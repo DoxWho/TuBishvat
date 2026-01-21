@@ -1,0 +1,687 @@
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { 
+  Users, Award, Timer as TimerIcon, Settings2, CheckCircle2, 
+  X, Sprout, HelpCircle, UserPlus, Trash2, Volume2, Volume1, VolumeX, 
+  Zap, Info, RefreshCcw, RotateCcw, BookOpen, ChevronRight, Trophy, Leaf,
+  Download, Upload, FileText
+} from 'lucide-react';
+
+// --- VERSIONING ---
+const APP_VERSION = "1.3";
+
+const DEFAULT_DATABASE = {
+  wheat: [
+    { prompt: "אִילָן", answer: "אִילָן (Tree)", type: "Vocab", hasAnswer: true, fact: "Wheat is one of the three 'staples' of the ancient world." },
+    { prompt: "אֲדָמָה", answer: "אֲדָמָה (Earth)", type: "Vocab", hasAnswer: true },
+    { prompt: "זֶרַע", answer: "זֶרַע (Seed)", type: "Vocab", hasAnswer: true },
+    { prompt: "מַיִם", answer: "מַיִם (Water)", type: "Vocab", hasAnswer: true },
+    { prompt: "שֶׁמֶשׁ", answer: "שֶׁמֶשׁ (Sun)", type: "Vocab", hasAnswer: true },
+    { prompt: "קָצִיר", answer: "קָצִיר (Harvest)", type: "Vocab", hasAnswer: true },
+    { prompt: "לֶחֶם", answer: "לֶחֶם (Bread)", type: "Vocab", hasAnswer: true },
+    { prompt: "שָׂדֶה", answer: "שָׂדֶה (Field)", type: "Vocab", hasAnswer: true },
+    { prompt: "טֶבַע", answer: "טֶבַע (Nature)", type: "Vocab", hasAnswer: true },
+    { prompt: "צֶמַח", answer: "צֶמַח (Plant)", type: "Vocab", hasAnswer: true },
+  ],
+  barley: [
+    { prompt: "How many 'New Years' are in the Jewish calendar?", answer: "Four", type: "Trivia", hasAnswer: true, fact: "Barley was often used as animal feed, showing all nature has a purpose." },
+    { prompt: "Which tree is the first to bloom in Israel in Shevat?", answer: "Shaked (Almond)", type: "Trivia", hasAnswer: true },
+    { prompt: "What is the Hebrew date of Tu Bishvat?", answer: "15th of Shevat", type: "Trivia", hasAnswer: true },
+    { prompt: "In the metaphor 'Man is like a tree', what are the roots?", answer: "The Head/Thoughts", type: "Trivia", hasAnswer: true },
+    { prompt: "Barley was one of the first crops ever grown in ancient Israel.", answer: "True", type: "Trivia", hasAnswer: true },
+    { prompt: "What specific color are the blossoms of an almond tree?", answer: "White or Light Pink", type: "Trivia", hasAnswer: true },
+    { prompt: "What do we call the festive meal eaten on Tu Bishvat?", answer: "Seder", type: "Trivia", hasAnswer: true },
+    { prompt: "Which book of the Torah lists the Seven Species?", answer: "Deuteronomy (Devarim)", type: "Trivia", hasAnswer: true },
+    { prompt: "What is the traditional prayer said over new fruit?", answer: "Shehecheyanu", type: "Trivia", hasAnswer: true },
+    { prompt: "True or False: Barley ripens before Wheat in Israel?", answer: "True", type: "Trivia", hasAnswer: true },
+  ],
+  grape: [
+    { quote: "Unless someone like you cares a whole awful lot...", source: "The Lorax", prompt: "What local environment part would you stand up for first?", type: "Discussion", hasAnswer: false, fact: "One vine can produce up to 40 clusters of grapes!" },
+    { quote: "As my ancestors planted for me, so I plant for my children.", source: "Talmud", prompt: "What are we 'planting' for people 50 years from now?", type: "Discussion", hasAnswer: false },
+    { quote: "Earth provides enough to satisfy every man's needs, but not every man's greed.", source: "Gandhi", prompt: "How can we practice 'enough-ness' this week?", type: "Discussion", hasAnswer: false },
+    { quote: "The best time to plant a tree was 20 years ago. The second best time is now.", source: "Proverb", prompt: "What is a green habit you can start today?", type: "Discussion", hasAnswer: false },
+    { quote: "A vine needs a trellis to grow high.", source: "Folklore", prompt: "Who are the 'trellises' (supporters) in your life?", type: "Discussion", hasAnswer: false },
+    { quote: "Look deep into nature, then you will understand everything better.", source: "Einstein", prompt: "What is the most complex thing you've seen in nature?", type: "Discussion", hasAnswer: false },
+    { quote: "To walk in nature is to witness a thousand miracles.", source: "Mary Davis", prompt: "Name one 'tiny miracle' you saw outside today.", type: "Discussion", hasAnswer: false },
+    { quote: "The vine produces clusters, not single grapes.", source: "Proverb", prompt: "How is our class like a cluster of grapes?", type: "Discussion", hasAnswer: false },
+    { quote: "Don't destroy the fruit-bearing trees.", source: "Torah", prompt: "Why is it important not to waste resources (Bal Tashchit)?", type: "Discussion", hasAnswer: false },
+    { quote: "Every blade of grass has an angel whispering 'Grow'.", source: "Midrash", prompt: "What whispers 'grow' to you when things are hard?", type: "Discussion", hasAnswer: false },
+  ],
+  fig: [
+    { prompt: "ACT OUT: A seed slowly sprouting into a giant tree.", type: "Charades", needsPlayer: 1, hasAnswer: false, fact: "Figs have no flowers on their branches—the flower is actually inside the fruit!" },
+    { prompt: "ACT OUT: A squirrel hiding nuts for the winter.", type: "Charades", needsPlayer: 1, hasAnswer: false },
+    { prompt: "ACT OUT: A heavy rainstorm watering the forest.", type: "Charades", needsPlayer: 3, hasAnswer: false },
+    { prompt: "ACT OUT: Picking fruit from a very tall branch.", type: "Charades", needsPlayer: 2, hasAnswer: false },
+    { prompt: "ACT OUT: A honeybee pollinating a flower.", type: "Charades", needsPlayer: 1, hasAnswer: false },
+    { prompt: "ACT OUT: A gardener planting a new sapling.", type: "Charades", needsPlayer: 2, hasAnswer: false },
+    { prompt: "ACT OUT: Wind blowing through autumn leaves.", type: "Charades", needsPlayer: 4, hasAnswer: false },
+    { prompt: "ACT OUT: A bird building a nest in a fig tree.", type: "Charades", needsPlayer: 1, hasAnswer: false },
+    { prompt: "ACT OUT: People having a picnic under a shade tree.", type: "Charades", needsPlayer: 3, hasAnswer: false },
+    { prompt: "ACT OUT: An old tree trunk providing a home for bugs.", type: "Charades", needsPlayer: 2, hasAnswer: false },
+  ],
+  pomegranate: [{ prompt: "Match Hebrew words to their meanings!", type: "Memory", fact: "It is said a pomegranate has 613 seeds, matching the 613 mitzvot!" }],
+  olive: [
+    { prompt: "PEACE", he: "שָׁלוֹם", forbidden: ["War", "Quiet", "Shalom", "Olive"], type: "Mindreader", needsPlayer: 2, hasAnswer: false, fact: "Olive trees can live for over 2,000 years!" },
+    { prompt: "LIGHT", he: "אוֹר", forbidden: ["Sun", "Lamp", "Dark", "Olive"], type: "Mindreader", needsPlayer: 2, hasAnswer: false },
+    { prompt: "OIL", he: "שֶׁמֶﻦ", forbidden: ["Fat", "Cooking", "Hanukkah", "Liquid"], type: "Mindreader", needsPlayer: 2, hasAnswer: false },
+    { prompt: "MOUNTAIN", he: "הַר", forbidden: ["Hill", "Climb", "High", "Peak"], type: "Mindreader", needsPlayer: 2, hasAnswer: false },
+    { prompt: "BRANCH", he: "עָנָף", forbidden: ["Tree", "Stick", "Leaf", "Bird"], type: "Mindreader", needsPlayer: 2, hasAnswer: false },
+    { prompt: "ANCIENT", he: "עַתִיק", forbidden: ["Old", "History", "New", "Past"], type: "Mindreader", needsPlayer: 2, hasAnswer: false },
+    { prompt: "GREEN", he: "יָרוֹק", forbidden: ["Color", "Grass", "Leaf", "Nature"], type: "Mindreader", needsPlayer: 2, hasAnswer: false },
+    { prompt: "DOVE", he: "יוֹנָה", forbidden: ["Bird", "Fly", "White", "Peace"], type: "Mindreader", needsPlayer: 2, hasAnswer: false },
+    { prompt: "STRENGTH", he: "כּוֹחַ", forbidden: ["Strong", "Muscle", "Weak", "Power"], type: "Mindreader", needsPlayer: 2, hasAnswer: false },
+    { prompt: "FRIEND", he: "חָבֵר", forbidden: ["Buddy", "Person", "School", "Love"], type: "Mindreader", needsPlayer: 2, hasAnswer: false },
+  ],
+  date: [
+    { prompt: "The act of 'Repairing the World' through justice and kindness.", answer: "Tikkun Olam", type: "Jeopardy", hasAnswer: true, fact: "Dates are often called 'Honey' in the Torah's description of Israel." },
+    { prompt: "The commandment forbidding wasteful destruction.", answer: "Bal Tashchit", type: "Jeopardy", hasAnswer: true },
+    { prompt: "The blessing said over fruit from a tree.", answer: "Borei Pri Ha'etz", type: "Jeopardy", hasAnswer: true },
+    { prompt: "The Hebrew month in which Tu Bishvat occurs.", answer: "Shevat", type: "Jeopardy", hasAnswer: true },
+    { prompt: "The land known for flowing with milk and honey (Date honey!).", answer: "Eretz Yisrael", type: "Jeopardy", hasAnswer: true },
+    { prompt: "A young tree or plant often given as a gift.", answer: "Sapling", type: "Jeopardy", hasAnswer: true },
+    { prompt: "The 'Crown' of the Seven Species with 613 seeds.", answer: "Pomegranate", type: "Jeopardy", hasAnswer: true },
+    { prompt: "The part of the tree that absorbs water and nutrients.", answer: "Roots", type: "Jeopardy", hasAnswer: true },
+    { prompt: "The holiday known as the New Year for Trees.", answer: "Tu Bishvat", type: "Jeopardy", hasAnswer: true },
+    { prompt: "A collection of 150 sacred poems often referencing nature.", answer: "Tehillim (Psalms)", type: "Jeopardy", hasAnswer: true },
+  ]
+};
+
+const SPECIES_DATA = {
+  wheat: { en: "Wheat", he: "חִטָּה", bg: "bg-amber-500", border: "border-amber-400", text: "text-amber-600", light: "text-amber-200", hex: "#f59e0b" },
+  barley: { en: "Barley", he: "שְׂעוֹרָה", bg: "bg-yellow-400", border: "border-yellow-300", text: "text-yellow-500", light: "text-yellow-200", hex: "#eab308" },
+  grape: { en: "Grapes", he: "עֲנָבִים", bg: "bg-indigo-500", border: "border-indigo-400", text: "text-indigo-500", light: "text-indigo-200", hex: "#6366f1" },
+  fig: { en: "Figs", he: "תְּאֵנִים", bg: "bg-purple-600", border: "border-purple-400", text: "text-purple-600", light: "text-purple-200", hex: "#9333ea" },
+  pomegranate: { en: "Pomegranate", he: "רִמּוֹן", bg: "bg-red-600", border: "border-red-400", text: "text-red-600", light: "text-red-200", hex: "#dc2626" },
+  olive: { en: "Olives", he: "זֵיתִים", bg: "bg-lime-600", border: "border-lime-400", text: "text-lime-600", light: "text-lime-200", hex: "#65a30d" },
+  date: { en: "Dates", he: "תְּמָרִים", bg: "bg-orange-700", border: "border-orange-500", text: "text-orange-700", light: "text-orange-200", hex: "#c2410c" }
+};
+
+const VOCAB_PAIRS = [
+  { h: "אֶרֶץ", e: "Land", hex: "#38bdf8" }, 
+  { h: "מַיִם", e: "Water", hex: "#60a5fa" }, 
+  { h: "שֶׁמֶשׁ", e: "Sun", hex: "#facc15" }, 
+  { h: "פְּרִי", e: "Fruit", hex: "#f87171" },
+  { h: "טֶבַע", e: "Nature", hex: "#34d399" }, 
+  { h: "עֵץ", e: "Tree", hex: "#d97706" }, 
+  { h: "בְּרָכָה", e: "Blessing", hex: "#818cf8" }, 
+  { h: "חַיִּים", e: "Life", hex: "#fb7185" }
+];
+
+const SpeciesIcon = ({ type, className = "w-6 h-6", color = "currentColor" }) => {
+  const icons = {
+    wheat: <path d="M12 22V12M12 12L8 8M12 12L16 8M12 8V2M12 8L8 4M12 8L16 4" stroke={color} strokeWidth="2" strokeLinecap="round" />,
+    barley: <path d="M12 22V10M12 10C12 10 16 8 16 5M12 10C12 10 8 8 8 5" stroke={color} strokeWidth="2" strokeLinecap="round" />,
+    grape: <g stroke={color} strokeWidth="2" fill="none"><circle cx="12" cy="7" r="2.5"/><circle cx="9.5" cy="11" r="2.5"/><circle cx="14.5" cy="11" r="2.5"/><circle cx="12" cy="15" r="2.5"/></g>,
+    fig: <path d="M12 22C12 22 19 18 19 13C19 8 12 3 12 3C12 3 5 8 5 13C5 18 12 22 12 22Z" stroke={color} strokeWidth="2" fill="none" />,
+    pomegranate: <g stroke={color} strokeWidth="2" fill="none"><path d="M12 21C16.5 21 20 17.5 20 13C20 8.5 16 5 12 5C8 5 4 8.5 4 13C4 17.5 7.5 21 12 21Z"/><path d="M9 5L8 2M12 5V2M15 5L16 2" strokeLinecap="round" strokeWidth="2.5"/></g>,
+    olive: <ellipse cx="12" cy="13" rx="5" ry="7" stroke={color} strokeWidth="2" fill="none" />,
+    date: <path d="M12 22V5M12 5C12 5 18 7 21 12M12 5C12 5 6 7 3 12M12 9C12 9 17 11 19 15M12 9C12 9 7 11 5 15" stroke={color} strokeWidth="2.5" strokeLinecap="round" />
+  };
+  return <svg viewBox="0 0 24 24" className={className} fill="none">{icons[type] || icons.wheat}</svg>;
+};
+
+const ParticleBurst = ({ count, color }) => {
+  const particles = Array.from({ length: count }).map((_, i) => ({
+    id: i,
+    left: Math.random() * 100,
+    top: -20,
+    size: Math.random() * 20 + 10,
+    delay: Math.random() * 0.5,
+    duration: Math.random() * 2 + 1.5,
+    rot: Math.random() * 360,
+    drift: (Math.random() - 0.5) * 40
+  }));
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-[1000] overflow-hidden">
+      {particles.map(p => (
+        <div key={p.id} className="absolute animate-particle" style={{
+          left: `${p.left}%`,
+          top: `${p.top}%`,
+          animationDelay: `${p.delay}s`,
+          animationDuration: `${p.duration}s`,
+          '--drift': `${p.drift}vw`,
+          '--rot': `${p.rot}deg`
+        }}>
+          <Leaf size={p.size} fill={color} className="text-white/20" />
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const App = () => {
+  // --- STATE ---
+  const [activeSpecies, setActiveSpecies] = useState('wheat');
+  const [inventory, setInventory] = useState({});
+  const [history, setHistory] = useState([]); 
+  const [missionIndex, setMissionIndex] = useState({});
+  const [activeChallenge, setActiveChallenge] = useState(null);
+  const [cardState, setCardState] = useState('back');
+  const [showSettings, setShowSettings] = useState(false);
+  const [showReport, setShowReport] = useState(false);
+  const [showFactOverlay, setShowFactOverlay] = useState(false);
+  const [celebrateSidebar, setCelebrateSidebar] = useState(false);
+  const [burstActive, setBurstActive] = useState(false);
+  const [gameDatabase, setGameDatabase] = useState(DEFAULT_DATABASE);
+  
+  // Settings & Roster
+  const [roster, setRoster] = useState(["Abby", "Marshall", "Julianna", "Kai", "Ellie", "Adi", "Aaron", "Isaac", "Avery P.", "David", "Brenner", "Aviv", "Avery W."]);
+  const [newStudentName, setNewStudentName] = useState("");
+  const [studentPool, setStudentPool] = useState([]);
+  const [settings, setSettings] = useState({ 
+    targetPerSpecies: 5,
+    volume: 50,
+    isMuted: false,
+    matchFlipTime: 1200,
+    timerDuration: 60,
+    groupSize: 2 
+  });
+  
+  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [memoryGames, setMemoryGames] = useState({ cards: [], flipped: [], matched: [] });
+  const [timeLeft, setTimeLeft] = useState(null);
+  const [timerStatus, setTimerStatus] = useState('idle');
+
+  // Database Management Logic
+  const exportDatabase = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(gameDatabase, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "tu_bishvat_database.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  };
+
+  const handleImportDatabase = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const json = JSON.parse(e.target.result);
+        // Simple validation check
+        if (json.wheat && json.barley && json.grape) {
+          setGameDatabase(json);
+          // Reset game to use new content
+          setInventory({});
+          setMissionIndex({});
+          setHistory([]);
+          alert("Database successfully updated!");
+        } else {
+          alert("Invalid database format. Please ensure all species keys are present.");
+        }
+      } catch (err) {
+        alert("Error parsing JSON file. Please check for syntax errors.");
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const totalRepairs = useMemo(() => Object.values(inventory).reduce((a, b) => a + b, 0), [inventory]);
+  const maxRepairs = settings.targetPerSpecies * 7;
+  const gameProgress = (totalRepairs / maxRepairs) * 100;
+
+  useEffect(() => {
+    if (gameProgress === 100 && totalRepairs > 0) {
+      setBurstActive(true);
+      setTimeout(() => setShowReport(true), 3000);
+    }
+  }, [gameProgress, totalRepairs]);
+
+  useEffect(() => {
+    if (burstActive) {
+      const timer = setTimeout(() => setBurstActive(false), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [burstActive]);
+
+  const getFontSize = (text, type) => {
+    if (!text) return 'text-6xl';
+    const len = text.length;
+    if (type === 'Vocab') return len > 8 ? 'text-7xl' : 'text-9xl';
+    if (len > 80) return 'text-3xl';
+    if (len > 50) return 'text-4xl';
+    if (len > 30) return 'text-5xl';
+    return 'text-6xl';
+  };
+
+  const getNextStudents = useCallback((count) => {
+    setStudentPool(prevPool => {
+      let pool = [...prevPool];
+      let selected = [];
+      for (let i = 0; i < count; i++) {
+        if (pool.length === 0) pool = [...roster].sort(() => Math.random() - 0.5);
+        selected.push(pool.pop());
+      }
+      setSelectedStudents(selected);
+      return pool;
+    });
+  }, [roster]);
+
+  const initMemoryGame = useCallback(() => {
+    const cards = [...VOCAB_PAIRS, ...VOCAB_PAIRS]
+      .map((item, i) => ({
+        id: i,
+        content: i < VOCAB_PAIRS.length ? item.h : item.e,
+        matchId: item.h,
+        hex: item.hex
+      }))
+      .sort(() => 0.5 - Math.random());
+    setMemoryGames({ cards, flipped: [], matched: [] });
+  }, []);
+
+  const loadMission = useCallback((speciesOverride) => {
+    const species = speciesOverride || activeSpecies;
+    if (species === 'pomegranate') {
+      initMemoryGame();
+      setActiveChallenge(gameDatabase.pomegranate[0]);
+      setSelectedStudents([]);
+      return;
+    }
+    const deck = gameDatabase[species];
+    const currentIdx = missionIndex[species] || 0;
+    const challenge = deck[currentIdx % deck.length];
+    const requiredCount = (challenge.type === 'Mindreader' || challenge.type === 'Charades') 
+        ? settings.groupSize : (challenge.needsPlayer || 0);
+
+    if (requiredCount > 0) getNextStudents(requiredCount);
+    else setSelectedStudents([]);
+
+    setActiveChallenge(challenge);
+  }, [activeSpecies, missionIndex, settings.groupSize, getNextStudents, initMemoryGame, gameDatabase]);
+
+  useEffect(() => { loadMission(); }, [activeSpecies, loadMission, gameDatabase]);
+
+  useEffect(() => {
+    let interval;
+    if (timerStatus === 'running' && timeLeft > 0) {
+      interval = setInterval(() => setTimeLeft(t => t - 1), 1000);
+    } else if (timeLeft === 0 && timerStatus === 'running') {
+      setTimerStatus('finished');
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [timeLeft, timerStatus]);
+
+  const handleComplete = () => {
+    const currentRepairs = inventory[activeSpecies] || 0;
+    setBurstActive(true);
+    setHistory(prev => [...prev, { species: activeSpecies, challenge: activeChallenge, students: selectedStudents }]);
+    if (currentRepairs < settings.targetPerSpecies) {
+      setInventory(prev => ({ ...prev, [activeSpecies]: currentRepairs + 1 }));
+      setCelebrateSidebar(true);
+      setTimeout(() => setCelebrateSidebar(false), 1500);
+    }
+    setCardState('back');
+    setTimerStatus('idle');
+    setTimeLeft(null);
+    setTimeout(() => {
+      setMissionIndex(prev => ({ ...prev, [activeSpecies]: (prev[activeSpecies] || 0) + 1 }));
+      loadMission();
+    }, 500);
+  };
+
+  const handleFlip = () => {
+    if (cardState === 'back') {
+      setCardState('front');
+      if (settings.timerDuration > 0 && (activeChallenge.type === 'Mindreader' || activeChallenge.type === 'Charades')) {
+        setTimeLeft(settings.timerDuration);
+        setTimerStatus('running');
+      }
+    } else if (cardState === 'front' && activeChallenge?.hasAnswer) {
+      setCardState('answer');
+    }
+  };
+
+  const handleMemoryClick = (index) => {
+    const card = memoryGames.cards[index];
+    if (memoryGames.flipped.length === 2 || memoryGames.flipped.includes(index) || memoryGames.matched.includes(card.matchId)) return;
+    const newFlipped = [...memoryGames.flipped, index];
+    setMemoryGames(prev => ({ ...prev, flipped: newFlipped }));
+    if (newFlipped.length === 2) {
+      const [firstIdx, secondIdx] = newFlipped;
+      if (memoryGames.cards[firstIdx].matchId === memoryGames.cards[secondIdx].matchId) {
+        setTimeout(() => setMemoryGames(prev => ({ ...prev, matched: [...prev.matched, card.matchId], flipped: [] })), 500);
+      } else {
+        setTimeout(() => setMemoryGames(prev => ({ ...prev, flipped: [] })), settings.matchFlipTime);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (memoryGames.matched.length === VOCAB_PAIRS.length && memoryGames.matched.length > 0) setTimeout(handleComplete, 1000);
+  }, [memoryGames.matched]);
+
+  const resetGame = () => {
+    setInventory({});
+    setMissionIndex({});
+    setHistory([]);
+    setStudentPool([]);
+    loadMission('wheat');
+    setShowSettings(false);
+    setShowReport(false);
+  };
+
+  const addStudent = (e) => {
+    if (e) e.preventDefault();
+    if (newStudentName.trim()) {
+      setRoster([...roster, newStudentName.trim()]);
+      setNewStudentName("");
+    }
+  };
+
+  const config = SPECIES_DATA[activeSpecies];
+
+  return (
+    <div className="h-screen bg-slate-950 text-white flex flex-col font-sans overflow-hidden select-none">
+      
+      {burstActive && <ParticleBurst count={gameProgress === 100 ? 150 : 40} color={config.hex} />}
+
+      {/* HARVEST REPORT OVERLAY */}
+      {showReport && (
+        <div className="fixed inset-0 z-[600] bg-slate-950/95 backdrop-blur-xl flex flex-col items-center justify-center p-8 overflow-y-auto">
+          <div className="w-full max-w-5xl bg-slate-900 rounded-[3rem] p-12 border border-emerald-500/30 shadow-2xl relative">
+            <button onClick={() => setShowReport(false)} className="absolute top-8 right-8 text-slate-500 hover:text-white"><X size={32}/></button>
+            <div className="text-center mb-12">
+               <div className="bg-emerald-500 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                 <Trophy size={48} className="text-white" />
+               </div>
+               <h2 className="text-6xl font-black uppercase tracking-tighter mb-2">Harvest Report</h2>
+               <p className="text-emerald-400 font-bold tracking-[0.3em] uppercase">Session Progress & Analytics</p>
+            </div>
+            <div className="grid grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <h3 className="text-xs font-black uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2"><BookOpen size={16} /> Completed Questions</h3>
+                <div className="bg-slate-800/50 rounded-3xl p-6 h-[400px] overflow-y-auto border border-white/5 space-y-3">
+                  {history.length > 0 ? history.map((h, i) => (
+                    <div key={i} className="flex items-center gap-4 bg-slate-800 p-4 rounded-2xl border border-white/5">
+                       <SpeciesIcon type={h.species} className="w-6 h-6 shrink-0" color={SPECIES_DATA[h.species].hex} />
+                       <div className="flex-grow">
+                          <p className="text-xs font-bold text-slate-500 uppercase">{h.challenge.type}</p>
+                          <p className="font-black text-lg text-white">{h.challenge.answer || h.challenge.prompt}</p>
+                       </div>
+                    </div>
+                  )) : <p className="text-slate-500 text-center py-10">No items repaired yet.</p>}
+                </div>
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-xs font-black uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2"><Users size={16} /> Participation</h3>
+                <div className="bg-slate-800/50 rounded-3xl p-6 h-[400px] overflow-y-auto border border-white/5">
+                  <div className="flex flex-wrap gap-2">
+                    {roster.map(name => {
+                      const count = history.filter(h => h.students.includes(name)).length;
+                      return (
+                        <div key={name} className={`px-4 py-2 rounded-xl flex items-center gap-2 ${count > 0 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/20' : 'bg-slate-800 text-slate-600'}`}>
+                           <span className="font-bold">{name}</span>
+                           {count > 0 && <span className="bg-emerald-500 text-slate-950 text-[10px] font-black px-1.5 rounded-full">{count}</span>}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+            {gameProgress === 100 && (
+              <div className="mt-12 flex justify-center">
+                <button onClick={resetGame} className="px-12 py-5 bg-emerald-500 text-slate-950 font-black text-2xl rounded-3xl hover:scale-105 shadow-xl">START NEW TIKKUN</button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* SETTINGS OVERLAY */}
+      {showSettings && (
+        <div className="fixed inset-0 z-[500] bg-slate-900/98 backdrop-blur-xl flex items-center justify-center p-8">
+          <div className="bg-slate-800 w-full max-w-5xl rounded-[3rem] p-10 shadow-2xl border border-white/10 relative flex flex-col max-h-[90vh]">
+            <button onClick={() => setShowSettings(false)} className="absolute top-8 right-8 text-slate-400 hover:text-white"><X size={32} /></button>
+            
+            <div className="flex justify-between items-center mb-10">
+              <h2 className="text-4xl font-black uppercase tracking-tighter flex items-center gap-4">
+                <Settings2 className="text-emerald-400" size={40} />
+                Game Settings
+              </h2>
+              <div className="flex gap-4">
+                <button onClick={() => setShowReport(true)} className="flex items-center gap-2 px-6 py-3 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-2xl font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all">
+                  <FileText size={18} /> View Harvest Report
+                </button>
+                <button onClick={resetGame} className="flex items-center gap-2 px-6 py-3 bg-red-500/10 text-red-400 border border-red-500/20 rounded-2xl font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all">
+                  <RotateCcw size={18} /> Reset Game
+                </button>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-12 overflow-y-auto pr-4 scrollbar-hide">
+              <div className="space-y-10">
+                {/* Content Management Section */}
+                <div className="bg-slate-900/50 p-6 rounded-[2rem] border border-white/5">
+                  <label className="text-xs font-black uppercase tracking-widest text-emerald-400 block mb-4">Content Management</label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button onClick={exportDatabase} className="flex flex-col items-center justify-center gap-2 p-4 bg-slate-800 rounded-2xl border border-white/10 hover:border-emerald-500/50 transition-all text-slate-300">
+                      <Download size={24} />
+                      <span className="text-xs font-bold uppercase">Export JSON</span>
+                    </button>
+                    <label className="flex flex-col items-center justify-center gap-2 p-4 bg-slate-800 rounded-2xl border border-white/10 hover:border-emerald-500/50 transition-all text-slate-300 cursor-pointer">
+                      <Upload size={24} />
+                      <span className="text-xs font-bold uppercase">Import JSON</span>
+                      <input type="file" accept=".json" onChange={handleImportDatabase} className="hidden" />
+                    </label>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-end mb-4">
+                    <label className="text-xs font-black uppercase tracking-widest text-slate-400">Target Repairs Per Species</label>
+                    <span className="text-2xl font-black text-emerald-400">{settings.targetPerSpecies}</span>
+                  </div>
+                  <input type="range" min="1" max="15" value={settings.targetPerSpecies} onChange={e => setSettings({...settings, targetPerSpecies: parseInt(e.target.value)})} className="w-full h-3 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500" />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-black uppercase tracking-widest text-slate-400 block mb-2">Timer</label>
+                    <select value={settings.timerDuration} onChange={e => setSettings({...settings, timerDuration: parseInt(e.target.value)})} className="w-full bg-slate-700 rounded-xl px-4 py-3 font-bold outline-none">
+                      {[0, 30, 60, 90, 120, 180].map(s => <option key={s} value={s}>{s === 0 ? 'Off' : `${s}s`}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-black uppercase tracking-widest text-slate-400 block mb-2">Group Size</label>
+                    <select value={settings.groupSize} onChange={e => setSettings({...settings, groupSize: parseInt(e.target.value)})} className="w-full bg-slate-700 rounded-xl px-4 py-3 font-bold outline-none">
+                      {[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n} Student(s)</option>)}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-black uppercase tracking-widest text-slate-400 block mb-4">Class Roster ({roster.length})</label>
+                <form onSubmit={addStudent} className="flex gap-2 mb-4">
+                  <input type="text" placeholder="Add student..." value={newStudentName} onChange={e => setNewStudentName(e.target.value)} className="flex-grow bg-slate-700 rounded-xl px-4 py-3 font-bold outline-none focus:border-emerald-500" />
+                  <button type="submit" className="bg-emerald-500 px-6 rounded-xl"><UserPlus size={20}/></button>
+                </form>
+                <div className="bg-slate-900/50 rounded-2xl p-4 h-64 overflow-y-auto grid grid-cols-2 gap-2 border border-white/5">
+                  {roster.map(name => (
+                    <div key={name} className="bg-slate-700 px-4 py-2 rounded-xl flex justify-between items-center group">
+                      <span className="font-bold text-sm">{name}</span>
+                      <button onClick={() => setRoster(roster.filter(n => n !== name))} className="text-slate-500 hover:text-red-400"><Trash2 size={14}/></button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* HEADER */}
+      <header className="h-20 border-b border-white/10 flex items-center justify-between px-8 bg-slate-900 z-50">
+        <div className="flex items-center gap-4">
+          <Sprout className="w-8 h-8 text-emerald-400" />
+          <h1 className="text-2xl font-black uppercase tracking-tighter">Etz Chayim <span className="text-emerald-500 font-serif">עֵץ חַיִּים</span></h1>
+        </div>
+        <div className="flex items-center gap-6">
+            {timeLeft !== null && (
+              <div className={`flex items-center gap-3 px-6 py-2 rounded-2xl border ${timerStatus === 'finished' ? 'bg-red-500' : 'bg-slate-800'}`}>
+                <TimerIcon className="text-emerald-400" size={20} />
+                <span className="text-xl font-black tabular-nums">{timeLeft}s</span>
+              </div>
+            )}
+            <button onClick={() => setShowSettings(true)} className="p-3 bg-slate-800 rounded-full hover:bg-slate-700 text-slate-400"><Settings2 size={24}/></button>
+        </div>
+      </header>
+
+      <main className="flex-grow flex p-4 gap-4 overflow-hidden">
+        
+        {/* SIDEBAR NAVIGATION */}
+        <div className="w-80 flex flex-col gap-2 h-full">
+          {Object.entries(SPECIES_DATA).map(([key, data]) => {
+            const count = inventory[key] || 0;
+            const isActive = activeSpecies === key;
+            const isComplete = count >= settings.targetPerSpecies;
+            const progress = (count / settings.targetPerSpecies) * 100;
+            return (
+              <button key={key} onClick={() => { setActiveSpecies(key); setCardState('back'); setTimerStatus('idle'); }}
+                className={`flex items-center gap-4 p-4 rounded-3xl border transition-all flex-grow ${isActive ? 'bg-white text-slate-950 scale-105 shadow-xl' : 'bg-slate-900 border-white/5'}`}>
+                <div className="relative w-12 h-12 flex items-center justify-center">
+                  <svg className="absolute w-full h-full -rotate-90">
+                    <circle cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="3" fill="none" className={isActive ? 'text-slate-100' : 'text-slate-800'} />
+                    <circle cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="3" fill="none" strokeDasharray="125.6" strokeDashoffset={125.6 - (125.6 * progress) / 100} className={isActive ? 'text-emerald-500' : (isComplete ? data.text : data.light)} />
+                  </svg>
+                  <SpeciesIcon type={key} className="w-6 h-6 z-10" color={isActive ? "#0f172a" : (isComplete ? data.hex : 'currentColor')} />
+                </div>
+                <div className="text-left">
+                  <p className={`text-lg font-black uppercase leading-none mb-1 ${!isActive && isComplete ? data.text : ''}`}>{data.en}</p>
+                  <p className="text-xl font-bold font-serif leading-none opacity-40">{data.he}</p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* MAIN GAME STAGE */}
+        <section className="flex-grow flex flex-col items-center justify-center relative bg-slate-900/50 rounded-[3rem] border border-white/5">
+          {selectedStudents.length > 0 && activeSpecies !== 'pomegranate' && (
+            <div className="absolute top-8 bg-white/20 backdrop-blur-md px-8 py-4 rounded-[2rem] flex items-center gap-4 shadow-2xl z-20 border border-white/30 animate-in slide-in-from-top-4">
+              <Users size={24} className="text-emerald-400" />
+              <div className="flex gap-2 font-black text-3xl">
+                {selectedStudents.map((s, i) => <span key={i}>{s}{i < selectedStudents.length - 1 ? ' & ' : ''}</span>)}
+              </div>
+            </div>
+          )}
+
+          <div className="w-full max-w-5xl h-full p-8 flex flex-col items-center justify-center">
+            {activeSpecies === 'pomegranate' ? (
+              <div className="grid grid-cols-4 gap-4 w-full h-[85%]">
+                {memoryGames.cards.map((card, idx) => (
+                  <div key={idx} onClick={() => handleMemoryClick(idx)} className="relative cursor-pointer perspective-1000">
+                    <div className={`w-full h-full transition-all duration-500 transform-style-3d ${memoryGames.flipped.includes(idx) || memoryGames.matched.includes(card.matchId) ? 'rotate-y-180' : ''}`}>
+                      <div className="absolute inset-0 bg-red-700 rounded-2xl border-4 border-red-500 flex flex-col items-center justify-center backface-hidden shadow-lg">
+                         <span className="text-white/40 font-black text-4xl mb-2">{idx + 1}</span>
+                      </div>
+                      <div className={`absolute inset-0 bg-white rounded-2xl flex items-center justify-center rotate-y-180 backface-hidden border-4 ${memoryGames.matched.includes(card.matchId) ? 'scale-95 border-emerald-400' : 'border-white'}`}>
+                        <span className="text-slate-900 font-black text-3xl text-center px-2">{card.content}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="w-full h-[90%] relative perspective-2000">
+                {/* BACK OF CARD */}
+                <div className={`absolute inset-0 transition-all duration-700 ${cardState === 'back' ? 'z-40 opacity-100 scale-100' : 'z-0 opacity-0 scale-90 rotate-y-180 pointer-events-none'}`}>
+                  <div className={`w-full h-full ${config.bg} rounded-[4rem] border-[10px] ${config.border} flex flex-col items-center justify-center shadow-2xl relative`}>
+                    <button onClick={(e) => { e.stopPropagation(); setShowFactOverlay(true); }} className="absolute top-10 right-10 p-4 bg-white/10 rounded-full"><Info size={32}/></button>
+                    {showFactOverlay && (
+                      <div className="absolute inset-0 z-[60] bg-black/95 flex flex-col items-center justify-center p-12 text-center">
+                        <h4 className="text-emerald-400 font-black uppercase mb-4">Species Fact</h4>
+                        <p className="text-4xl font-black leading-tight max-w-2xl mb-12">{activeChallenge?.fact || "Wait for it..."}</p>
+                        <button onClick={(e) => { e.stopPropagation(); setShowFactOverlay(false); }} className="px-10 py-4 bg-white text-slate-950 font-black rounded-2xl">Got it!</button>
+                      </div>
+                    )}
+                    <div className="bg-white/10 p-16 rounded-full mb-6 backdrop-blur-md border border-white/20">
+                      <SpeciesIcon type={activeSpecies} className="w-32 h-32" color="white" />
+                    </div>
+                    <h3 className="text-6xl font-black uppercase tracking-[0.2em]">{config.en}</h3>
+                    <button onClick={handleFlip} className="mt-8 px-8 py-4 bg-white text-slate-950 rounded-full font-black tracking-widest text-lg flex items-center gap-2 hover:scale-105 transition-transform">
+                      <Zap className="text-emerald-500" /> START MISSION
+                    </button>
+                  </div>
+                </div>
+
+                {/* FRONT OF CARD */}
+                <div className={`absolute inset-0 transition-all duration-700 ${cardState !== 'back' ? 'z-40 opacity-100 scale-100' : 'z-0 opacity-0 scale-90 rotate-y-180 pointer-events-none'}`}>
+                  <div className="w-full h-full bg-white text-slate-900 rounded-[4rem] p-12 flex flex-col shadow-2xl border-4 border-slate-50 relative">
+                    <div className="flex justify-between items-center mb-8 border-b pb-6">
+                      <span className="text-4xl font-black uppercase text-slate-400">{activeChallenge?.type}</span>
+                      <span className={`text-2xl font-black uppercase px-6 py-2 bg-slate-100 rounded-full ${config.text}`}>{config.en}</span>
+                    </div>
+                    <div className="flex-grow flex flex-col items-center justify-center text-center">
+                      {cardState === 'front' ? (
+                        <div className="w-full">
+                          {activeChallenge?.quote && <p className="text-2xl italic font-serif text-slate-500 mb-6">"{activeChallenge.quote}"</p>}
+                          <h2 className={`font-black uppercase tracking-tight leading-[1.1] ${getFontSize(activeChallenge?.prompt, activeChallenge?.type)}`}>{activeChallenge?.prompt}</h2>
+                          {activeChallenge?.type === 'Mindreader' && (
+                            <div className="mt-12 flex flex-wrap justify-center gap-4">
+                              {activeChallenge.forbidden.map(w => <span key={w} className="px-6 py-2 bg-red-50 text-red-500 rounded-xl font-black text-xl border-2 border-red-100 uppercase">{w}</span>)}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="animate-in zoom-in">
+                          <CheckCircle2 className="text-emerald-500 mx-auto mb-6" size={80}/>
+                          <p className="text-xs font-black uppercase tracking-[0.5em] text-slate-400 mb-4">Solution</p>
+                          <p className={`font-black uppercase text-emerald-600 leading-none ${getFontSize(activeChallenge?.answer)}`}>{activeChallenge?.answer}</p>
+                        </div>
+                      )}
+                    </div>
+                    <div className="mt-12 flex gap-4">
+                      {activeChallenge?.hasAnswer && cardState === 'front' ? (
+                        <button onClick={handleFlip} className={`flex-grow py-10 rounded-[3rem] font-black text-4xl text-white ${config.bg} uppercase tracking-widest shadow-xl`}>Reveal Answer</button>
+                      ) : (
+                        <button onClick={handleComplete} className="flex-grow py-10 bg-emerald-500 rounded-[3rem] font-black text-4xl text-white uppercase tracking-widest shadow-xl">Confirm Repair</button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* PROGRESS TRACKER */}
+        <div className="w-36 bg-slate-900/50 rounded-[3rem] border border-white/5 flex flex-col items-center py-10 relative">
+          <div className="flex-grow w-4 bg-white/10 rounded-full flex flex-col-reverse overflow-hidden my-8 border border-white/5">
+            <div className="w-full bg-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.5)] transition-all duration-1000" style={{ height: `${gameProgress}%` }} />
+          </div>
+          <div className="flex flex-col-reverse gap-3 px-4 w-full">
+            {Object.entries(SPECIES_DATA).map(([key, data]) => (
+              (inventory[key] || 0) >= settings.targetPerSpecies && (
+                <div key={key} className={`w-full aspect-square rounded-2xl flex items-center justify-center ${data.bg} shadow-lg animate-in zoom-in`}>
+                  <SpeciesIcon type={key} className="w-8 h-8 text-white" />
+                </div>
+              )
+            ))}
+          </div>
+        </div>
+      </main>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        .perspective-1000 { perspective: 1000px; }
+        .perspective-2000 { perspective: 2000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        @keyframes particle-anim {
+          0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+          10% { opacity: 1; }
+          100% { transform: translateY(110vh) translateX(var(--drift)) rotate(var(--rot)); opacity: 0; }
+        }
+        .animate-particle { animation: particle-anim linear forwards; }
+      `}} />
+    </div>
+  );
+};
+
+export default App;
