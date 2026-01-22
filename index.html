@@ -1,404 +1,630 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tu Bishvat: The Seven Species Mission</title>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background: #020617; color: white; margin: 0; overflow: hidden; height: 100vh; }
-        .hebrew-text { direction: rtl; unicode-bidi: isolate; font-family: 'Arial', sans-serif; }
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { 
+  Users, Award, Timer as TimerIcon, Settings2, CheckCircle2, 
+  X, Sprout, HelpCircle, UserPlus, Trash2, Volume2, 
+  Zap, Info, RefreshCcw, RotateCcw, BookOpen, Trophy, Leaf,
+  VolumeX
+} from 'lucide-react';
+
+const APP_NAME = "Tu Bishvat: The Seven Species Mission";
+
+const INITIAL_DATABASE = {
+  wheat: [
+    { prompt: "עֵץ", answer: "עֵץ (Tree)", type: "Vocab", hasAnswer: true },
+    { prompt: "אֲדָמָה", answer: "אֲדָמָה (Earth)", type: "Vocab", hasAnswer: true },
+    { prompt: "זֶרַע", answer: "זֶרַע (Seed)", type: "Vocab", hasAnswer: true },
+    { prompt: "מַיִם", answer: "מַיִם (Water)", type: "Vocab", hasAnswer: true },
+    { prompt: "שֶׁמֶשׁ", answer: "שֶׁמֶשׁ (Sun)", type: "Vocab", hasAnswer: true },
+    { prompt: "קָצִיר", answer: "קָצִיר (Harvest)", type: "Vocab", hasAnswer: true },
+    { prompt: "לֶחֶם", answer: "לֶחֶם (Bread)", type: "Vocab", hasAnswer: true },
+    { prompt: "שָׂדֶה", answer: "שָׂדֶה (Field)", type: "Vocab", hasAnswer: true },
+    { prompt: "טֶבַע", answer: "טֶבַע (Nature)", type: "Vocab", hasAnswer: true },
+    { prompt: "צֶמַח", answer: "צֶמַח (Plant)", type: "Vocab", hasAnswer: true }
+  ],
+  barley: [
+    { prompt: "How many 'New Years' are in the Jewish calendar?", answer: "Four", type: "Trivia", hasAnswer: true },
+    { prompt: "Which tree is the first to bloom in Israel in Shevat?", answer: "שָׁקֵד (shaqed) - Almond", type: "Trivia", hasAnswer: true },
+    { prompt: "What is the Hebrew date of Tu Bishvat?", answer: "15th of שְׁבָט (Shevat)", type: "Trivia", hasAnswer: true },
+    { prompt: "In the metaphor 'A person is like a tree,' what do the roots represent?", answer: "Our values, family, and Jewish traditions", type: "Trivia", hasAnswer: true },
+    { prompt: "Barley was one of the first crops grown in ancient Israel.", answer: "True", type: "Trivia", hasAnswer: true },
+    { prompt: "What color are almond blossoms?", answer: "White or light pink", type: "Trivia", hasAnswer: true },
+    { prompt: "What do we call the festive meal on Tu Bishvat?", answer: "Seder", type: "Trivia", hasAnswer: true },
+    { prompt: "Which book of the Torah lists the Seven Species?", answer: "Deuteronomy (Devarim)", type: "Trivia", hasAnswer: true },
+    { prompt: "What prayer is said over new fruit?", answer: "Shehecheyanu", type: "Trivia", hasAnswer: true },
+    { prompt: "True or False: Barley ripens before wheat in Israel.", answer: "True", type: "Trivia", hasAnswer: true }
+  ],
+  grape: [
+    { quote: "Unless someone like you cares a whole awful lot, nothing is going to get better. It’s not.", source: "The Lorax", prompt: "What local environment would you protect first?", type: "Discussion", hasAnswer: false },
+    { quote: "As my ancestors planted for me, so I plant for my children.", source: "Talmud", prompt: "What are we planting for people 50 years from now?", type: "Discussion", hasAnswer: false },
+    { quote: "Earth provides enough to satisfy every man's needs, but not every man's greed.", source: "Gandhi", prompt: "How can we practice enough-ness this week?", type: "Discussion", hasAnswer: false },
+    { quote: "The best time to plant a tree was 20 years ago. The second best time is now.", source: "Proverb", prompt: "What green habit can you start today?", type: "Discussion", hasAnswer: false },
+    { quote: "A vine needs a trellis to grow high.", source: "Folklore", prompt: "Who are the supporters who help you grow?", type: "Discussion", hasAnswer: false },
+    { quote: "Look deep into nature, and then you will understand everything better.", source: "Einstein", prompt: "What is the most complex thing you have seen in nature?", type: "Discussion", hasAnswer: false },
+    { quote: "To walk in nature is to witness a thousand miracles.", source: "Mary Davis", prompt: "What tiny miracle have you noticed recently?", type: "Discussion", hasAnswer: false },
+    { quote: "The vine produces clusters, not single grapes.", source: "Proverb", prompt: "How is our class like a cluster of grapes?", type: "Discussion", hasAnswer: false },
+    { quote: "When you besiege a city… you must not destroy its trees.", source: "Torah", prompt: "Why is wasting resources a problem?", type: "Discussion", hasAnswer: false },
+    { quote: "Every blade of grass has an angel that whispers to it, ‘Grow.’", source: "Midrash", prompt: "What helps you grow when things are hard?", type: "Discussion", hasAnswer: false }
+  ],
+  fig: [
+    { prompt: "ACT OUT: A seed slowly growing into a tree", type: "Charades", hasAnswer: false },
+    { prompt: "ACT OUT: A squirrel hiding nuts", type: "Charades", hasAnswer: false },
+    { prompt: "ACT OUT: Reaching high to pick ripe fruit from a tree", type: "Charades", hasAnswer: false },
+    { prompt: "ACT OUT: A bee pollinating a flower", type: "Charades", hasAnswer: false },
+    { prompt: "ACT OUT: A gardener planting a tree", type: "Charades", hasAnswer: false },
+    { prompt: "ACT OUT: Wind blowing through leaves", type: "Charades", hasAnswer: false },
+    { prompt: "ACT OUT: A bird building a nest", type: "Charades", hasAnswer: false },
+    { prompt: "ACT OUT: People picnicking under a tree", type: "Charades", hasAnswer: false },
+    { prompt: "ACT OUT: Cleaning trash from a park or forest", type: "Charades", hasAnswer: false },
+    { prompt: "ACT OUT: Rain in a forest", type: "Charades", hasAnswer: false }
+  ],
+  pomegranate: {
+    title: "Match Hebrew words to their meanings!",
+    pairs: [
+      { h: "ט״וּ בִּשְׁבָט", e: "Birthday of the Trees", hex: "#38bdf8" },
+      { h: "Planting a tree", e: "Replaces Forests", hex: "#60a5fa" },
+      { h: "Picking up trash", e: "Protects wildlife", hex: "#facc15" },
+      { h: "Composting", e: "Feeds the soil", hex: "#f87171" },
+      { h: "טֶבַע", e: "Nature", hex: "#34d399" },
+      { h: "Bees", e: "Pollinate flowers", hex: "#d97706" },
+      { h: "אֶרֶץ", e: "Land", hex: "#818cf8" },
+      { h: "מַיִם", e: "Water", hex: "#fb7185" }
+    ]
+  },
+  olive: [
+    { prompt: "PEACE", he: "שָׁלוֹם", forbidden: ["War", "Quiet", "Shalom", "Olive"], type: "Mindreader", hasAnswer: false },
+    { prompt: "LIGHT", he: "אוֹר", forbidden: ["Sun", "Lamp", "Dark", "Olive"], type: "Mindreader", hasAnswer: false },
+    { prompt: "OIL", he: "שֶׁמֶן", forbidden: ["Fat", "Cooking", "Hanukkah", "Liquid"], type: "Mindreader", hasAnswer: false },
+    { prompt: "MOUNTAIN", he: "הַר", forbidden: ["Hill", "Climb", "High", "Peak"], type: "Mindreader", hasAnswer: false },
+    { prompt: "BRANCH", he: "עָנָף", forbidden: ["Tree", "Stick", "Leaf", "Bird"], type: "Mindreader", hasAnswer: false },
+    { prompt: "ANCIENT", he: "עַתִּיק", forbidden: ["Old", "History", "New", "Past"], type: "Mindreader", hasAnswer: false },
+    { prompt: "GREEN", he: "יָרוֹק", forbidden: ["Color", "Grass", "Leaf", "Nature"], type: "Mindreader", hasAnswer: false },
+    { prompt: "DOVE", he: "יוֹנָה", forbidden: ["Bird", "Fly", "White", "Peace"], type: "Mindreader", hasAnswer: false },
+    { prompt: "STRENGTH", he: "כּוֹחַ", forbidden: ["Strong", "Muscle", "Weak", "Power"], type: "Mindreader", hasAnswer: false },
+    { prompt: "FRIEND", he: "חָבֵר", forbidden: ["Buddy", "Person", "School", "Love"], type: "Mindreader", hasAnswer: false }
+  ],
+  date: [
+    { prompt: "Repairing the world through justice and kindness", answer: "תִּיקּוּן עוֹלָם (Tikkun Olam)", type: "Jeopardy", hasAnswer: true },
+    { prompt: "Blessing over fruit from a tree", answer: "בּוֹרֵא פְּרִי הָעֵץ (Borei Pri Ha’etz)", type: "Jeopardy", hasAnswer: true },
+    { prompt: "Month when Tu Bishvat occurs", answer: "שְׁבָט (Shevat)", type: "Jeopardy", hasAnswer: true },
+    { prompt: "Land of milk and honey (date honey)", answer: "אֶרֶץ יִשְׂרָאֵל (Eretz Yisrael)", type: "Jeopardy", hasAnswer: true },
+    { prompt: "A young tree or plant", answer: "שְׁתִיל (Sapling)", type: "Jeopardy", hasAnswer: true },
+    { prompt: "Crown of the Seven Species with 613 seeds", answer: "רִמּוֹן (Pomegranate)", type: "Jeopardy", hasAnswer: true },
+    { prompt: "Part of a tree that absorbs water", answer: "שֹׁרָשִׁים (Roots)", type: "Jeopardy", hasAnswer: true },
+    { prompt: "New Year for Trees", answer: "ט\"ו בִּשְׁבָט (Tu Bishvat)", type: "Jeopardy", hasAnswer: true },
+    { prompt: "Showing kindness to the environment (Middah)", answer: "חֶסֶד (Chesed)", type: "Jeopardy", hasAnswer: true },
+    { prompt: "Acting fairly and responsibly with nature (Middah)", answer: "צֶדֶק (Tzedek)", type: "Jeopardy", hasAnswer: true }
+  ]
+};
+
+const SPECIES_DATA = {
+  wheat: { en: "Wheat", he: "חִטָּה", bg: "bg-amber-500", border: "border-amber-400", text: "text-amber-600", hex: "#f59e0b" },
+  barley: { en: "Barley", he: "שְׂעוֹרָה", bg: "bg-yellow-400", border: "border-yellow-300", text: "text-yellow-500", hex: "#eab308" },
+  grape: { en: "Grapes", he: "עֲנָבִים", bg: "bg-indigo-500", border: "border-indigo-400", text: "text-indigo-500", hex: "#6366f1" },
+  fig: { en: "Figs", he: "תְּאֵנִים", bg: "bg-purple-600", border: "border-purple-400", text: "text-purple-600", hex: "#9333ea" },
+  pomegranate: { en: "Pomegranate", he: "רִמּוֹן", bg: "bg-red-600", border: "border-red-400", text: "text-red-600", hex: "#dc2626" },
+  olive: { en: "Olives", he: "זֵיתִים", bg: "bg-lime-600", border: "border-lime-400", text: "text-lime-600", hex: "#65a30d" },
+  date: { en: "Dates", he: "תְּמָרִים", bg: "bg-orange-700", border: "border-orange-500", text: "text-orange-700", hex: "#c2410c" }
+};
+
+const SpeciesIcon = ({ type, className = "w-6 h-6", color = "currentColor" }) => {
+  const icons = {
+    wheat: <path d="M12 22V12M12 12L8 8M12 12L16 8M12 8V2M12 8L8 4M12 8L16 4" stroke={color} strokeWidth="2" strokeLinecap="round" />,
+    barley: <path d="M12 22V10M12 10C12 10 16 8 16 5M12 10C12 10 8 8 8 5" stroke={color} strokeWidth="2" strokeLinecap="round" />,
+    grape: <g stroke={color} strokeWidth="2" fill="none"><circle cx="12" cy="7" r="2.5"/><circle cx="9.5" cy="11" r="2.5"/><circle cx="14.5" cy="11" r="2.5"/><circle cx="12" cy="15" r="2.5"/></g>,
+    fig: <path d="M12 22C12 22 19 18 19 13C19 8 12 3 12 3C12 3 5 8 5 13C5 18 12 22 12 22Z" stroke={color} strokeWidth="2" fill="none" />,
+    pomegranate: <g stroke={color} strokeWidth="2" fill="none"><path d="M12 21C16.5 21 20 17.5 20 13C20 8.5 16 5 12 5C8 5 4 8.5 4 13C4 17.5 7.5 21 12 21Z"/><path d="M9 5L8 2M12 5V2M15 5L16 2" strokeLinecap="round" strokeWidth="2.5"/></g>,
+    olive: <ellipse cx="12" cy="13" rx="5" ry="7" stroke={color} strokeWidth="2" fill="none" />,
+    date: <path d="M12 22V5M12 5C12 5 18 7 21 12M12 5C12 5 6 7 3 12M12 9C12 9 17 11 19 15M12 9C12 9 7 11 5 15" stroke={color} strokeWidth="2.5" strokeLinecap="round" />
+  };
+  return <svg viewBox="0 0 24 24" className={className} fill="none">{icons[type] || icons.wheat}</svg>;
+};
+
+const ParticleBurst = ({ color }) => (
+  <div className="fixed inset-0 pointer-events-none z-[1000] overflow-hidden">
+    {Array.from({ length: 80 }).map((_, i) => (
+      <div key={i} className="absolute animate-particle-burst" style={{
+        left: `${Math.random() * 100}%`,
+        top: `-10%`,
+        animationDelay: `${Math.random() * 2}s`,
+        '--drift': `${(Math.random() - 0.5) * 60}vw`,
+        '--rot': `${Math.random() * 1080}deg`
+      }}>
+        <Leaf size={Math.random() * 30 + 15} fill={color} />
+      </div>
+    ))}
+  </div>
+);
+
+const App = () => {
+  const [activeSpecies, setActiveSpecies] = useState('wheat');
+  const [inventory, setInventory] = useState({});
+  const [missionIndex, setMissionIndex] = useState({});
+  const [activeChallenge, setActiveChallenge] = useState(null);
+  const [cardState, setCardState] = useState('back');
+  const [showSettings, setShowSettings] = useState(false);
+  const [showGameComplete, setShowGameComplete] = useState(false);
+  const [burstActive, setBurstActive] = useState(false);
+  
+  // Roster Management
+  const [roster, setRoster] = useState(["Abby", "Marshall", "Julianna", "Kai", "Ellie", "Adi", "Aaron", "Isaac", "Avery P.", "David", "Brenner", "Aviv", "Avery W."]);
+  const [newStudent, setNewStudent] = useState("");
+  const [rosterIndex, setRosterIndex] = useState(0);
+  const [selectedStudents, setSelectedStudents] = useState([]);
+  
+  const [settings, setSettings] = useState({ 
+    targetPerSpecies: 5,
+    volume: 50,
+    isMuted: false,
+    timerDuration: 60,
+    groupSize: 2,
+    showAnimations: true
+  });
+
+  const [memoryState, setMemoryState] = useState({ 
+    cards: [], flipped: [], matched: [] 
+  });
+  const [timeLeft, setTimeLeft] = useState(null);
+  const [timerStatus, setTimerStatus] = useState('idle');
+
+  const maxPossible = settings.targetPerSpecies * 7;
+  const progressTotal = useMemo(() => {
+    let repairs = 0;
+    const targets = settings.targetPerSpecies;
+    Object.keys(SPECIES_DATA).forEach(k => {
+      if (k === 'pomegranate') {
+        repairs += (memoryState.matched.length / 8) * targets;
+      } else {
+        repairs += Math.min(inventory[k] || 0, targets);
+      }
+    });
+    return repairs;
+  }, [inventory, memoryState.matched, settings.targetPerSpecies]);
+
+  const gameProgressPercent = Math.min(100, Math.round((progressTotal / maxPossible) * 100));
+
+  const resetGame = () => {
+    setInventory({});
+    setMissionIndex({});
+    setMemoryState({ cards: [], flipped: [], matched: [] });
+    setActiveSpecies('wheat');
+    setCardState('back');
+    setShowGameComplete(false);
+    setRosterIndex(0);
+    setSelectedStudents([]);
+  };
+
+  // Helper to get the actual students for the current index without advancing yet
+  const peekNextStudents = useCallback((startIdx, count) => {
+    if (roster.length === 0) return [];
+    let students = [];
+    for (let i = 0; i < count; i++) {
+      students.push(roster[(startIdx + i) % roster.length]);
+    }
+    return students;
+  }, [roster]);
+
+  const initMemoryGame = useCallback(() => {
+    if (memoryState.cards.length > 0) return;
+    const pairs = INITIAL_DATABASE.pomegranate.pairs.slice(0, 8);
+    const cards = [...pairs, ...pairs].map((p, i) => ({
+      id: i,
+      content: i < 8 ? p.h : p.e,
+      matchId: p.h,
+      hex: p.hex
+    })).sort(() => 0.5 - Math.random());
+    setMemoryState(prev => ({ ...prev, cards }));
+  }, [memoryState.cards]);
+
+  const loadMission = useCallback((species, currentRosterIdx) => {
+    const sp = species || activeSpecies;
+    const rIdx = currentRosterIdx !== undefined ? currentRosterIdx : rosterIndex;
+
+    if (sp === 'pomegranate') {
+      initMemoryGame();
+      setActiveChallenge({ type: 'Memory', prompt: INITIAL_DATABASE.pomegranate.title });
+      setSelectedStudents([]);
+      return;
+    }
+
+    const deck = INITIAL_DATABASE[sp];
+    const mIdx = missionIndex[sp] || 0;
+    const challenge = deck[mIdx % deck.length];
+    
+    // Lock in students for Fig and Olive IMMEDIATELY on load so they are visible
+    if (sp === 'fig' || sp === 'olive') {
+      setSelectedStudents(peekNextStudents(rIdx, settings.groupSize));
+    } else {
+      setSelectedStudents([]);
+    }
+
+    setActiveChallenge(challenge);
+  }, [activeSpecies, missionIndex, rosterIndex, settings.groupSize, peekNextStudents, initMemoryGame]);
+
+  useEffect(() => { loadMission(); }, [activeSpecies, loadMission]);
+
+  useEffect(() => {
+    if (gameProgressPercent === 100 && settings.showAnimations) {
+      setShowGameComplete(true);
+    }
+  }, [gameProgressPercent, settings.showAnimations]);
+
+  useEffect(() => {
+    let interval;
+    if (timerStatus === 'running' && timeLeft > 0) {
+      interval = setInterval(() => setTimeLeft(t => t - 1), 1000);
+    } else if (timeLeft === 0 && timerStatus === 'running') {
+      setTimerStatus('finished');
+    }
+    return () => clearInterval(interval);
+  }, [timeLeft, timerStatus]);
+
+  const handleComplete = () => {
+    const currentCount = inventory[activeSpecies] || 0;
+    if (settings.showAnimations) setBurstActive(true);
+    
+    // Update inventory
+    if (currentCount < settings.targetPerSpecies) {
+      setInventory(prev => ({ ...prev, [activeSpecies]: currentCount + 1 }));
+    }
+    
+    // Prepare for next mission
+    setCardState('back');
+    setTimerStatus('idle');
+    setTimeLeft(null);
+    
+    // Advance Roster Index ONLY after the mission is finished
+    const newRosterIdx = (activeSpecies === 'fig' || activeSpecies === 'olive') 
+      ? (rosterIndex + settings.groupSize) % roster.length 
+      : rosterIndex;
+    
+    setRosterIndex(newRosterIdx);
+
+    // Celebration duration 3 seconds
+    setTimeout(() => {
+      setMissionIndex(prev => ({ ...prev, [activeSpecies]: (prev[activeSpecies] || 0) + 1 }));
+      // Pass the new roster index specifically to the load function so it "peeks" the NEXT group
+      loadMission(activeSpecies, newRosterIdx);
+      setBurstActive(false);
+    }, 3000);
+  };
+
+  const handleFlip = () => {
+    if (cardState === 'back') {
+      setCardState('front');
+      if (settings.timerDuration > 0 && (activeChallenge?.type === 'Mindreader' || activeChallenge?.type === 'Charades')) {
+        setTimeLeft(settings.timerDuration);
+        setTimerStatus('running');
+      }
+    } else if (cardState === 'front' && activeChallenge?.hasAnswer) {
+      setCardState('answer');
+    }
+  };
+
+  const handleMemoryClick = (idx) => {
+    if (memoryState.flipped.length === 2 || memoryState.flipped.includes(idx) || memoryState.matched.includes(memoryState.cards[idx].matchId)) return;
+    const newFlipped = [...memoryState.flipped, idx];
+    setMemoryState(prev => ({ ...prev, flipped: newFlipped }));
+    
+    if (newFlipped.length === 2) {
+      const [c1, c2] = newFlipped.map(i => memoryState.cards[i]);
+      if (c1.matchId === c2.matchId) {
+        setTimeout(() => {
+          setMemoryState(prev => ({ ...prev, matched: [...prev.matched, c1.matchId], flipped: [] }));
+          if (memoryState.matched.length + 1 === 8) {
+            handleComplete();
+          }
+        }, 600);
+      } else {
+        setTimeout(() => setMemoryState(prev => ({ ...prev, flipped: [] })), 1200);
+      }
+    }
+  };
+
+  return (
+    <div className="h-screen bg-slate-950 text-white flex flex-col font-sans overflow-hidden select-none relative">
+      {burstActive && <ParticleBurst color={SPECIES_DATA[activeSpecies].hex} />}
+      
+      {showGameComplete && (
+        <div onClick={() => setShowGameComplete(false)} className="fixed inset-0 z-[1000] bg-slate-900/95 backdrop-blur-3xl flex flex-col items-center justify-center p-12 cursor-pointer animate-in fade-in duration-700">
+           <Trophy size={200} className="text-yellow-400 mb-8 animate-bounce" />
+           <h2 className="text-9xl font-black uppercase text-center tracking-tighter mb-4">Mission AccomplISHED!</h2>
+           <p className="text-4xl text-slate-300 font-bold">The Seven Species have been restored.</p>
+           <p className="mt-12 text-slate-500 uppercase tracking-[1em] animate-pulse">Click anywhere to return</p>
+           <ParticleBurst color="#fbbf24" />
+        </div>
+      )}
+
+      {showSettings && (
+        <div className="fixed inset-0 z-[600] bg-slate-950/98 backdrop-blur-lg flex items-center justify-center p-8">
+          <div className="bg-slate-900 border border-white/10 w-full max-w-5xl rounded-[3rem] p-12 shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="flex justify-between items-center mb-10">
+              <h2 className="text-5xl font-black uppercase flex items-center gap-4"><Settings2 size={48} className="text-emerald-400"/> Mission Config</h2>
+              <button onClick={() => setShowSettings(false)} className="p-2 hover:bg-slate-800 rounded-full transition-colors"><X size={40}/></button>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-12 overflow-y-auto pr-4">
+              <div className="space-y-8">
+                <div>
+                  <label className="text-xs font-black uppercase tracking-widest text-slate-500 block mb-3">Timer Options</label>
+                  <select value={settings.timerDuration} onChange={e => setSettings({...settings, timerDuration: parseInt(e.target.value)})} className="w-full bg-slate-800 p-4 rounded-2xl border border-white/10 outline-none text-xl font-bold">
+                    <option value={0}>OFF</option>
+                    {[15, 30, 45, 60, 75, 90, 105, 120].map(v => <option key={v} value={v}>{v} Seconds</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-black uppercase tracking-widest text-slate-500 block mb-3">Group Sizes (Fig/Olive)</label>
+                  <div className="flex gap-4">
+                    {[1, 2, 3, 4].map(v => (
+                      <button key={v} onClick={() => setSettings({...settings, groupSize: v})} className={`flex-grow py-4 rounded-xl font-black text-xl border transition-all ${settings.groupSize === v ? 'bg-emerald-500 border-emerald-400 scale-105' : 'bg-slate-800 border-white/5 opacity-50'}`}>{v}</button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs font-black uppercase tracking-widest text-slate-500 block mb-3">Target Repairs Per Species</label>
+                  <div className="flex items-center gap-6">
+                    <input type="range" min="1" max="15" value={settings.targetPerSpecies} onChange={e => setSettings({...settings, targetPerSpecies: parseInt(e.target.value)})} className="flex-grow accent-emerald-500 h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer" />
+                    <span className="text-4xl font-black text-emerald-400 w-12 text-center">{settings.targetPerSpecies}</span>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <button onClick={() => setSettings({...settings, isMuted: !settings.isMuted})} className="flex-grow bg-slate-800 p-5 rounded-2xl flex items-center justify-center gap-3 hover:bg-slate-700 transition-colors">
+                    {settings.isMuted ? <VolumeX className="text-red-400" /> : <Volume2 className="text-emerald-400" />}
+                    <span className="font-bold text-xl">{settings.isMuted ? "Unmute" : "Mute Audio"}</span>
+                  </button>
+                  <button onClick={resetGame} className="flex-grow bg-red-500/10 border border-red-500/20 p-5 rounded-2xl text-red-400 font-bold flex items-center justify-center gap-2 hover:bg-red-500/20 transition-colors"><RotateCcw size={24}/> Reset Mission</button>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                 <label className="text-xs font-black uppercase tracking-widest text-slate-500 block">Class Roster ({roster.length} Students)</label>
+                 <div className="flex gap-2">
+                   <input type="text" value={newStudent} onChange={e => setNewStudent(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && (newStudent && (setRoster([...roster, newStudent]), setNewStudent("")))} placeholder="Student Name..." className="flex-grow bg-slate-800 p-5 rounded-2xl outline-none border border-white/5 text-xl" />
+                   <button onClick={() => { if(newStudent) { setRoster([...roster, newStudent]); setNewStudent(""); }}} className="bg-emerald-500 px-6 rounded-2xl hover:bg-emerald-400 transition-colors"><UserPlus size={28}/></button>
+                 </div>
+                 <div className="bg-slate-800/50 rounded-2xl p-6 h-72 overflow-y-auto border border-white/5 grid grid-cols-2 gap-3">
+                   {roster.map(name => (
+                     <div key={name} className="bg-slate-800 px-4 py-3 rounded-xl flex justify-between items-center group animate-in fade-in slide-in-from-right-2">
+                        <span className="text-lg font-bold">{name}</span>
+                        <button onClick={() => setRoster(roster.filter(n => n !== name))} className="text-slate-600 hover:text-red-400 transition-colors"><Trash2 size={18}/></button>
+                     </div>
+                   ))}
+                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <header className="h-24 bg-slate-900 border-b border-white/10 flex items-center justify-between px-12 z-50 shrink-0">
+        <div className="flex items-center gap-6">
+          <div className="bg-emerald-500/10 p-3 rounded-2xl border border-emerald-500/20">
+            <Sprout className="w-12 h-12 text-emerald-400" />
+          </div>
+          <h1 className="text-4xl font-black uppercase tracking-tighter text-emerald-50">{APP_NAME}</h1>
+        </div>
+        <div className="flex items-center gap-8">
+           {timeLeft !== null && (
+             <div className={`px-10 py-3 rounded-[2rem] flex items-center gap-4 border-4 transition-all ${timerStatus === 'finished' ? 'bg-red-500 border-red-400 animate-pulse' : 'bg-slate-800 border-white/10'}`}>
+               <TimerIcon size={32} className={timerStatus === 'finished' ? 'text-white' : 'text-emerald-400'} />
+               <span className="text-4xl font-black tabular-nums">{timeLeft}s</span>
+             </div>
+           )}
+           <button onClick={() => setShowSettings(true)} className="p-5 bg-slate-800 rounded-[2rem] hover:bg-slate-700 transition-all border border-white/10 shadow-xl">
+              <Settings2 size={36} className="text-slate-200" />
+           </button>
+        </div>
+      </header>
+
+      <main className="flex-grow flex p-10 gap-10 overflow-hidden">
+        {/* Navigation Sidebar */}
+        <div className="w-96 flex flex-col gap-4 h-full shrink-0">
+          {Object.entries(SPECIES_DATA).map(([key, data]) => {
+            const repairs = key === 'pomegranate' ? (memoryState.matched.length / 8) * settings.targetPerSpecies : (inventory[key] || 0);
+            const isCompleted = repairs >= settings.targetPerSpecies;
+            const isActive = activeSpecies === key;
+            const progress = (repairs / settings.targetPerSpecies) * 100;
+            
+            return (
+              <button 
+                key={key} 
+                onClick={() => { setActiveSpecies(key); setCardState('back'); setTimerStatus('idle'); }}
+                className={`flex items-center gap-6 p-6 rounded-[3rem] border transition-all relative overflow-hidden flex-grow group ${
+                  isActive ? 'bg-white text-slate-950 scale-[1.05] shadow-2xl z-20' : 
+                  isCompleted ? 'bg-slate-900 border-white/10 opacity-90' : 'bg-slate-900/50 border-white/5 opacity-60'
+                }`}
+              >
+                {isCompleted && !isActive && (
+                  <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundColor: data.hex }} />
+                )}
+                
+                <div className="relative w-20 h-20 flex items-center justify-center shrink-0">
+                   <svg className="absolute w-full h-full -rotate-90">
+                     <circle cx="40" cy="40" r="36" stroke="currentColor" strokeWidth="6" fill="none" className={isActive ? 'text-slate-100' : 'text-slate-800'} />
+                     <circle 
+                        cx="40" cy="40" r="36" stroke="currentColor" strokeWidth="6" fill="none" 
+                        strokeDasharray="226.2" strokeDashoffset={226.2 - (226.2 * Math.min(100, progress)) / 100} 
+                        className={isActive ? 'text-emerald-500' : isCompleted ? 'text-emerald-400' : data.text} 
+                      />
+                   </svg>
+                   <SpeciesIcon type={key} className="w-10 h-10 z-10" color={isActive ? "#0f172a" : data.hex} />
+                </div>
+                
+                <div className="text-left flex-grow">
+                  <p className="text-2xl font-black uppercase leading-tight">{data.en}</p>
+                  <p className="text-3xl font-bold font-serif leading-none opacity-40 mt-1">{data.he}</p>
+                </div>
+
+                {isCompleted && (
+                  <CheckCircle2 size={32} className="text-emerald-500 mr-2 shrink-0" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Central Playing Board */}
+        <section className="flex-grow flex flex-col items-center justify-center relative bg-slate-900/60 rounded-[5rem] border border-white/10 overflow-hidden shadow-inner">
+           {selectedStudents.length > 0 && activeSpecies !== 'pomegranate' && (
+             <div className="absolute top-12 bg-slate-800/95 backdrop-blur-3xl px-20 py-8 rounded-[4rem] border border-white/20 shadow-2xl z-30 flex items-center gap-10 animate-in slide-in-from-top duration-700">
+               <div className="bg-emerald-500/20 p-4 rounded-full">
+                 <Users size={48} className="text-emerald-400" />
+               </div>
+               <div className="flex flex-col items-start">
+                 <span className="text-xs font-black text-emerald-500 uppercase tracking-widest mb-1">Current Players</span>
+                 <div className="text-6xl font-black tracking-tighter uppercase whitespace-nowrap">
+                   {selectedStudents.map((s, i) => (
+                     <span key={i} className="animate-in fade-in slide-in-from-left-4 duration-500" style={{ animationDelay: `${i * 0.1}s` }}>
+                       {s}{i < selectedStudents.length - 1 ? ' & ' : ''}
+                     </span>
+                   ))}
+                 </div>
+               </div>
+             </div>
+           )}
+
+           <div className="w-full h-full p-16 flex flex-col items-center justify-center pt-48">
+             {activeSpecies === 'pomegranate' ? (
+               <div className="w-full h-full flex flex-col gap-6 max-w-7xl">
+                 <div className="grid grid-cols-4 gap-6 flex-grow">
+                   {memoryState.cards.map((card, idx) => {
+                     const isFlipped = memoryState.flipped.includes(idx);
+                     const isMatched = memoryState.matched.includes(card.matchId);
+                     return (
+                       <div key={idx} onClick={() => handleMemoryClick(idx)} className="relative perspective-2000 cursor-pointer group">
+                         <div className={`w-full h-full transition-all duration-700 transform-style-3d ${isFlipped || isMatched ? 'rotate-y-180' : ''}`}>
+                           <div className="absolute inset-0 bg-red-800 rounded-[2.5rem] border-[6px] border-red-500/40 flex flex-col items-center justify-center backface-hidden shadow-2xl hover:scale-[1.02] transition-transform">
+                             <SpeciesIcon type="pomegranate" className="w-24 h-24 text-red-400 opacity-20 mb-4" />
+                             <span className="text-white font-black text-6xl opacity-40">{idx + 1}</span>
+                           </div>
+                           <div className={`absolute inset-0 bg-white rounded-[2.5rem] rotate-y-180 backface-hidden flex items-center justify-center p-8 border-[12px] ${isMatched ? 'scale-[0.98]' : ''}`} style={{ borderColor: isMatched ? card.hex : 'white' }}>
+                              {isMatched && (
+                                <div className="absolute top-4 right-4 bg-emerald-500 text-white px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-lg">MATCHED</div>
+                              )}
+                              <span className="text-slate-900 font-black text-4xl text-center leading-tight tracking-tight">{card.content}</span>
+                           </div>
+                         </div>
+                       </div>
+                     );
+                   })}
+                 </div>
+               </div>
+             ) : (
+               <div className="w-full max-w-7xl h-full relative perspective-2000">
+                 {/* Card Back State */}
+                 <div className={`absolute inset-0 transition-all duration-1000 ${cardState === 'back' ? 'z-40 opacity-100' : 'opacity-0 scale-90 -rotate-y-180 pointer-events-none'}`}>
+                   <div className={`w-full h-full ${SPECIES_DATA[activeSpecies].bg} rounded-[6rem] border-[16px] ${SPECIES_DATA[activeSpecies].border} flex flex-col items-center justify-center shadow-2xl group`}>
+                     <div className="bg-white/10 p-24 rounded-full mb-12 backdrop-blur-xl border border-white/20 group-hover:scale-110 transition-transform duration-700 shadow-inner">
+                        <SpeciesIcon type={activeSpecies} className="w-64 h-64" color="white" />
+                     </div>
+                     <h2 className="text-9xl font-black uppercase tracking-[0.25em] drop-shadow-2xl">{SPECIES_DATA[activeSpecies].en}</h2>
+                     <button onClick={handleFlip} className="mt-16 px-20 py-8 bg-white text-slate-950 rounded-[3rem] font-black text-4xl uppercase tracking-[0.2em] hover:bg-emerald-50 transition-all hover:scale-105 active:scale-95 flex items-center gap-6 shadow-2xl">
+                       <Zap className="text-emerald-500 w-10 h-10" fill="currentColor" /> Initiate Mission
+                     </button>
+                   </div>
+                 </div>
+
+                 {/* Card Front/Answer State */}
+                 <div className={`absolute inset-0 transition-all duration-1000 ${cardState !== 'back' ? 'z-40 opacity-100 scale-100' : 'opacity-0 scale-90 rotate-y-180 pointer-events-none'}`}>
+                   <div className="w-full h-full bg-white text-slate-950 rounded-[6rem] p-24 flex flex-col shadow-2xl relative overflow-hidden">
+                     <div className="absolute top-10 right-10 opacity-5">
+                       <SpeciesIcon type={activeSpecies} className="w-80 h-80" color="#000" />
+                     </div>
+                     
+                     <div className="text-center mb-12 shrink-0">
+                       <span className="text-xl font-black uppercase tracking-[1em] text-slate-300 border-b-4 border-slate-100 pb-4 px-12 block w-fit mx-auto">
+                         {activeChallenge?.type} MISSION
+                       </span>
+                     </div>
+                     
+                     <div className="flex-grow flex flex-col items-center justify-center text-center px-10">
+                       {cardState === 'front' ? (
+                         <div className="animate-in zoom-in duration-700">
+                           {activeChallenge?.quote && (
+                             <div className="mb-12 max-w-5xl">
+                               <p className="text-5xl font-serif italic text-slate-500 leading-relaxed mb-6">"{activeChallenge.quote}"</p>
+                               <div className="flex items-center justify-center gap-4">
+                                 <div className="h-px w-20 bg-emerald-200"></div>
+                                 <p className="text-2xl text-emerald-600 font-black uppercase tracking-[0.3em]">{activeChallenge.source}</p>
+                                 <div className="h-px w-20 bg-emerald-200"></div>
+                               </div>
+                             </div>
+                           )}
+                           <h3 className="text-8xl font-black uppercase tracking-tighter leading-[0.9] px-4 text-slate-900">{activeChallenge?.prompt}</h3>
+                           
+                           {activeChallenge?.type === 'Mindreader' && (
+                             <div className="mt-20 flex flex-wrap justify-center gap-6">
+                               {activeChallenge.forbidden.map(w => (
+                                 <div key={w} className="px-10 py-5 bg-red-50 text-red-500 rounded-3xl font-black text-2xl border-4 border-red-100 uppercase tracking-widest">{w}</div>
+                               ))}
+                             </div>
+                           )}
+                         </div>
+                       ) : (
+                         <div className="animate-in zoom-in duration-700 flex flex-col items-center">
+                            <div className="bg-emerald-100 p-12 rounded-full mb-10 shadow-inner">
+                              <CheckCircle2 size={140} className="text-emerald-500" />
+                            </div>
+                            <h4 className="text-3xl font-black text-slate-400 uppercase tracking-[1em] mb-6">REPAIR COMPLETE</h4>
+                            <p className="text-9xl font-black text-emerald-600 uppercase leading-none tracking-tight">{activeChallenge?.answer}</p>
+                         </div>
+                       )}
+                     </div>
+
+                     <div className="mt-16 shrink-0">
+                       {activeChallenge?.hasAnswer && cardState === 'front' ? (
+                         <button onClick={handleFlip} className={`w-full py-12 rounded-[4rem] font-black text-5xl text-white ${SPECIES_DATA[activeSpecies].bg} uppercase tracking-[0.2em] shadow-2xl hover:brightness-110 hover:scale-[1.02] transition-all active:scale-95`}>Reveal Answer</button>
+                       ) : (
+                         <button onClick={handleComplete} className="w-full py-12 bg-emerald-500 rounded-[4rem] font-black text-5xl text-white uppercase tracking-[0.2em] shadow-2xl hover:bg-emerald-400 hover:scale-[1.02] transition-all active:scale-95">Confirm Repair</button>
+                       )}
+                     </div>
+                   </div>
+                 </div>
+               </div>
+             )}
+           </div>
+        </section>
+
+        {/* Global Progress Thermometer */}
+        <aside className="w-56 flex flex-col items-center py-12 bg-slate-900/40 rounded-[6rem] border border-white/10 relative shrink-0">
+          <div className="text-5xl font-black text-emerald-400 mb-6 drop-shadow-md">{gameProgressPercent}%</div>
+          <div className="flex-grow w-24 bg-slate-800 rounded-full flex flex-col-reverse overflow-hidden border-[8px] border-slate-800 shadow-2xl relative">
+             <div 
+               className="w-full bg-gradient-to-t from-emerald-700 via-emerald-400 to-emerald-300 transition-all duration-1000 ease-out" 
+               style={{ height: `${gameProgressPercent}%` }} 
+             />
+             <div className="absolute inset-0 flex flex-col-reverse p-4 gap-3">
+                {Object.entries(SPECIES_DATA).map(([k, d]) => {
+                  const repairs = k === 'pomegranate' ? (memoryState.matched.length / 8) * settings.targetPerSpecies : (inventory[k] || 0);
+                  return repairs >= settings.targetPerSpecies ? (
+                    <div key={k} className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 animate-in zoom-in duration-500 ${d.bg} shadow-lg border-2 border-white/20`}>
+                      <SpeciesIcon type={k} className="w-8 h-8 text-white" />
+                    </div>
+                  ) : null;
+                })}
+             </div>
+          </div>
+          <div className="mt-10 text-sm font-black text-slate-400 uppercase text-center leading-relaxed tracking-widest">GLOBAL REPAIR<br/>METER</div>
+        </aside>
+      </main>
+
+      <style dangerouslySetInnerHTML={{ __html: `
         .perspective-2000 { perspective: 2000px; }
         .transform-style-3d { transform-style: preserve-3d; }
         .backface-hidden { backface-visibility: hidden; }
         .rotate-y-180 { transform: rotateY(180deg); }
-        .no-select { user-select: none; }
-        .card-container { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    </style>
-</head>
-<body>
-    <div id="root"></div>
+        @keyframes particle-burst-anim {
+          0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+          10% { opacity: 1; }
+          100% { transform: translateY(120vh) translateX(var(--drift)) rotate(var(--rot)); opacity: 0; }
+        }
+        .animate-particle-burst { 
+          animation: particle-burst-anim 3s linear forwards; 
+        }
+        select::-ms-expand { display: none; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 32px; width: 32px; border-radius: 50%; background: #10b981; cursor: pointer; margin-top: -12px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5); border: 4px solid white; }
+      `}} />
+    </div>
+  );
+};
 
-    <script type="text/babel">
-        const { useState, useEffect, useCallback, useMemo } = React;
-
-        const MATCH_PAIRS = [
-            { h: "אֶרֶץ", e: "Land", hex: "#38bdf8" }, { h: "מַיִם", e: "Water", hex: "#60a5fa" }, 
-            { h: "שֶׁמֶשׁ", e: "Sun", hex: "#facc15" }, { h: "פְּרִי", e: "Fruit", hex: "#f87171" },
-            { h: "טֶבַע", e: "Nature", hex: "#34d399" }, { h: "עֵץ", e: "Tree", hex: "#d97706" }, 
-            { h: "בְּרָכָה", e: "Blessing", hex: "#818cf8" }, { h: "חַיִּים", e: "Life", hex: "#fb7185" }
-        ];
-
-        const GRAPE_MISSIONS = [
-            { quote: "Unless someone like you cares a whole awful lot...", source: "The Lorax", prompt: "What local environment part would you stand up for first?", type: "Discussion", fact: "One vine can produce up to 40 clusters of grapes!" },
-            { quote: "As my ancestors planted for me, so I plant for my children.", source: "Talmud", prompt: "What are we 'planting' for people 50 years from now?", type: "Discussion" },
-            { quote: "Earth provides enough to satisfy every man's needs, but not every man's greed.", source: "Gandhi", prompt: "How can we practice 'enough-ness' this week?", type: "Discussion" },
-            { quote: "The best time to plant a tree was 20 years ago. The second best time is now.", source: "Proverb", prompt: "What is a green habit you can start today?", type: "Discussion" },
-            { quote: "A vine needs a trellis to grow high.", source: "Folklore", prompt: "Who are the 'trellises' (supporters) in your life?", type: "Discussion" },
-            { quote: "Look deep into nature, then you will understand everything better.", source: "Einstein", prompt: "What is the most complex thing you've seen in nature?", type: "Discussion" },
-            { quote: "To walk in nature is to witness a thousand miracles.", source: "Mary Davis", prompt: "Name one 'tiny miracle' you saw outside today?", type: "Discussion" },
-            { quote: "The vine produces clusters, not single grapes.", source: "Proverb", prompt: "How is our class like a cluster of grapes?", type: "Discussion" },
-            { quote: "Don't destroy the fruit-bearing trees.", source: "Torah", prompt: "Why is it important not to waste resources (Bal Tashchit)?", type: "Discussion" },
-            { quote: "Every blade of grass has an angel whispering 'Grow'.", source: "Midrash", prompt: "What whispers 'grow' to you when things are hard?", type: "Discussion" }
-        ];
-
-        const SPECIES_DATA = {
-            wheat: { en: "Wheat", he: "חִטָּה", hex: "#f59e0b", bg: "bg-amber-500", border: "border-amber-500" },
-            barley: { en: "Barley", he: "שְׂעוֹרָה", hex: "#eab308", bg: "bg-yellow-400", border: "border-yellow-400" },
-            grape: { en: "Grapes", he: "עֲנָבִים", hex: "#6366f1", bg: "bg-indigo-500", border: "border-indigo-500" },
-            fig: { en: "Figs", he: "תְּאֵנִים", hex: "#9333ea", bg: "bg-purple-600", border: "border-purple-600" },
-            pomegranate: { en: "Pomegranate", he: "רִמּוֹן", hex: "#dc2626", bg: "bg-red-600", border: "border-red-600" },
-            olive: { en: "Olives", he: "זֵיתִים", hex: "#65a30d", bg: "bg-lime-600", border: "border-lime-600" },
-            date: { en: "Dates", he: "תְּמָרִים", hex: "#c2410c", bg: "bg-orange-700", border: "border-orange-700" }
-        };
-
-        const LucideIcon = ({ name, size = 24, className = "" }) => {
-            const [svg, setSvg] = useState("");
-            useEffect(() => {
-                const checkLucide = setInterval(() => {
-                    if (window.lucide) {
-                        const icon = window.lucide.icons[name];
-                        if (icon) {
-                            const s = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${icon[1].map(i => `<${i[0]} ${Object.entries(i[1]).map(([k,v]) => `${k}="${v}"`).join(' ')} />`).join('')}</svg>`;
-                            setSvg(s); clearInterval(checkLucide);
-                        }
-                    }
-                }, 50);
-                return () => clearInterval(checkLucide);
-            }, [name, size]);
-            return <span className={className} dangerouslySetInnerHTML={{ __html: svg }} />;
-        };
-
-        const SpeciesIcon = ({ type, className = "", color = "currentColor", fill = "none" }) => {
-            const icons = {
-                wheat: <path d="M12 22V12M12 12L8 8M12 12L16 8M12 8V2M12 8L8 4" />,
-                barley: <path d="M12 22V10M12 10C12 10 16 8 16 5M12 10C12 10 8 8 8 5" />,
-                grape: <g><circle cx="12" cy="7" r="2.5"/><circle cx="9.5" cy="11" r="2.5"/><circle cx="14.5" cy="11" r="2.5"/><circle cx="12" cy="15" r="2.5"/></g>,
-                fig: <path d="M12 22C12 22 19 18 19 13C19 8 12 3 12 3C12 3 5 8 5 13C5 18 12 22 12 22Z" />,
-                pomegranate: <g><path d="M12 21C16.5 21 20 17.5 20 13C20 8.5 16 5 12 5C8 5 4 8.5 4 13C4 17.5 7.5 21 12 21Z"/><path d="M9 5L8 2M12 5V2M15 5L16 2"/></g>,
-                olive: <ellipse cx="12" cy="13" rx="5" ry="7" />,
-                date: <path d="M12 22V5M12 5C12 5 18 7 21 12M12 5C12 5 6 7 3 12" />
-            };
-            return <svg viewBox="0 0 24 24" fill={fill} stroke={color} strokeWidth="2.5" strokeLinecap="round" className={className}>{icons[type]}</svg>;
-        };
-
-        const ProgressRing = ({ progress, color, size = 48 }) => {
-            const radius = 20;
-            const circumference = 2 * Math.PI * radius;
-            const offset = circumference - (progress / 100) * circumference;
-            return (
-                <svg width={size} height={size} className="transform -rotate-90">
-                    <circle cx={size/2} cy={size/2} r={radius} stroke="currentColor" strokeWidth="4" fill="transparent" className="opacity-10" />
-                    <circle cx={size/2} cy={size/2} r={radius} stroke={color} strokeWidth="4" fill="transparent" strokeDasharray={circumference} style={{ strokeDashoffset: offset, transition: 'stroke-dashoffset 0.8s ease' }} strokeLinecap="round" />
-                </svg>
-            );
-        };
-
-        const App = () => {
-            const [roster, setRoster] = useState(["Alex", "Marshall", "Kai", "Adi", "Aaron", "David", "Brenner"]);
-            const [inventory, setInventory] = useState({});
-            const [activeSpecies, setActiveSpecies] = useState('wheat');
-            const [cardState, setCardState] = useState('back');
-            const [challenge, setChallenge] = useState(null);
-            const [selectedAgents, setSelectedAgents] = useState([]);
-            const [showSettings, setShowSettings] = useState(false);
-            const [targetPerSpecies, setTargetPerSpecies] = useState(3);
-            const [groupSize, setGroupSize] = useState(2);
-            
-            const [memoryCards, setMemoryCards] = useState([]);
-            const [flippedIndices, setFlippedIndices] = useState([]);
-            const [matchedIds, setMatchedIds] = useState([]);
-
-            const initMemoryGame = useCallback(() => {
-                const cards = [];
-                MATCH_PAIRS.forEach((pair, i) => {
-                    cards.push({ id: `h-${i}`, text: pair.h, matchId: i, type: 'he', color: pair.hex });
-                    cards.push({ id: `e-${i}`, text: pair.e, matchId: i, type: 'en', color: pair.hex });
-                });
-                setMemoryCards(cards.sort(() => Math.random() - 0.5));
-                setFlippedIndices([]);
-                setMatchedIds([]);
-            }, []);
-
-            useEffect(() => { initMemoryGame(); }, [initMemoryGame]);
-
-            const generateMission = useCallback(() => {
-                if (activeSpecies === 'pomegranate') return;
-                
-                let next;
-                if (activeSpecies === 'grape') {
-                    next = GRAPE_MISSIONS[Math.floor(Math.random() * GRAPE_MISSIONS.length)];
-                } else {
-                    const deck = [
-                        { id: "w1", prompt: "אִילָן", answer: "אִילָן (Tree)", type: "Vocab", hasAnswer: true },
-                        { id: "b1", prompt: "How many 'New Years' are in the Jewish calendar?", answer: "Four", type: "Trivia", hasAnswer: true },
-                        { id: "d1", prompt: "The act of 'Repairing the World' through justice and kindness.", answer: "Tikkun Olam", type: "Jeopardy", hasAnswer: true }
-                    ];
-                    next = deck[Math.floor(Math.random() * deck.length)];
-                }
-                
-                setChallenge(next);
-                
-                // Only select agents for Fig and Olive
-                if (activeSpecies === 'fig' || activeSpecies === 'olive') {
-                    const pool = [...roster].sort(() => 0.5 - Math.random());
-                    setSelectedAgents(pool.slice(0, groupSize));
-                } else {
-                    setSelectedAgents([]);
-                }
-            }, [activeSpecies, roster, groupSize]);
-
-            useEffect(() => { generateMission(); }, [activeSpecies, generateMission]);
-
-            const handleFlip = (idx) => {
-                if (flippedIndices.length === 2 || flippedIndices.includes(idx) || matchedIds.includes(memoryCards[idx].matchId)) return;
-                const newFlipped = [...flippedIndices, idx];
-                setFlippedIndices(newFlipped);
-
-                if (newFlipped.length === 2) {
-                    const [first, second] = newFlipped;
-                    if (memoryCards[first].matchId === memoryCards[second].matchId) {
-                        setMatchedIds(prev => [...prev, memoryCards[first].matchId]);
-                        setFlippedIndices([]);
-                        if (matchedIds.length + 1 === MATCH_PAIRS.length) {
-                            setTimeout(() => {
-                                setInventory(prev => ({ ...prev, pomegranate: (prev.pomegranate || 0) + 1 }));
-                                initMemoryGame();
-                            }, 1500);
-                        }
-                    } else {
-                        setTimeout(() => setFlippedIndices([]), 1000);
-                    }
-                }
-            };
-
-            const completeMission = () => {
-                setInventory(prev => ({ ...prev, [activeSpecies]: (prev[activeSpecies] || 0) + 1 }));
-                setCardState('back');
-                setTimeout(generateMission, 500);
-            };
-
-            const tikkunProgress = (Object.keys(SPECIES_DATA).filter(k => (inventory[k] || 0) >= targetPerSpecies).length / 7) * 100;
-
-            return (
-                <div className="h-screen flex flex-col bg-slate-950 text-white overflow-hidden no-select">
-                    <header className="h-20 bg-slate-900/80 border-b border-white/10 px-8 flex items-center justify-between shrink-0 z-[60]">
-                        <div className="flex items-center gap-6">
-                            <div className="p-2.5 bg-emerald-500 rounded-xl shadow-lg shadow-emerald-500/20">
-                                <SpeciesIcon type="date" className="w-7 h-7 text-white" />
-                            </div>
-                            <div>
-                                <h1 className="text-xl font-black uppercase tracking-tighter leading-none">The Seven Species Mission</h1>
-                                <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mt-1 block">Planting Seeds for Tomorrow</span>
-                            </div>
-                        </div>
-                        <button onClick={() => setShowSettings(true)} className="p-3 hover:bg-white/10 rounded-full transition-colors">
-                            <LucideIcon name="settings-2" />
-                        </button>
-                    </header>
-
-                    <main className="flex-grow flex p-6 gap-6 overflow-hidden">
-                        <div className="w-72 flex flex-col gap-2 shrink-0 hide-scrollbar overflow-y-auto">
-                            {Object.entries(SPECIES_DATA).map(([key, data]) => {
-                                const count = inventory[key] || 0;
-                                const isDone = count >= targetPerSpecies;
-                                const isActive = activeSpecies === key;
-                                const progress = Math.min((count / targetPerSpecies) * 100, 100);
-
-                                return (
-                                    <button key={key} onClick={() => {setActiveSpecies(key); setCardState('back');}}
-                                        className={`py-6 px-5 rounded-2xl border-2 transition-all flex items-center gap-4 relative overflow-hidden group
-                                            ${isDone ? data.bg + ' border-transparent' : isActive ? 'bg-white border-white text-slate-950 shadow-xl' : 'bg-slate-900/60 border-white/5 opacity-70 hover:opacity-100'}`}>
-                                        <div className="relative shrink-0">
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                <ProgressRing progress={progress} color={isDone ? '#fff' : data.hex} size={44} />
-                                            </div>
-                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center relative z-10 transition-colors ${isActive ? 'bg-slate-100' : isDone ? 'bg-white/20' : 'bg-white/5'}`}>
-                                                <SpeciesIcon type={key} className="w-6 h-6" color={isActive ? data.hex : 'white'} />
-                                            </div>
-                                        </div>
-                                        <div className="text-left flex-grow min-w-0 z-10">
-                                            <div className={`text-[10px] font-black uppercase tracking-widest mb-1 truncate ${isActive ? 'text-slate-500' : isDone ? 'text-white/80' : 'text-slate-400'}`}>{data.en}</div>
-                                            <div className={`text-xl font-black hebrew-text truncate ${isDone ? 'text-white' : ''}`}>{data.he}</div>
-                                        </div>
-                                        {isDone && <LucideIcon name="check-circle" size={18} className="text-white shrink-0 z-10" />}
-                                    </button>
-                                );
-                            })}
-                        </div>
-
-                        <div className="flex-grow flex flex-col items-center justify-center relative min-h-0">
-                            {cardState !== 'back' && activeSpecies !== 'pomegranate' && (
-                                <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-10 transition-opacity" />
-                            )}
-
-                            {activeSpecies === 'pomegranate' ? (
-                                <div className="w-full h-full max-h-[85vh] grid grid-cols-4 grid-rows-4 gap-4 p-4">
-                                    {memoryCards.map((card, idx) => {
-                                        const isFlipped = flippedIndices.includes(idx) || matchedIds.includes(card.matchId);
-                                        const isMatched = matchedIds.includes(card.matchId);
-                                        return (
-                                            <div key={card.id} onClick={() => handleFlip(idx)} className="perspective-2000 cursor-pointer w-full h-full min-h-0">
-                                                <div className={`relative w-full h-full card-container transform-style-3d ${isFlipped ? 'rotate-y-180' : ''}`}>
-                                                    <div className="absolute inset-0 backface-hidden bg-red-600 rounded-2xl flex items-center justify-center border-4 border-white/20 shadow-lg">
-                                                        <span className="text-3xl font-black text-white/40">{idx + 1}</span>
-                                                    </div>
-                                                    <div className={`absolute inset-0 rotate-y-180 backface-hidden bg-white rounded-2xl border-4 flex flex-col items-center justify-center p-2 text-center shadow-xl transition-colors duration-500`}
-                                                        style={{ borderColor: isMatched ? card.color : '#e2e8f0' }}>
-                                                        <span className={`text-2xl font-black text-black leading-tight ${card.type === 'he' ? 'hebrew-text' : ''}`}>
-                                                            {card.text}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            ) : (
-                                <div className="flex flex-col items-center w-full h-full justify-center gap-10 z-20">
-                                    {selectedAgents.length > 0 && (
-                                        <div className="flex gap-4 animate-in slide-in-from-top-4">
-                                            {selectedAgents.map(a => (
-                                                <div key={a} className="px-6 py-3 bg-white text-slate-950 rounded-2xl border-[3px] border-emerald-500 shadow-xl font-black uppercase text-lg flex items-center gap-3">
-                                                    <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-xs text-white">{a[0]}</div>
-                                                    {a}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    <div className="w-full max-w-xl aspect-[3/4] perspective-2000">
-                                        <div className={`w-full h-full transform-style-3d transition-all duration-700 ${cardState !== 'back' ? 'rotate-y-180' : ''}`}>
-                                            <div className="absolute inset-0 backface-hidden bg-white rounded-[3rem] p-4 shadow-2xl">
-                                                <div className={`w-full h-full ${SPECIES_DATA[activeSpecies].bg} rounded-[2.5rem] flex flex-col items-center justify-center text-white relative overflow-hidden`}>
-                                                    <div className="absolute inset-0 opacity-10 pointer-events-none">
-                                                        <SpeciesIcon type={activeSpecies} className="w-full h-full scale-125" color="white" fill="white" />
-                                                    </div>
-                                                    <h2 className="text-7xl font-black uppercase tracking-tighter mb-4 z-10">{SPECIES_DATA[activeSpecies].en}</h2>
-                                                    <button onClick={() => setCardState('front')} className="mt-8 px-14 py-6 bg-white text-slate-950 rounded-2xl font-black text-2xl uppercase tracking-widest shadow-2xl hover:scale-105 active:scale-95 transition-all z-10">Start Mission</button>
-                                                </div>
-                                            </div>
-
-                                            <div className="absolute inset-0 rotate-y-180 backface-hidden bg-white rounded-[3rem] p-12 flex flex-col shadow-2xl border-[16px] border-slate-50">
-                                                <div className="flex-grow flex flex-col items-center justify-center text-center">
-                                                    {activeSpecies === 'grape' && challenge?.quote && (
-                                                        <div className="mb-6 animate-in fade-in slide-in-from-bottom-2">
-                                                            <div className="text-2xl font-serif italic text-slate-600 mb-2 leading-relaxed">"{challenge.quote}"</div>
-                                                            <div className="text-xs font-black uppercase tracking-widest text-emerald-600">— {challenge.source}</div>
-                                                        </div>
-                                                    )}
-                                                    <div className={`font-black text-slate-900 leading-tight mb-8 ${challenge?.prompt?.length > 40 ? 'text-3xl' : 'text-5xl'}`}>
-                                                        {challenge?.prompt}
-                                                    </div>
-                                                    {cardState === 'reveal' && challenge?.hasAnswer && (
-                                                        <div className="p-6 bg-emerald-50 rounded-2xl border-4 border-emerald-100 animate-in zoom-in w-full text-3xl font-black text-emerald-600 uppercase">
-                                                            {challenge.answer}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <button onClick={challenge?.hasAnswer && cardState === 'front' ? () => setCardState('reveal') : completeMission} 
-                                                    className={`w-full py-6 ${SPECIES_DATA[activeSpecies].bg} text-white rounded-2xl font-black text-xl uppercase tracking-widest shadow-xl active:scale-95 transition-all`}>
-                                                    {challenge?.hasAnswer && cardState === 'front' ? 'Reveal Answer' : 'Mission Success'}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="w-24 flex flex-col items-center shrink-0 h-full">
-                            <span className="text-2xl font-black text-emerald-400 mb-2">{Math.round(tikkunProgress)}</span>
-                            <div className="flex-grow w-16 bg-slate-900/40 rounded-full border border-white/10 flex flex-col-reverse p-2 relative overflow-hidden shadow-inner">
-                                <div className="absolute bottom-0 inset-x-0 bg-emerald-500/30 transition-all duration-1000 ease-out" style={{ height: `${tikkunProgress}%` }} />
-                                <div className="z-10 flex flex-col-reverse gap-3">
-                                    {Object.keys(SPECIES_DATA).map(k => (inventory[k] || 0) >= targetPerSpecies && (
-                                        <div key={k} className={`w-full aspect-square rounded-full flex items-center justify-center ${SPECIES_DATA[k].bg} border-4 border-slate-950 shadow-xl animate-in zoom-in duration-500`}>
-                                            <SpeciesIcon type={k} className="w-8 h-8 text-white" />
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </main>
-
-                    {showSettings && (
-                        <div className="fixed inset-0 bg-slate-950/95 z-[100] flex items-center justify-center p-6 backdrop-blur-md">
-                            <div className="bg-slate-900 w-full max-w-2xl rounded-[3rem] border border-white/10 p-10 shadow-2xl overflow-y-auto max-h-[90vh]">
-                                <div className="flex justify-between items-center mb-10">
-                                    <h2 className="text-4xl font-black uppercase italic tracking-tighter">Mission Config</h2>
-                                    <button onClick={() => setShowSettings(false)} className="p-2 hover:bg-white/10 rounded-full"><LucideIcon name="x" size={32} /></button>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-10">
-                                    <div className="space-y-8">
-                                        <section>
-                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4 block">Missions Per Species</label>
-                                            <div className="flex gap-2">
-                                                {[1, 3, 5, 10].map(val => (
-                                                    <button key={val} onClick={() => setTargetPerSpecies(val)}
-                                                        className={`flex-grow py-4 rounded-xl font-black text-xl transition-all ${targetPerSpecies === val ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>
-                                                        {val}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </section>
-                                        <section>
-                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4 block">Team Size (Fig/Olive)</label>
-                                            <div className="flex gap-2">
-                                                {[1, 2, 3, 4].map(val => (
-                                                    <button key={val} onClick={() => setGroupSize(val)}
-                                                        className={`flex-grow py-4 rounded-xl font-black text-xl transition-all ${groupSize === val ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/30' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>
-                                                        {val}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </section>
-                                    </div>
-
-                                    <section>
-                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4 block">Field Agents ({roster.length})</label>
-                                        <div className="bg-slate-950/50 rounded-2xl p-4 border border-white/5 max-h-64 overflow-y-auto hide-scrollbar mb-4 space-y-2">
-                                            {roster.map((name, i) => (
-                                                <div key={i} className="bg-slate-800/80 px-4 py-3 rounded-xl flex items-center justify-between group">
-                                                    <span className="font-bold tracking-tight">{name}</span>
-                                                    <button onClick={() => setRoster(roster.filter((_, idx) => idx !== i))} className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg transition-all" title="Remove Agent">
-                                                        <LucideIcon name="trash-2" size={18} />
-                                                    </button>
-                                                </div>
-                                            ))}
-                                            {roster.length === 0 && <div className="text-center py-8 text-slate-600 italic">No agents recruited...</div>}
-                                        </div>
-                                        <form className="flex gap-2" onSubmit={(e) => {
-                                            e.preventDefault();
-                                            const name = e.target.agentName.value.trim();
-                                            if (name) {
-                                                setRoster([...roster, name]);
-                                                e.target.reset();
-                                            }
-                                        }}>
-                                            <input name="agentName" placeholder="New Agent Name..." className="flex-grow bg-slate-950 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition-colors" />
-                                            <button className="bg-emerald-500 px-6 rounded-xl font-black uppercase tracking-widest text-xs">Add</button>
-                                        </form>
-                                    </section>
-                                </div>
-                                <button onClick={() => setShowSettings(false)} className="w-full mt-12 py-5 bg-white text-slate-950 rounded-2xl font-black uppercase tracking-widest text-xl hover:bg-slate-100 transition-colors shadow-2xl">Save & Resume Missions</button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            );
-        };
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-</body>
-</html>
+export default App;
