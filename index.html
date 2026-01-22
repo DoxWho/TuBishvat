@@ -1,630 +1,638 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { 
-  Users, Award, Timer as TimerIcon, Settings2, CheckCircle2, 
-  X, Sprout, HelpCircle, UserPlus, Trash2, Volume2, 
-  Zap, Info, RefreshCcw, RotateCcw, BookOpen, Trophy, Leaf,
-  VolumeX
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Bishvat: The Seven Species Mission</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+Hebrew:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+        }
 
-const APP_NAME = "Tu Bishvat: The Seven Species Mission";
+        .hebrew { font-family: 'Noto Sans Hebrew', sans-serif; }
 
-const INITIAL_DATABASE = {
-  wheat: [
-    { prompt: "עֵץ", answer: "עֵץ (Tree)", type: "Vocab", hasAnswer: true },
-    { prompt: "אֲדָמָה", answer: "אֲדָמָה (Earth)", type: "Vocab", hasAnswer: true },
-    { prompt: "זֶרַע", answer: "זֶרַע (Seed)", type: "Vocab", hasAnswer: true },
-    { prompt: "מַיִם", answer: "מַיִם (Water)", type: "Vocab", hasAnswer: true },
-    { prompt: "שֶׁמֶשׁ", answer: "שֶׁמֶשׁ (Sun)", type: "Vocab", hasAnswer: true },
-    { prompt: "קָצִיר", answer: "קָצִיר (Harvest)", type: "Vocab", hasAnswer: true },
-    { prompt: "לֶחֶם", answer: "לֶחֶם (Bread)", type: "Vocab", hasAnswer: true },
-    { prompt: "שָׂדֶה", answer: "שָׂדֶה (Field)", type: "Vocab", hasAnswer: true },
-    { prompt: "טֶבַע", answer: "טֶבַע (Nature)", type: "Vocab", hasAnswer: true },
-    { prompt: "צֶמַח", answer: "צֶמַח (Plant)", type: "Vocab", hasAnswer: true }
-  ],
-  barley: [
-    { prompt: "How many 'New Years' are in the Jewish calendar?", answer: "Four", type: "Trivia", hasAnswer: true },
-    { prompt: "Which tree is the first to bloom in Israel in Shevat?", answer: "שָׁקֵד (shaqed) - Almond", type: "Trivia", hasAnswer: true },
-    { prompt: "What is the Hebrew date of Tu Bishvat?", answer: "15th of שְׁבָט (Shevat)", type: "Trivia", hasAnswer: true },
-    { prompt: "In the metaphor 'A person is like a tree,' what do the roots represent?", answer: "Our values, family, and Jewish traditions", type: "Trivia", hasAnswer: true },
-    { prompt: "Barley was one of the first crops grown in ancient Israel.", answer: "True", type: "Trivia", hasAnswer: true },
-    { prompt: "What color are almond blossoms?", answer: "White or light pink", type: "Trivia", hasAnswer: true },
-    { prompt: "What do we call the festive meal on Tu Bishvat?", answer: "Seder", type: "Trivia", hasAnswer: true },
-    { prompt: "Which book of the Torah lists the Seven Species?", answer: "Deuteronomy (Devarim)", type: "Trivia", hasAnswer: true },
-    { prompt: "What prayer is said over new fruit?", answer: "Shehecheyanu", type: "Trivia", hasAnswer: true },
-    { prompt: "True or False: Barley ripens before wheat in Israel.", answer: "True", type: "Trivia", hasAnswer: true }
-  ],
-  grape: [
-    { quote: "Unless someone like you cares a whole awful lot, nothing is going to get better. It’s not.", source: "The Lorax", prompt: "What local environment would you protect first?", type: "Discussion", hasAnswer: false },
-    { quote: "As my ancestors planted for me, so I plant for my children.", source: "Talmud", prompt: "What are we planting for people 50 years from now?", type: "Discussion", hasAnswer: false },
-    { quote: "Earth provides enough to satisfy every man's needs, but not every man's greed.", source: "Gandhi", prompt: "How can we practice enough-ness this week?", type: "Discussion", hasAnswer: false },
-    { quote: "The best time to plant a tree was 20 years ago. The second best time is now.", source: "Proverb", prompt: "What green habit can you start today?", type: "Discussion", hasAnswer: false },
-    { quote: "A vine needs a trellis to grow high.", source: "Folklore", prompt: "Who are the supporters who help you grow?", type: "Discussion", hasAnswer: false },
-    { quote: "Look deep into nature, and then you will understand everything better.", source: "Einstein", prompt: "What is the most complex thing you have seen in nature?", type: "Discussion", hasAnswer: false },
-    { quote: "To walk in nature is to witness a thousand miracles.", source: "Mary Davis", prompt: "What tiny miracle have you noticed recently?", type: "Discussion", hasAnswer: false },
-    { quote: "The vine produces clusters, not single grapes.", source: "Proverb", prompt: "How is our class like a cluster of grapes?", type: "Discussion", hasAnswer: false },
-    { quote: "When you besiege a city… you must not destroy its trees.", source: "Torah", prompt: "Why is wasting resources a problem?", type: "Discussion", hasAnswer: false },
-    { quote: "Every blade of grass has an angel that whispers to it, ‘Grow.’", source: "Midrash", prompt: "What helps you grow when things are hard?", type: "Discussion", hasAnswer: false }
-  ],
-  fig: [
-    { prompt: "ACT OUT: A seed slowly growing into a tree", type: "Charades", hasAnswer: false },
-    { prompt: "ACT OUT: A squirrel hiding nuts", type: "Charades", hasAnswer: false },
-    { prompt: "ACT OUT: Reaching high to pick ripe fruit from a tree", type: "Charades", hasAnswer: false },
-    { prompt: "ACT OUT: A bee pollinating a flower", type: "Charades", hasAnswer: false },
-    { prompt: "ACT OUT: A gardener planting a tree", type: "Charades", hasAnswer: false },
-    { prompt: "ACT OUT: Wind blowing through leaves", type: "Charades", hasAnswer: false },
-    { prompt: "ACT OUT: A bird building a nest", type: "Charades", hasAnswer: false },
-    { prompt: "ACT OUT: People picnicking under a tree", type: "Charades", hasAnswer: false },
-    { prompt: "ACT OUT: Cleaning trash from a park or forest", type: "Charades", hasAnswer: false },
-    { prompt: "ACT OUT: Rain in a forest", type: "Charades", hasAnswer: false }
-  ],
-  pomegranate: {
-    title: "Match Hebrew words to their meanings!",
-    pairs: [
-      { h: "ט״וּ בִּשְׁבָט", e: "Birthday of the Trees", hex: "#38bdf8" },
-      { h: "Planting a tree", e: "Replaces Forests", hex: "#60a5fa" },
-      { h: "Picking up trash", e: "Protects wildlife", hex: "#facc15" },
-      { h: "Composting", e: "Feeds the soil", hex: "#f87171" },
-      { h: "טֶבַע", e: "Nature", hex: "#34d399" },
-      { h: "Bees", e: "Pollinate flowers", hex: "#d97706" },
-      { h: "אֶרֶץ", e: "Land", hex: "#818cf8" },
-      { h: "מַיִם", e: "Water", hex: "#fb7185" }
-    ]
-  },
-  olive: [
-    { prompt: "PEACE", he: "שָׁלוֹם", forbidden: ["War", "Quiet", "Shalom", "Olive"], type: "Mindreader", hasAnswer: false },
-    { prompt: "LIGHT", he: "אוֹר", forbidden: ["Sun", "Lamp", "Dark", "Olive"], type: "Mindreader", hasAnswer: false },
-    { prompt: "OIL", he: "שֶׁמֶן", forbidden: ["Fat", "Cooking", "Hanukkah", "Liquid"], type: "Mindreader", hasAnswer: false },
-    { prompt: "MOUNTAIN", he: "הַר", forbidden: ["Hill", "Climb", "High", "Peak"], type: "Mindreader", hasAnswer: false },
-    { prompt: "BRANCH", he: "עָנָף", forbidden: ["Tree", "Stick", "Leaf", "Bird"], type: "Mindreader", hasAnswer: false },
-    { prompt: "ANCIENT", he: "עַתִּיק", forbidden: ["Old", "History", "New", "Past"], type: "Mindreader", hasAnswer: false },
-    { prompt: "GREEN", he: "יָרוֹק", forbidden: ["Color", "Grass", "Leaf", "Nature"], type: "Mindreader", hasAnswer: false },
-    { prompt: "DOVE", he: "יוֹנָה", forbidden: ["Bird", "Fly", "White", "Peace"], type: "Mindreader", hasAnswer: false },
-    { prompt: "STRENGTH", he: "כּוֹחַ", forbidden: ["Strong", "Muscle", "Weak", "Power"], type: "Mindreader", hasAnswer: false },
-    { prompt: "FRIEND", he: "חָבֵר", forbidden: ["Buddy", "Person", "School", "Love"], type: "Mindreader", hasAnswer: false }
-  ],
-  date: [
-    { prompt: "Repairing the world through justice and kindness", answer: "תִּיקּוּן עוֹלָם (Tikkun Olam)", type: "Jeopardy", hasAnswer: true },
-    { prompt: "Blessing over fruit from a tree", answer: "בּוֹרֵא פְּרִי הָעֵץ (Borei Pri Ha’etz)", type: "Jeopardy", hasAnswer: true },
-    { prompt: "Month when Tu Bishvat occurs", answer: "שְׁבָט (Shevat)", type: "Jeopardy", hasAnswer: true },
-    { prompt: "Land of milk and honey (date honey)", answer: "אֶרֶץ יִשְׂרָאֵל (Eretz Yisrael)", type: "Jeopardy", hasAnswer: true },
-    { prompt: "A young tree or plant", answer: "שְׁתִיל (Sapling)", type: "Jeopardy", hasAnswer: true },
-    { prompt: "Crown of the Seven Species with 613 seeds", answer: "רִמּוֹן (Pomegranate)", type: "Jeopardy", hasAnswer: true },
-    { prompt: "Part of a tree that absorbs water", answer: "שֹׁרָשִׁים (Roots)", type: "Jeopardy", hasAnswer: true },
-    { prompt: "New Year for Trees", answer: "ט\"ו בִּשְׁבָט (Tu Bishvat)", type: "Jeopardy", hasAnswer: true },
-    { prompt: "Showing kindness to the environment (Middah)", answer: "חֶסֶד (Chesed)", type: "Jeopardy", hasAnswer: true },
-    { prompt: "Acting fairly and responsibly with nature (Middah)", answer: "צֶדֶק (Tzedek)", type: "Jeopardy", hasAnswer: true }
-  ]
-};
-
-const SPECIES_DATA = {
-  wheat: { en: "Wheat", he: "חִטָּה", bg: "bg-amber-500", border: "border-amber-400", text: "text-amber-600", hex: "#f59e0b" },
-  barley: { en: "Barley", he: "שְׂעוֹרָה", bg: "bg-yellow-400", border: "border-yellow-300", text: "text-yellow-500", hex: "#eab308" },
-  grape: { en: "Grapes", he: "עֲנָבִים", bg: "bg-indigo-500", border: "border-indigo-400", text: "text-indigo-500", hex: "#6366f1" },
-  fig: { en: "Figs", he: "תְּאֵנִים", bg: "bg-purple-600", border: "border-purple-400", text: "text-purple-600", hex: "#9333ea" },
-  pomegranate: { en: "Pomegranate", he: "רִמּוֹן", bg: "bg-red-600", border: "border-red-400", text: "text-red-600", hex: "#dc2626" },
-  olive: { en: "Olives", he: "זֵיתִים", bg: "bg-lime-600", border: "border-lime-400", text: "text-lime-600", hex: "#65a30d" },
-  date: { en: "Dates", he: "תְּמָרִים", bg: "bg-orange-700", border: "border-orange-500", text: "text-orange-700", hex: "#c2410c" }
-};
-
-const SpeciesIcon = ({ type, className = "w-6 h-6", color = "currentColor" }) => {
-  const icons = {
-    wheat: <path d="M12 22V12M12 12L8 8M12 12L16 8M12 8V2M12 8L8 4M12 8L16 4" stroke={color} strokeWidth="2" strokeLinecap="round" />,
-    barley: <path d="M12 22V10M12 10C12 10 16 8 16 5M12 10C12 10 8 8 8 5" stroke={color} strokeWidth="2" strokeLinecap="round" />,
-    grape: <g stroke={color} strokeWidth="2" fill="none"><circle cx="12" cy="7" r="2.5"/><circle cx="9.5" cy="11" r="2.5"/><circle cx="14.5" cy="11" r="2.5"/><circle cx="12" cy="15" r="2.5"/></g>,
-    fig: <path d="M12 22C12 22 19 18 19 13C19 8 12 3 12 3C12 3 5 8 5 13C5 18 12 22 12 22Z" stroke={color} strokeWidth="2" fill="none" />,
-    pomegranate: <g stroke={color} strokeWidth="2" fill="none"><path d="M12 21C16.5 21 20 17.5 20 13C20 8.5 16 5 12 5C8 5 4 8.5 4 13C4 17.5 7.5 21 12 21Z"/><path d="M9 5L8 2M12 5V2M15 5L16 2" strokeLinecap="round" strokeWidth="2.5"/></g>,
-    olive: <ellipse cx="12" cy="13" rx="5" ry="7" stroke={color} strokeWidth="2" fill="none" />,
-    date: <path d="M12 22V5M12 5C12 5 18 7 21 12M12 5C12 5 6 7 3 12M12 9C12 9 17 11 19 15M12 9C12 9 7 11 5 15" stroke={color} strokeWidth="2.5" strokeLinecap="round" />
-  };
-  return <svg viewBox="0 0 24 24" className={className} fill="none">{icons[type] || icons.wheat}</svg>;
-};
-
-const ParticleBurst = ({ color }) => (
-  <div className="fixed inset-0 pointer-events-none z-[1000] overflow-hidden">
-    {Array.from({ length: 80 }).map((_, i) => (
-      <div key={i} className="absolute animate-particle-burst" style={{
-        left: `${Math.random() * 100}%`,
-        top: `-10%`,
-        animationDelay: `${Math.random() * 2}s`,
-        '--drift': `${(Math.random() - 0.5) * 60}vw`,
-        '--rot': `${Math.random() * 1080}deg`
-      }}>
-        <Leaf size={Math.random() * 30 + 15} fill={color} />
-      </div>
-    ))}
-  </div>
-);
-
-const App = () => {
-  const [activeSpecies, setActiveSpecies] = useState('wheat');
-  const [inventory, setInventory] = useState({});
-  const [missionIndex, setMissionIndex] = useState({});
-  const [activeChallenge, setActiveChallenge] = useState(null);
-  const [cardState, setCardState] = useState('back');
-  const [showSettings, setShowSettings] = useState(false);
-  const [showGameComplete, setShowGameComplete] = useState(false);
-  const [burstActive, setBurstActive] = useState(false);
-  
-  // Roster Management
-  const [roster, setRoster] = useState(["Abby", "Marshall", "Julianna", "Kai", "Ellie", "Adi", "Aaron", "Isaac", "Avery P.", "David", "Brenner", "Aviv", "Avery W."]);
-  const [newStudent, setNewStudent] = useState("");
-  const [rosterIndex, setRosterIndex] = useState(0);
-  const [selectedStudents, setSelectedStudents] = useState([]);
-  
-  const [settings, setSettings] = useState({ 
-    targetPerSpecies: 5,
-    volume: 50,
-    isMuted: false,
-    timerDuration: 60,
-    groupSize: 2,
-    showAnimations: true
-  });
-
-  const [memoryState, setMemoryState] = useState({ 
-    cards: [], flipped: [], matched: [] 
-  });
-  const [timeLeft, setTimeLeft] = useState(null);
-  const [timerStatus, setTimerStatus] = useState('idle');
-
-  const maxPossible = settings.targetPerSpecies * 7;
-  const progressTotal = useMemo(() => {
-    let repairs = 0;
-    const targets = settings.targetPerSpecies;
-    Object.keys(SPECIES_DATA).forEach(k => {
-      if (k === 'pomegranate') {
-        repairs += (memoryState.matched.length / 8) * targets;
-      } else {
-        repairs += Math.min(inventory[k] || 0, targets);
-      }
-    });
-    return repairs;
-  }, [inventory, memoryState.matched, settings.targetPerSpecies]);
-
-  const gameProgressPercent = Math.min(100, Math.round((progressTotal / maxPossible) * 100));
-
-  const resetGame = () => {
-    setInventory({});
-    setMissionIndex({});
-    setMemoryState({ cards: [], flipped: [], matched: [] });
-    setActiveSpecies('wheat');
-    setCardState('back');
-    setShowGameComplete(false);
-    setRosterIndex(0);
-    setSelectedStudents([]);
-  };
-
-  // Helper to get the actual students for the current index without advancing yet
-  const peekNextStudents = useCallback((startIdx, count) => {
-    if (roster.length === 0) return [];
-    let students = [];
-    for (let i = 0; i < count; i++) {
-      students.push(roster[(startIdx + i) % roster.length]);
-    }
-    return students;
-  }, [roster]);
-
-  const initMemoryGame = useCallback(() => {
-    if (memoryState.cards.length > 0) return;
-    const pairs = INITIAL_DATABASE.pomegranate.pairs.slice(0, 8);
-    const cards = [...pairs, ...pairs].map((p, i) => ({
-      id: i,
-      content: i < 8 ? p.h : p.e,
-      matchId: p.h,
-      hex: p.hex
-    })).sort(() => 0.5 - Math.random());
-    setMemoryState(prev => ({ ...prev, cards }));
-  }, [memoryState.cards]);
-
-  const loadMission = useCallback((species, currentRosterIdx) => {
-    const sp = species || activeSpecies;
-    const rIdx = currentRosterIdx !== undefined ? currentRosterIdx : rosterIndex;
-
-    if (sp === 'pomegranate') {
-      initMemoryGame();
-      setActiveChallenge({ type: 'Memory', prompt: INITIAL_DATABASE.pomegranate.title });
-      setSelectedStudents([]);
-      return;
-    }
-
-    const deck = INITIAL_DATABASE[sp];
-    const mIdx = missionIndex[sp] || 0;
-    const challenge = deck[mIdx % deck.length];
-    
-    // Lock in students for Fig and Olive IMMEDIATELY on load so they are visible
-    if (sp === 'fig' || sp === 'olive') {
-      setSelectedStudents(peekNextStudents(rIdx, settings.groupSize));
-    } else {
-      setSelectedStudents([]);
-    }
-
-    setActiveChallenge(challenge);
-  }, [activeSpecies, missionIndex, rosterIndex, settings.groupSize, peekNextStudents, initMemoryGame]);
-
-  useEffect(() => { loadMission(); }, [activeSpecies, loadMission]);
-
-  useEffect(() => {
-    if (gameProgressPercent === 100 && settings.showAnimations) {
-      setShowGameComplete(true);
-    }
-  }, [gameProgressPercent, settings.showAnimations]);
-
-  useEffect(() => {
-    let interval;
-    if (timerStatus === 'running' && timeLeft > 0) {
-      interval = setInterval(() => setTimeLeft(t => t - 1), 1000);
-    } else if (timeLeft === 0 && timerStatus === 'running') {
-      setTimerStatus('finished');
-    }
-    return () => clearInterval(interval);
-  }, [timeLeft, timerStatus]);
-
-  const handleComplete = () => {
-    const currentCount = inventory[activeSpecies] || 0;
-    if (settings.showAnimations) setBurstActive(true);
-    
-    // Update inventory
-    if (currentCount < settings.targetPerSpecies) {
-      setInventory(prev => ({ ...prev, [activeSpecies]: currentCount + 1 }));
-    }
-    
-    // Prepare for next mission
-    setCardState('back');
-    setTimerStatus('idle');
-    setTimeLeft(null);
-    
-    // Advance Roster Index ONLY after the mission is finished
-    const newRosterIdx = (activeSpecies === 'fig' || activeSpecies === 'olive') 
-      ? (rosterIndex + settings.groupSize) % roster.length 
-      : rosterIndex;
-    
-    setRosterIndex(newRosterIdx);
-
-    // Celebration duration 3 seconds
-    setTimeout(() => {
-      setMissionIndex(prev => ({ ...prev, [activeSpecies]: (prev[activeSpecies] || 0) + 1 }));
-      // Pass the new roster index specifically to the load function so it "peeks" the NEXT group
-      loadMission(activeSpecies, newRosterIdx);
-      setBurstActive(false);
-    }, 3000);
-  };
-
-  const handleFlip = () => {
-    if (cardState === 'back') {
-      setCardState('front');
-      if (settings.timerDuration > 0 && (activeChallenge?.type === 'Mindreader' || activeChallenge?.type === 'Charades')) {
-        setTimeLeft(settings.timerDuration);
-        setTimerStatus('running');
-      }
-    } else if (cardState === 'front' && activeChallenge?.hasAnswer) {
-      setCardState('answer');
-    }
-  };
-
-  const handleMemoryClick = (idx) => {
-    if (memoryState.flipped.length === 2 || memoryState.flipped.includes(idx) || memoryState.matched.includes(memoryState.cards[idx].matchId)) return;
-    const newFlipped = [...memoryState.flipped, idx];
-    setMemoryState(prev => ({ ...prev, flipped: newFlipped }));
-    
-    if (newFlipped.length === 2) {
-      const [c1, c2] = newFlipped.map(i => memoryState.cards[i]);
-      if (c1.matchId === c2.matchId) {
-        setTimeout(() => {
-          setMemoryState(prev => ({ ...prev, matched: [...prev.matched, c1.matchId], flipped: [] }));
-          if (memoryState.matched.length + 1 === 8) {
-            handleComplete();
-          }
-        }, 600);
-      } else {
-        setTimeout(() => setMemoryState(prev => ({ ...prev, flipped: [] })), 1200);
-      }
-    }
-  };
-
-  return (
-    <div className="h-screen bg-slate-950 text-white flex flex-col font-sans overflow-hidden select-none relative">
-      {burstActive && <ParticleBurst color={SPECIES_DATA[activeSpecies].hex} />}
-      
-      {showGameComplete && (
-        <div onClick={() => setShowGameComplete(false)} className="fixed inset-0 z-[1000] bg-slate-900/95 backdrop-blur-3xl flex flex-col items-center justify-center p-12 cursor-pointer animate-in fade-in duration-700">
-           <Trophy size={200} className="text-yellow-400 mb-8 animate-bounce" />
-           <h2 className="text-9xl font-black uppercase text-center tracking-tighter mb-4">Mission AccomplISHED!</h2>
-           <p className="text-4xl text-slate-300 font-bold">The Seven Species have been restored.</p>
-           <p className="mt-12 text-slate-500 uppercase tracking-[1em] animate-pulse">Click anywhere to return</p>
-           <ParticleBurst color="#fbbf24" />
-        </div>
-      )}
-
-      {showSettings && (
-        <div className="fixed inset-0 z-[600] bg-slate-950/98 backdrop-blur-lg flex items-center justify-center p-8">
-          <div className="bg-slate-900 border border-white/10 w-full max-w-5xl rounded-[3rem] p-12 shadow-2xl flex flex-col max-h-[90vh]">
-            <div className="flex justify-between items-center mb-10">
-              <h2 className="text-5xl font-black uppercase flex items-center gap-4"><Settings2 size={48} className="text-emerald-400"/> Mission Config</h2>
-              <button onClick={() => setShowSettings(false)} className="p-2 hover:bg-slate-800 rounded-full transition-colors"><X size={40}/></button>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-12 overflow-y-auto pr-4">
-              <div className="space-y-8">
-                <div>
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-500 block mb-3">Timer Options</label>
-                  <select value={settings.timerDuration} onChange={e => setSettings({...settings, timerDuration: parseInt(e.target.value)})} className="w-full bg-slate-800 p-4 rounded-2xl border border-white/10 outline-none text-xl font-bold">
-                    <option value={0}>OFF</option>
-                    {[15, 30, 45, 60, 75, 90, 105, 120].map(v => <option key={v} value={v}>{v} Seconds</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-500 block mb-3">Group Sizes (Fig/Olive)</label>
-                  <div className="flex gap-4">
-                    {[1, 2, 3, 4].map(v => (
-                      <button key={v} onClick={() => setSettings({...settings, groupSize: v})} className={`flex-grow py-4 rounded-xl font-black text-xl border transition-all ${settings.groupSize === v ? 'bg-emerald-500 border-emerald-400 scale-105' : 'bg-slate-800 border-white/5 opacity-50'}`}>{v}</button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-500 block mb-3">Target Repairs Per Species</label>
-                  <div className="flex items-center gap-6">
-                    <input type="range" min="1" max="15" value={settings.targetPerSpecies} onChange={e => setSettings({...settings, targetPerSpecies: parseInt(e.target.value)})} className="flex-grow accent-emerald-500 h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer" />
-                    <span className="text-4xl font-black text-emerald-400 w-12 text-center">{settings.targetPerSpecies}</span>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <button onClick={() => setSettings({...settings, isMuted: !settings.isMuted})} className="flex-grow bg-slate-800 p-5 rounded-2xl flex items-center justify-center gap-3 hover:bg-slate-700 transition-colors">
-                    {settings.isMuted ? <VolumeX className="text-red-400" /> : <Volume2 className="text-emerald-400" />}
-                    <span className="font-bold text-xl">{settings.isMuted ? "Unmute" : "Mute Audio"}</span>
-                  </button>
-                  <button onClick={resetGame} className="flex-grow bg-red-500/10 border border-red-500/20 p-5 rounded-2xl text-red-400 font-bold flex items-center justify-center gap-2 hover:bg-red-500/20 transition-colors"><RotateCcw size={24}/> Reset Mission</button>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-4">
-                 <label className="text-xs font-black uppercase tracking-widest text-slate-500 block">Class Roster ({roster.length} Students)</label>
-                 <div className="flex gap-2">
-                   <input type="text" value={newStudent} onChange={e => setNewStudent(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && (newStudent && (setRoster([...roster, newStudent]), setNewStudent("")))} placeholder="Student Name..." className="flex-grow bg-slate-800 p-5 rounded-2xl outline-none border border-white/5 text-xl" />
-                   <button onClick={() => { if(newStudent) { setRoster([...roster, newStudent]); setNewStudent(""); }}} className="bg-emerald-500 px-6 rounded-2xl hover:bg-emerald-400 transition-colors"><UserPlus size={28}/></button>
-                 </div>
-                 <div className="bg-slate-800/50 rounded-2xl p-6 h-72 overflow-y-auto border border-white/5 grid grid-cols-2 gap-3">
-                   {roster.map(name => (
-                     <div key={name} className="bg-slate-800 px-4 py-3 rounded-xl flex justify-between items-center group animate-in fade-in slide-in-from-right-2">
-                        <span className="text-lg font-bold">{name}</span>
-                        <button onClick={() => setRoster(roster.filter(n => n !== name))} className="text-slate-600 hover:text-red-400 transition-colors"><Trash2 size={18}/></button>
-                     </div>
-                   ))}
-                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <header className="h-24 bg-slate-900 border-b border-white/10 flex items-center justify-between px-12 z-50 shrink-0">
-        <div className="flex items-center gap-6">
-          <div className="bg-emerald-500/10 p-3 rounded-2xl border border-emerald-500/20">
-            <Sprout className="w-12 h-12 text-emerald-400" />
-          </div>
-          <h1 className="text-4xl font-black uppercase tracking-tighter text-emerald-50">{APP_NAME}</h1>
-        </div>
-        <div className="flex items-center gap-8">
-           {timeLeft !== null && (
-             <div className={`px-10 py-3 rounded-[2rem] flex items-center gap-4 border-4 transition-all ${timerStatus === 'finished' ? 'bg-red-500 border-red-400 animate-pulse' : 'bg-slate-800 border-white/10'}`}>
-               <TimerIcon size={32} className={timerStatus === 'finished' ? 'text-white' : 'text-emerald-400'} />
-               <span className="text-4xl font-black tabular-nums">{timeLeft}s</span>
-             </div>
-           )}
-           <button onClick={() => setShowSettings(true)} className="p-5 bg-slate-800 rounded-[2rem] hover:bg-slate-700 transition-all border border-white/10 shadow-xl">
-              <Settings2 size={36} className="text-slate-200" />
-           </button>
-        </div>
-      </header>
-
-      <main className="flex-grow flex p-10 gap-10 overflow-hidden">
-        {/* Navigation Sidebar */}
-        <div className="w-96 flex flex-col gap-4 h-full shrink-0">
-          {Object.entries(SPECIES_DATA).map(([key, data]) => {
-            const repairs = key === 'pomegranate' ? (memoryState.matched.length / 8) * settings.targetPerSpecies : (inventory[key] || 0);
-            const isCompleted = repairs >= settings.targetPerSpecies;
-            const isActive = activeSpecies === key;
-            const progress = (repairs / settings.targetPerSpecies) * 100;
-            
-            return (
-              <button 
-                key={key} 
-                onClick={() => { setActiveSpecies(key); setCardState('back'); setTimerStatus('idle'); }}
-                className={`flex items-center gap-6 p-6 rounded-[3rem] border transition-all relative overflow-hidden flex-grow group ${
-                  isActive ? 'bg-white text-slate-950 scale-[1.05] shadow-2xl z-20' : 
-                  isCompleted ? 'bg-slate-900 border-white/10 opacity-90' : 'bg-slate-900/50 border-white/5 opacity-60'
-                }`}
-              >
-                {isCompleted && !isActive && (
-                  <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundColor: data.hex }} />
-                )}
-                
-                <div className="relative w-20 h-20 flex items-center justify-center shrink-0">
-                   <svg className="absolute w-full h-full -rotate-90">
-                     <circle cx="40" cy="40" r="36" stroke="currentColor" strokeWidth="6" fill="none" className={isActive ? 'text-slate-100' : 'text-slate-800'} />
-                     <circle 
-                        cx="40" cy="40" r="36" stroke="currentColor" strokeWidth="6" fill="none" 
-                        strokeDasharray="226.2" strokeDashoffset={226.2 - (226.2 * Math.min(100, progress)) / 100} 
-                        className={isActive ? 'text-emerald-500' : isCompleted ? 'text-emerald-400' : data.text} 
-                      />
-                   </svg>
-                   <SpeciesIcon type={key} className="w-10 h-10 z-10" color={isActive ? "#0f172a" : data.hex} />
-                </div>
-                
-                <div className="text-left flex-grow">
-                  <p className="text-2xl font-black uppercase leading-tight">{data.en}</p>
-                  <p className="text-3xl font-bold font-serif leading-none opacity-40 mt-1">{data.he}</p>
-                </div>
-
-                {isCompleted && (
-                  <CheckCircle2 size={32} className="text-emerald-500 mr-2 shrink-0" />
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Central Playing Board */}
-        <section className="flex-grow flex flex-col items-center justify-center relative bg-slate-900/60 rounded-[5rem] border border-white/10 overflow-hidden shadow-inner">
-           {selectedStudents.length > 0 && activeSpecies !== 'pomegranate' && (
-             <div className="absolute top-12 bg-slate-800/95 backdrop-blur-3xl px-20 py-8 rounded-[4rem] border border-white/20 shadow-2xl z-30 flex items-center gap-10 animate-in slide-in-from-top duration-700">
-               <div className="bg-emerald-500/20 p-4 rounded-full">
-                 <Users size={48} className="text-emerald-400" />
-               </div>
-               <div className="flex flex-col items-start">
-                 <span className="text-xs font-black text-emerald-500 uppercase tracking-widest mb-1">Current Players</span>
-                 <div className="text-6xl font-black tracking-tighter uppercase whitespace-nowrap">
-                   {selectedStudents.map((s, i) => (
-                     <span key={i} className="animate-in fade-in slide-in-from-left-4 duration-500" style={{ animationDelay: `${i * 0.1}s` }}>
-                       {s}{i < selectedStudents.length - 1 ? ' & ' : ''}
-                     </span>
-                   ))}
-                 </div>
-               </div>
-             </div>
-           )}
-
-           <div className="w-full h-full p-16 flex flex-col items-center justify-center pt-48">
-             {activeSpecies === 'pomegranate' ? (
-               <div className="w-full h-full flex flex-col gap-6 max-w-7xl">
-                 <div className="grid grid-cols-4 gap-6 flex-grow">
-                   {memoryState.cards.map((card, idx) => {
-                     const isFlipped = memoryState.flipped.includes(idx);
-                     const isMatched = memoryState.matched.includes(card.matchId);
-                     return (
-                       <div key={idx} onClick={() => handleMemoryClick(idx)} className="relative perspective-2000 cursor-pointer group">
-                         <div className={`w-full h-full transition-all duration-700 transform-style-3d ${isFlipped || isMatched ? 'rotate-y-180' : ''}`}>
-                           <div className="absolute inset-0 bg-red-800 rounded-[2.5rem] border-[6px] border-red-500/40 flex flex-col items-center justify-center backface-hidden shadow-2xl hover:scale-[1.02] transition-transform">
-                             <SpeciesIcon type="pomegranate" className="w-24 h-24 text-red-400 opacity-20 mb-4" />
-                             <span className="text-white font-black text-6xl opacity-40">{idx + 1}</span>
-                           </div>
-                           <div className={`absolute inset-0 bg-white rounded-[2.5rem] rotate-y-180 backface-hidden flex items-center justify-center p-8 border-[12px] ${isMatched ? 'scale-[0.98]' : ''}`} style={{ borderColor: isMatched ? card.hex : 'white' }}>
-                              {isMatched && (
-                                <div className="absolute top-4 right-4 bg-emerald-500 text-white px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-lg">MATCHED</div>
-                              )}
-                              <span className="text-slate-900 font-black text-4xl text-center leading-tight tracking-tight">{card.content}</span>
-                           </div>
-                         </div>
-                       </div>
-                     );
-                   })}
-                 </div>
-               </div>
-             ) : (
-               <div className="w-full max-w-7xl h-full relative perspective-2000">
-                 {/* Card Back State */}
-                 <div className={`absolute inset-0 transition-all duration-1000 ${cardState === 'back' ? 'z-40 opacity-100' : 'opacity-0 scale-90 -rotate-y-180 pointer-events-none'}`}>
-                   <div className={`w-full h-full ${SPECIES_DATA[activeSpecies].bg} rounded-[6rem] border-[16px] ${SPECIES_DATA[activeSpecies].border} flex flex-col items-center justify-center shadow-2xl group`}>
-                     <div className="bg-white/10 p-24 rounded-full mb-12 backdrop-blur-xl border border-white/20 group-hover:scale-110 transition-transform duration-700 shadow-inner">
-                        <SpeciesIcon type={activeSpecies} className="w-64 h-64" color="white" />
-                     </div>
-                     <h2 className="text-9xl font-black uppercase tracking-[0.25em] drop-shadow-2xl">{SPECIES_DATA[activeSpecies].en}</h2>
-                     <button onClick={handleFlip} className="mt-16 px-20 py-8 bg-white text-slate-950 rounded-[3rem] font-black text-4xl uppercase tracking-[0.2em] hover:bg-emerald-50 transition-all hover:scale-105 active:scale-95 flex items-center gap-6 shadow-2xl">
-                       <Zap className="text-emerald-500 w-10 h-10" fill="currentColor" /> Initiate Mission
-                     </button>
-                   </div>
-                 </div>
-
-                 {/* Card Front/Answer State */}
-                 <div className={`absolute inset-0 transition-all duration-1000 ${cardState !== 'back' ? 'z-40 opacity-100 scale-100' : 'opacity-0 scale-90 rotate-y-180 pointer-events-none'}`}>
-                   <div className="w-full h-full bg-white text-slate-950 rounded-[6rem] p-24 flex flex-col shadow-2xl relative overflow-hidden">
-                     <div className="absolute top-10 right-10 opacity-5">
-                       <SpeciesIcon type={activeSpecies} className="w-80 h-80" color="#000" />
-                     </div>
-                     
-                     <div className="text-center mb-12 shrink-0">
-                       <span className="text-xl font-black uppercase tracking-[1em] text-slate-300 border-b-4 border-slate-100 pb-4 px-12 block w-fit mx-auto">
-                         {activeChallenge?.type} MISSION
-                       </span>
-                     </div>
-                     
-                     <div className="flex-grow flex flex-col items-center justify-center text-center px-10">
-                       {cardState === 'front' ? (
-                         <div className="animate-in zoom-in duration-700">
-                           {activeChallenge?.quote && (
-                             <div className="mb-12 max-w-5xl">
-                               <p className="text-5xl font-serif italic text-slate-500 leading-relaxed mb-6">"{activeChallenge.quote}"</p>
-                               <div className="flex items-center justify-center gap-4">
-                                 <div className="h-px w-20 bg-emerald-200"></div>
-                                 <p className="text-2xl text-emerald-600 font-black uppercase tracking-[0.3em]">{activeChallenge.source}</p>
-                                 <div className="h-px w-20 bg-emerald-200"></div>
-                               </div>
-                             </div>
-                           )}
-                           <h3 className="text-8xl font-black uppercase tracking-tighter leading-[0.9] px-4 text-slate-900">{activeChallenge?.prompt}</h3>
-                           
-                           {activeChallenge?.type === 'Mindreader' && (
-                             <div className="mt-20 flex flex-wrap justify-center gap-6">
-                               {activeChallenge.forbidden.map(w => (
-                                 <div key={w} className="px-10 py-5 bg-red-50 text-red-500 rounded-3xl font-black text-2xl border-4 border-red-100 uppercase tracking-widest">{w}</div>
-                               ))}
-                             </div>
-                           )}
-                         </div>
-                       ) : (
-                         <div className="animate-in zoom-in duration-700 flex flex-col items-center">
-                            <div className="bg-emerald-100 p-12 rounded-full mb-10 shadow-inner">
-                              <CheckCircle2 size={140} className="text-emerald-500" />
-                            </div>
-                            <h4 className="text-3xl font-black text-slate-400 uppercase tracking-[1em] mb-6">REPAIR COMPLETE</h4>
-                            <p className="text-9xl font-black text-emerald-600 uppercase leading-none tracking-tight">{activeChallenge?.answer}</p>
-                         </div>
-                       )}
-                     </div>
-
-                     <div className="mt-16 shrink-0">
-                       {activeChallenge?.hasAnswer && cardState === 'front' ? (
-                         <button onClick={handleFlip} className={`w-full py-12 rounded-[4rem] font-black text-5xl text-white ${SPECIES_DATA[activeSpecies].bg} uppercase tracking-[0.2em] shadow-2xl hover:brightness-110 hover:scale-[1.02] transition-all active:scale-95`}>Reveal Answer</button>
-                       ) : (
-                         <button onClick={handleComplete} className="w-full py-12 bg-emerald-500 rounded-[4rem] font-black text-5xl text-white uppercase tracking-[0.2em] shadow-2xl hover:bg-emerald-400 hover:scale-[1.02] transition-all active:scale-95">Confirm Repair</button>
-                       )}
-                     </div>
-                   </div>
-                 </div>
-               </div>
-             )}
-           </div>
-        </section>
-
-        {/* Global Progress Thermometer */}
-        <aside className="w-56 flex flex-col items-center py-12 bg-slate-900/40 rounded-[6rem] border border-white/10 relative shrink-0">
-          <div className="text-5xl font-black text-emerald-400 mb-6 drop-shadow-md">{gameProgressPercent}%</div>
-          <div className="flex-grow w-24 bg-slate-800 rounded-full flex flex-col-reverse overflow-hidden border-[8px] border-slate-800 shadow-2xl relative">
-             <div 
-               className="w-full bg-gradient-to-t from-emerald-700 via-emerald-400 to-emerald-300 transition-all duration-1000 ease-out" 
-               style={{ height: `${gameProgressPercent}%` }} 
-             />
-             <div className="absolute inset-0 flex flex-col-reverse p-4 gap-3">
-                {Object.entries(SPECIES_DATA).map(([k, d]) => {
-                  const repairs = k === 'pomegranate' ? (memoryState.matched.length / 8) * settings.targetPerSpecies : (inventory[k] || 0);
-                  return repairs >= settings.targetPerSpecies ? (
-                    <div key={k} className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 animate-in zoom-in duration-500 ${d.bg} shadow-lg border-2 border-white/20`}>
-                      <SpeciesIcon type={k} className="w-8 h-8 text-white" />
-                    </div>
-                  ) : null;
-                })}
-             </div>
-          </div>
-          <div className="mt-10 text-sm font-black text-slate-400 uppercase text-center leading-relaxed tracking-widest">GLOBAL REPAIR<br/>METER</div>
-        </aside>
-      </main>
-
-      <style dangerouslySetInnerHTML={{ __html: `
         .perspective-2000 { perspective: 2000px; }
-        .transform-style-3d { transform-style: preserve-3d; }
-        .backface-hidden { backface-visibility: hidden; }
-        .rotate-y-180 { transform: rotateY(180deg); }
-        @keyframes particle-burst-anim {
-          0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
-          10% { opacity: 1; }
-          100% { transform: translateY(120vh) translateX(var(--drift)) rotate(var(--rot)); opacity: 0; }
+        .inner-card {
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            position: relative;
+            width: 100%;
+            height: 100%;
         }
-        .animate-particle-burst { 
-          animation: particle-burst-anim 3s linear forwards; 
+        .is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 2.5rem;
         }
-        select::-ms-expand { display: none; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 32px; width: 32px; border-radius: 50%; background: #10b981; cursor: pointer; margin-top: -12px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5); border: 4px solid white; }
-      `}} />
-    </div>
-  );
-};
+        .card-back { transform: rotateY(180deg); }
 
-export default App;
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.5s ease;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(-10vh) rotate(0deg) scale(0); opacity: 0; }
+            20% { opacity: 1; scale: 1.2; }
+            100% { transform: translateY(110vh) rotate(360deg) scale(0.8); opacity: 0; }
+        }
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            animation: confetti-fall 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        .thermometer-fill {
+            transition: height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .source-tag {
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #94a3b8;
+        }
+
+        .species-badge {
+            transition: all 0.4s ease;
+            filter: grayscale(1) opacity(0.2);
+        }
+        .species-badge.completed {
+            filter: grayscale(0) opacity(1);
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app" class="h-screen flex flex-col relative overflow-hidden">
+        <div id="particle-overlay"></div>
+
+        <!-- Header -->
+        <header class="h-20 bg-slate-900 border-b border-white/10 flex items-center justify-between px-10 shrink-0 z-50">
+            <div class="flex items-center gap-4">
+                <div class="p-2 bg-emerald-500/20 rounded-lg border border-emerald-500/30">
+                    <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13m9-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13" stroke-width="2"/></svg>
+                </div>
+                <h1 class="text-xl font-black uppercase tracking-tighter">Tu Bishvat: The Seven Species Mission</h1>
+            </div>
+            
+            <div id="timer-ui" class="hidden px-6 py-2 bg-slate-800 rounded-full border border-white/10 flex items-center gap-3">
+                <span class="text-emerald-400 font-black text-xl tabular-nums" id="timer-val">60s</span>
+            </div>
+
+            <div class="flex gap-4">
+                <button onclick="toggleSettings()" class="p-3 bg-slate-800 rounded-xl border border-white/10">⚙️</button>
+            </div>
+        </header>
+
+        <!-- Main Layout -->
+        <main class="flex-grow flex p-6 gap-6 overflow-hidden">
+            
+            <!-- Navigation -->
+            <div id="species-nav" class="w-72 flex flex-col gap-2 shrink-0 overflow-y-auto pr-2"></div>
+
+            <!-- Gameplay -->
+            <div class="flex-grow flex flex-col items-center justify-center relative bg-slate-900/40 rounded-[3rem] border border-white/5 shadow-inner p-8">
+                
+                <div id="player-tag" class="hidden mb-6 px-8 py-3 bg-slate-800/80 backdrop-blur border border-white/10 rounded-full flex flex-col items-center">
+                    <span class="text-[9px] font-black text-emerald-400 tracking-widest uppercase">Current Task Force</span>
+                    <div id="active-players" class="text-2xl font-black uppercase">--</div>
+                </div>
+
+                <div id="game-portal" class="w-full max-w-md aspect-[3/4] relative">
+                    <div id="main-card-ui" class="w-full h-full perspective-2000">
+                        <div id="inner-card" class="inner-card">
+                            <!-- Front -->
+                            <div id="card-front" class="card-face border-8 shadow-2xl p-8">
+                                <div id="front-icon" class="mb-6 p-10 bg-white/10 rounded-full border border-white/20"></div>
+                                <div class="text-center">
+                                    <h2 id="front-title" class="text-4xl font-black uppercase mb-1">WHEAT</h2>
+                                    <div id="front-hebrew" class="hebrew text-2xl font-black opacity-50 mb-8">חִטָּה</div>
+                                </div>
+                                <button onclick="handleInitiate()" id="initiate-btn" class="w-full py-5 bg-white text-slate-950 rounded-2xl font-black text-xl uppercase tracking-widest hover:scale-105 transition-transform shadow-xl">
+                                    Initiate
+                                </button>
+                            </div>
+                            <!-- Back -->
+                            <div id="card-back" class="card-face card-back bg-white text-slate-900 p-10 shadow-2xl">
+                                <div id="back-content" class="flex-grow flex flex-col items-center justify-center text-center w-full overflow-y-auto"></div>
+                                <div class="w-full space-y-3 shrink-0">
+                                    <button id="reveal-btn" onclick="handleReveal()" class="hidden w-full py-5 bg-slate-900 text-white rounded-2xl font-black text-xl uppercase">Reveal Answer</button>
+                                    <button id="complete-btn" onclick="handleComplete()" class="hidden w-full py-5 bg-emerald-500 text-white rounded-2xl font-black text-xl uppercase">Confirm Repair</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="match-game-area" class="hidden absolute inset-0 z-30">
+                        <div id="match-grid" class="grid grid-cols-4 gap-3 w-full h-full"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thick Thermometer with Species Badges -->
+            <aside class="w-48 flex flex-col items-center py-6 bg-slate-900/40 rounded-[3rem] border border-white/5 shrink-0">
+                <div id="global-percent" class="text-3xl font-black text-emerald-400 mb-4">0%</div>
+                
+                <!-- Meter -->
+                <div class="flex-grow w-14 bg-slate-800 rounded-full flex flex-col-reverse overflow-hidden border-4 border-slate-700 shadow-inner relative mb-6">
+                    <div id="progress-fill" class="thermometer-fill w-full bg-gradient-to-t from-emerald-600 via-emerald-400 to-emerald-300" style="height: 0%"></div>
+                </div>
+
+                <!-- Species Badges Stack -->
+                <div id="species-badges" class="grid grid-cols-2 gap-2 px-4 mb-2"></div>
+                
+                <div class="text-[9px] font-black text-slate-500 uppercase text-center tracking-tighter">Repair Status</div>
+            </aside>
+        </main>
+
+        <!-- Settings -->
+        <div id="settings-modal" class="hidden fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-6">
+            <div class="bg-slate-900 border border-white/10 rounded-[2.5rem] w-full max-w-2xl p-10">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-black uppercase">Mission Config</h2>
+                    <button onclick="toggleSettings()" class="text-3xl">✕</button>
+                </div>
+                <div class="grid grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="text-[10px] font-black text-slate-500 uppercase mb-2 block">Group Size (1-4)</label>
+                            <input type="number" id="cfg-group-size" value="2" min="1" max="4" class="w-full bg-slate-800 p-3 rounded-lg border border-white/10 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black text-slate-500 uppercase mb-2 block">Target Missions / Species</label>
+                            <input type="number" id="cfg-target-missions" value="5" min="1" max="10" class="w-full bg-slate-800 p-3 rounded-lg border border-white/10 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black text-slate-500 uppercase mb-2 block">Mission Timer</label>
+                            <select id="cfg-timer" class="w-full bg-slate-800 p-3 rounded-lg border border-white/10 outline-none">
+                                <option value="0">Off</option>
+                                <option value="30">30 Seconds</option>
+                                <option value="60" selected>60 Seconds</option>
+                                <option value="120">120 Seconds</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="space-y-6 flex flex-col">
+                        <div class="flex-grow">
+                            <label class="text-[10px] font-black text-slate-500 uppercase mb-2 block">Roster</label>
+                            <div id="roster-list" class="h-32 overflow-y-auto bg-slate-950/50 p-3 rounded-lg border border-white/5 space-y-1 mb-2"></div>
+                            <div class="flex gap-2">
+                                <input type="text" id="add-student-name" placeholder="Name..." class="flex-grow bg-slate-800 p-2 rounded-lg text-sm outline-none">
+                                <button onclick="addStudent()" class="bg-emerald-500 px-4 rounded-lg font-bold">Add</button>
+                            </div>
+                        </div>
+                        <button onclick="resetGame()" class="w-full py-4 bg-red-500/10 text-red-500 border border-red-500/30 font-black uppercase rounded-xl hover:bg-red-500/20">Reset Mission</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Celebration Overlay -->
+        <div id="game-over-overlay" class="hidden fixed inset-0 z-[200] bg-emerald-600/95 backdrop-blur-2xl flex flex-col items-center justify-center p-10 text-center cursor-pointer" onclick="closeCelebration()">
+            <div class="w-32 h-32 mb-10 text-white">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22V12M12 12L8 8M12 12L16 8M12 8V2M12 8L8 4M12 8L16 4"/></svg>
+            </div>
+            <h2 class="text-7xl font-black uppercase mb-4 tracking-tighter">Mission Accomplished</h2>
+            <p class="text-2xl font-bold opacity-80 uppercase tracking-[0.3em]">The Seven Species Flourish</p>
+        </div>
+    </div>
+
+    <script>
+        // LOCKED CONTENT DATABASE
+        const SPECIES_DATA = {
+            wheat: { 
+                en: "Wheat", hb: "חִטָּה", color: "#f59e0b", type: "Vocab",
+                items: [
+                    { h: "עֵץ", e: "Tree" }, { h: "אֲדָמָה", e: "Earth" }, { h: "זֶרַע", e: "Seed" },
+                    { h: "מַיִם", e: "Water" }, { h: "שֶׁמֶשׁ", e: "Sun" }, { h: "קָצִיר", e: "Harvest" },
+                    { h: "לֶחֶם", e: "Bread" }, { h: "שָׂדֶה", e: "Field" }, { h: "טֶבַע", e: "Nature" },
+                    { h: "צֶמַח", e: "Plant" }
+                ]
+            },
+            barley: { 
+                en: "Barley", hb: "שְׂעוֹרָה", color: "#eab308", type: "Trivia",
+                items: [
+                    { q: "How many 'New Years' are in the Jewish calendar?", a: "Four" },
+                    { q: "Which tree is the first to bloom in Israel in Shevat?", a: "שָׁקֵד (shaqed) - Almond" },
+                    { q: "What is the Hebrew date of Tu Bishvat?", a: "15th of שְׁבָט (Shevat)" },
+                    { q: "In the metaphor 'A person is like a tree,' what do the roots represent?", a: "Our values, family, and Jewish traditions" },
+                    { q: "Barley was one of the first crops grown in ancient Israel.", a: "True" },
+                    { q: "What color are almond blossoms?", a: "White or light pink" },
+                    { q: "What do we call the festive meal on Tu Bishvat?", a: "Seder" },
+                    { q: "Which book of the Torah lists the Seven Species?", a: "Deuteronomy (Devarim)" },
+                    { q: "What prayer is said over new fruit?", a: "Shehecheyanu" },
+                    { q: "True or False: Barley ripens before wheat in Israel.", a: "True" }
+                ]
+            },
+            grape: { 
+                en: "Grapes", hb: "עֲנָבִים", color: "#6366f1", type: "Discussion",
+                items: [
+                    { s: "The Lorax", q: "Unless someone like you cares a whole awful lot, nothing is going to get better. It’s not.", p: "What local environment would you protect first?" },
+                    { s: "Talmud", q: "As my ancestors planted for me, so I plant for my children.", p: "What are we planting for people 50 years from now?" },
+                    { s: "Gandhi", q: "Earth provides enough to satisfy every man's needs, but not every man's greed.", p: "How can we practice enough-ness this week?" },
+                    { s: "Proverb", q: "The best time to plant a tree was 20 years ago. The second best time is now.", p: "What green habit can you start today?" },
+                    { s: "Folklore", q: "A vine needs a trellis to grow high.", p: "Who are the supporters who help you grow?" },
+                    { s: "Einstein", q: "Look deep into nature, and then you will understand everything better.", p: "What is the most complex thing you have seen in nature?" },
+                    { s: "Mary Davis", q: "To walk in nature is to witness a thousand miracles.", p: "What tiny miracle have you noticed recently?" },
+                    { s: "Proverb", q: "The vine produces clusters, not single grapes.", p: "How is our class like a cluster of grapes?" },
+                    { s: "Torah", q: "When you besiege a city… you must not destroy its trees.", p: "Why is wasting resources a problem?" },
+                    { s: "Midrash", q: "Every blade of grass has an angel that whispers to it, ‘Grow.’", p: "What helps you grow when things are hard?" }
+                ]
+            },
+            fig: { 
+                en: "Figs", hb: "תְּאֵנִים", color: "#9333ea", type: "Charades",
+                items: [
+                    "A seed slowly growing into a tree", "A squirrel hiding nuts", "Reaching high to pick ripe fruit from a tree",
+                    "A bee pollinating a flower", "A gardener planting a tree", "Wind blowing through leaves",
+                    "A bird building a nest", "People picnicking under a tree", "Cleaning trash from a park or forest", "Rain in a forest"
+                ]
+            },
+            pomegranate: { 
+                en: "Pomegranate", hb: "רִמּוֹן", color: "#dc2626", type: "Memory",
+                items: [
+                    { a: "ט״וּ בִּשְׁבָט Tu Bishvat", b: "Birthday of the Trees" },
+                    { a: "Planting a tree", b: "Replaces Forests" },
+                    { a: "Picking up trash", b: "Protects wildlife" },
+                    { a: "Composting food scraps", b: "Feeds the soil" },
+                    { a: "טֶבַע", b: "Nature" },
+                    { a: "Bees", b: "Pollinate flowers" },
+                    { a: "אֶרֶץ", b: "Land" },
+                    { a: "מַיִם", b: "Water" }
+                ]
+            },
+            olive: { 
+                en: "Olives", hb: "זֵיתִים", color: "#65a30d", type: "Mindreader",
+                items: [
+                    { t: "Peace", h: "שָׁלוֹם", f: ["War", "Quiet", "Shalom", "Olive"] },
+                    { t: "Light", h: "אוֹר", f: ["Sun", "Lamp", "Dark", "Olive"] },
+                    { t: "Oil", h: "שֶׁמֶן", f: ["Fat", "Cooking", "Hanukkah", "Liquid"] },
+                    { t: "Mountain", h: "הַר", f: ["Hill", "Climb", "High", "Peak"] },
+                    { t: "Branch", h: "עָנָף", f: ["Tree", "Stick", "Leaf", "Bird"] },
+                    { t: "Ancient", h: "עַתִּיק", f: ["Old", "History", "New", "Past"] },
+                    { t: "Green", h: "יָרוֹק", f: ["Color", "Grass", "Leaf", "Nature"] },
+                    { t: "Dove", h: "יוֹנָה", f: ["Bird", "Fly", "White", "Peace"] },
+                    { t: "Strength", h: "כּוֹחַ", f: ["Strong", "Muscle", "Weak", "Power"] },
+                    { t: "Friend", h: "חָבֵר", f: ["Buddy", "Person", "School", "Love"] }
+                ]
+            },
+            date: { 
+                en: "Dates", hb: "תְּמָרִים", color: "#c2410c", type: "Jeopardy",
+                items: [
+                    { q: "Repairing the world through justice and kindness", a: "תִּיקּוּן עוֹלָם (Tikkun Olam)" },
+                    { q: "Blessing over fruit from a tree", a: "בּוֹרֵא פְּרִי הָעֵץ (Borei Pri Ha’etz)" },
+                    { q: "Month when Tu Bishvat occurs", a: "שְׁבָט (Shevat)" },
+                    { q: "Land of milk and honey (date honey)", a: "אֶרֶץ יִשְׂרָאֵל (Eretz Yisrael)" },
+                    { q: "A young tree or plant", a: "שְׁתִיל (Sapling)" },
+                    { q: "Crown of the Seven Species with 613 seeds", a: "רִמּוֹן (Pomegranate)" },
+                    { q: "Part of a tree that absorbs water", a: "שֹׁרָשִׁים (Roots)" },
+                    { q: "New Year for Trees", a: "ט\"ו בִּשְׁבָט (Tu Bishvat)" }
+                ]
+            }
+        };
+
+        // State Management
+        let state = {
+            roster: ["Abby", "Marshall", "Julianna", "Kai", "Ellie", "Adi", "Aaron", "Isaac", "Avery P.", "David"],
+            rosterIdx: 0,
+            active: 'wheat',
+            inventory: { wheat:0, barley:0, grape:0, fig:0, pomegranate:0, olive:0, date:0 },
+            indices: { wheat:0, barley:0, grape:0, fig:0, pomegranate:0, olive:0, date:0 },
+            cfg: { groupSize: 2, target: 5, timer: 60 },
+            pomegranate: { matched: [], flipped: [], deck: null },
+            processing: false,
+            timer: null
+        };
+
+        // --- Core Functions ---
+        function init() {
+            renderNav();
+            renderRoster();
+            updateThermometer();
+            syncCard();
+        }
+
+        function renderNav() {
+            const container = document.getElementById('species-nav');
+            container.innerHTML = Object.keys(SPECIES_DATA).map(key => {
+                const s = SPECIES_DATA[key];
+                const done = state.inventory[key] >= state.cfg.target;
+                const progress = (state.inventory[key] / state.cfg.target) * 100;
+                const offset = 125.6 - (progress / 100) * 125.6;
+
+                return `
+                <button onclick="selectSpecies('${key}')" 
+                    class="relative group flex items-center gap-4 p-4 rounded-3xl border transition-all 
+                    ${state.active === key ? 'scale-[1.02] shadow-xl' : 'opacity-70'}
+                    ${done ? 'bg-opacity-100' : 'bg-slate-900/50 border-white/5'}"
+                    style="${done ? `background-color: ${s.color}; border-color: white;` : (state.active === key ? `background-color: white; color: #0f172a;` : '')}">
+                    
+                    <div class="relative w-12 h-12 flex items-center justify-center shrink-0">
+                        <svg class="absolute inset-0 w-full h-full" viewBox="0 0 50 50">
+                            <circle class="progress-ring__circle" stroke="${done ? 'white' : s.color}" stroke-width="3" fill="transparent" r="20" cx="25" cy="25" 
+                                style="stroke-dasharray: 125.6; stroke-dashoffset: ${offset}; opacity: ${done ? 0 : 1}"/>
+                        </svg>
+                        <div class="z-10 w-6 h-6">${getIcon(key, (done || state.active === key) ? (done ? 'white' : '#0f172a') : s.color)}</div>
+                    </div>
+
+                    <div class="text-left flex-grow">
+                        <div class="text-[10px] font-black uppercase tracking-widest ${state.active === key ? 'text-slate-900' : 'opacity-60'} leading-none mb-1">${s.en}</div>
+                        <div class="hebrew text-sm font-black">${s.hb}</div>
+                    </div>
+                </button>
+                `;
+            }).join('');
+        }
+
+        function syncCard() {
+            const key = state.active;
+            const s = SPECIES_DATA[key];
+            const portal = document.getElementById('main-card-ui');
+            const matchArea = document.getElementById('match-game-area');
+            
+            document.getElementById('inner-card').classList.remove('is-flipped');
+            state.processing = false;
+
+            if (key === 'pomegranate') {
+                portal.classList.add('invisible');
+                matchArea.classList.remove('hidden');
+                renderMatchGrid();
+            } else {
+                portal.classList.remove('invisible');
+                matchArea.classList.add('hidden');
+                
+                const front = document.getElementById('card-front');
+                front.style.backgroundColor = s.color;
+                front.style.borderColor = 'white';
+                
+                document.getElementById('front-icon').innerHTML = getIcon(key, 'white', 'w-32 h-32');
+                document.getElementById('front-title').innerText = s.en;
+                document.getElementById('front-hebrew').innerText = s.hb;
+            }
+
+            if (key === 'fig' || key === 'olive') {
+                document.getElementById('player-tag').classList.remove('hidden');
+                const p = [];
+                for(let i=0; i<state.cfg.groupSize; i++) p.push(state.roster[(state.rosterIdx + i) % state.roster.length]);
+                document.getElementById('active-players').innerText = p.join(" & ");
+            } else {
+                document.getElementById('player-tag').classList.add('hidden');
+            }
+        }
+
+        function handleInitiate() {
+            const s = SPECIES_DATA[state.active];
+            const item = s.items[state.indices[state.active] % s.items.length];
+            let html = "";
+
+            if (state.active === 'wheat') {
+                html = `<span class="hebrew text-8xl font-black mb-4">${item.h}</span><div class="text-slate-400 font-bold uppercase tracking-widest">Identify Translation</div>`;
+                state.currentAnswer = item.e;
+            } else if (state.active === 'barley') {
+                html = `<h3 class="text-3xl font-black uppercase mb-8 leading-tight">${item.q}</h3>`;
+                state.currentAnswer = item.a;
+            } else if (state.active === 'grape') {
+                html = `<p class="italic text-lg mb-4">"${item.q}"</p><span class="source-tag mb-12">— ${item.s}</span><h3 class="text-2xl font-black uppercase text-indigo-600">${item.p}</h3>`;
+            } else if (state.active === 'fig') {
+                html = `<div class="text-slate-400 font-black uppercase mb-8 tracking-[0.4em]">Act Out</div><h3 class="text-4xl font-black uppercase">${item}</h3>`;
+            } else if (state.active === 'olive') {
+                html = `<h3 class="text-6xl font-black hebrew text-lime-600 mb-6">${item.h}</h3><h4 class="text-3xl font-black uppercase mb-10">${item.t}</h4><div class="flex flex-wrap justify-center gap-2">` + 
+                       item.f.map(w => `<span class="px-3 py-1 bg-red-50 text-red-500 rounded-full text-[10px] font-black uppercase border border-red-100">${w}</span>`).join('') + 
+                       `</div>`;
+            } else if (state.active === 'date') {
+                html = `<div class="text-slate-400 font-black uppercase mb-8 tracking-[0.4em]">Jeopardy</div><h3 class="text-2xl font-bold italic mb-10">"I am ${item.q}..."</h3>`;
+                state.currentAnswer = item.a;
+            }
+
+            renderContent(s.type, html);
+            document.getElementById('inner-card').classList.add('is-flipped');
+            
+            const reveal = document.getElementById('reveal-btn');
+            const complete = document.getElementById('complete-btn');
+
+            if (state.currentAnswer) {
+                reveal.classList.remove('hidden');
+                complete.classList.add('hidden');
+            } else {
+                reveal.classList.add('hidden');
+                complete.classList.remove('hidden');
+            }
+
+            if (state.cfg.timer > 0 && (s.type === 'Charades' || s.type === 'Mindreader')) startTimer();
+        }
+
+        function handleReveal() {
+            const html = `
+                <div class="text-emerald-500 mb-6"><svg class="w-20 h-20 mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17L4 12"/></svg></div>
+                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Repair Key</div>
+                <p class="text-4xl font-black text-slate-900 uppercase tracking-tighter">${state.currentAnswer}</p>
+            `;
+            renderContent("REVEALED", html);
+            document.getElementById('reveal-btn').classList.add('hidden');
+            document.getElementById('complete-btn').classList.remove('hidden');
+            state.currentAnswer = null;
+        }
+
+        function handleComplete() {
+            if (state.processing) return;
+            state.processing = true;
+
+            const color = SPECIES_DATA[state.active].color;
+            
+            // Simultaneous Burst and Flip
+            createConfetti(color, state.active);
+            
+            state.inventory[state.active]++;
+            state.indices[state.active]++;
+            
+            if (state.active === 'fig' || state.active === 'olive') {
+                state.rosterIdx = (state.rosterIdx + parseInt(state.cfg.groupSize)) % state.roster.length;
+            }
+
+            updateThermometer();
+            renderNav();
+            stopTimer();
+
+            // Card resets immediately as confetti is flying
+            setTimeout(() => {
+                syncCard();
+                checkGameOver();
+            }, 600);
+        }
+
+        // --- Match Logic ---
+        function renderMatchGrid() {
+            const grid = document.getElementById('match-grid');
+            const s = SPECIES_DATA.pomegranate;
+            
+            if (!state.pomegranate.deck) {
+                const deck = [];
+                s.items.forEach((p, i) => {
+                    deck.push({ id: `a-${i}`, text: p.a, mid: i });
+                    deck.push({ id: `b-${i}`, text: p.b, mid: i });
+                });
+                state.pomegranate.deck = deck.sort(() => 0.5 - Math.random());
+            }
+
+            grid.innerHTML = state.pomegranate.deck.map((card, i) => {
+                const matched = state.pomegranate.matched.includes(card.mid);
+                const flipped = state.pomegranate.flipped.includes(i) || matched;
+                const mColor = matched ? getMatchColor(card.mid) : '';
+                
+                return `
+                <button onclick="clickMatch(${i})" 
+                    class="relative aspect-[3/4] rounded-xl border-4 transition-all flex flex-col items-center justify-center p-2 
+                    ${flipped ? 'bg-white text-slate-900 border-white' : 'bg-red-700 border-red-800 text-white/20'}"
+                    style="${matched ? `border-color: ${mColor};` : ''}">
+                    
+                    ${!flipped ? `<span class="text-3xl font-black">${i+1}</span>` : ''}
+                    
+                    <span class="${flipped ? 'opacity-100' : 'opacity-0'} font-bold text-[11px] leading-tight hebrew text-center z-10">${card.text}</span>
+                </button>
+                `;
+            }).join('');
+        }
+
+        function clickMatch(idx) {
+            const p = state.pomegranate;
+            if (p.flipped.length === 2 || p.flipped.includes(idx) || p.matched.includes(p.deck[idx].mid)) return;
+
+            p.flipped.push(idx);
+            renderMatchGrid();
+
+            if (p.flipped.length === 2) {
+                if (p.deck[p.flipped[0]].mid === p.deck[p.flipped[1]].mid) {
+                    p.matched.push(p.deck[p.flipped[0]].mid);
+                    p.flipped = [];
+                    state.inventory.pomegranate = Math.floor((p.matched.length / 8) * state.cfg.target);
+                    updateThermometer();
+                    renderNav();
+                    if (p.matched.length === 8) {
+                        createConfetti('#dc2626', 'pomegranate');
+                        setTimeout(checkGameOver, 1000);
+                    } else {
+                        renderMatchGrid();
+                    }
+                } else {
+                    setTimeout(() => { p.flipped = []; renderMatchGrid(); }, 1200);
+                }
+            }
+        }
+
+        // --- Visual Helpers ---
+        function getIcon(key, color, size = "w-full h-full", border = 2) {
+            const paths = {
+                wheat: `<path d="M12 22V12M12 12L8 8M12 12L16 8M12 8V2M12 8L8 4M12 8L16 4" stroke="${color}" stroke-width="${border}"/>`,
+                barley: `<path d="M12 22V10M12 10C12 10 16 8 16 5M12 10C12 10 8 8 8 5" stroke="${color}" stroke-width="${border}"/>`,
+                grape: `<circle cx="12" cy="7" r="2.5" stroke="${color}" stroke-width="${border}"/><circle cx="9.5" cy="11" r="2.5" stroke="${color}" stroke-width="${border}"/><circle cx="14.5" cy="11" r="2.5" stroke="${color}" stroke-width="${border}"/><circle cx="12" cy="15" r="2.5" stroke="${color}" stroke-width="${border}"/>`,
+                fig: `<path d="M12 22C12 22 19 18 19 13C19 8 12 3 12 3C12 3 5 8 5 13C5 18 12 22 12 22Z" stroke="${color}" stroke-width="${border}"/>`,
+                pomegranate: `<circle cx="12" cy="13" r="8" stroke="${color}" stroke-width="${border}"/><path d="M9 5L8 2M12 5V2M15 5L16 2" stroke="${color}" stroke-width="${border}"/>`,
+                olive: `<ellipse cx="12" cy="13" rx="5" ry="7" stroke="${color}" stroke-width="${border}"/><circle cx="12" cy="11" r="1.5" fill="${color}"/>`,
+                date: `<path d="M12 22V5M12 5C12 5 18 7 21 12M12 5C12 5 6 7 3 12" stroke="${color}" stroke-width="${border}"/>`
+            };
+            return `<svg viewBox="0 0 24 24" fill="none" class="${size}">${paths[key] || ''}</svg>`;
+        }
+
+        function createConfetti(color, key) {
+            const o = document.getElementById('particle-overlay');
+            for(let i=0; i<60; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.animationDelay = Math.random() * 0.4 + 's';
+                const size = Math.random() * 20 + 20;
+                p.innerHTML = getIcon(key, color, `w-[${size}px] h-[${size}px]`, 3);
+                o.appendChild(p);
+                setTimeout(() => p.remove(), 2500);
+            }
+        }
+
+        function renderContent(type, html) {
+            document.getElementById('back-content').innerHTML = `
+                <span class="text-[9px] font-black text-slate-400 uppercase mb-4 tracking-[0.4em]">${type} Mission</span>
+                ${html}
+            `;
+        }
+
+        function updateThermometer() {
+            const keys = Object.keys(SPECIES_DATA);
+            const totalTarget = state.cfg.target * keys.length;
+            const currentTotal = Object.values(state.inventory).reduce((a, b) => a + b, 0);
+            const percent = Math.min(100, Math.round((currentTotal / totalTarget) * 100));
+            
+            document.getElementById('global-percent').innerText = percent + '%';
+            document.getElementById('progress-fill').style.height = percent + '%';
+
+            const badgeContainer = document.getElementById('species-badges');
+            badgeContainer.innerHTML = keys.map(k => {
+                const s = SPECIES_DATA[k];
+                const isDone = state.inventory[k] >= state.cfg.target;
+                return `
+                <div class="species-badge w-12 h-12 rounded-xl flex items-center justify-center p-2 border border-white/10 ${isDone ? 'completed shadow-lg' : ''}" 
+                     style="background: ${isDone ? s.color : 'transparent'};">
+                    ${getIcon(k, isDone ? 'white' : 'rgba(255,255,255,0.2)', 'w-full h-full', isDone ? 2.5 : 2)}
+                </div>
+                `;
+            }).join('');
+        }
+
+        function selectSpecies(k) { state.active = k; syncCard(); renderNav(); }
+        function toggleSettings() { document.getElementById('settings-modal').classList.toggle('hidden'); }
+        function renderRoster() {
+            const list = document.getElementById('roster-list');
+            list.innerHTML = state.roster.map((s, i) => `<div class="flex justify-between p-1 px-3 bg-white/5 rounded text-sm"><span>${s}</span><button onclick="removeStudent(${i})">✕</button></div>`).join('');
+        }
+        function addStudent() { const input = document.getElementById('add-student-name'); if(input.value) { state.roster.push(input.value); input.value=''; renderRoster(); } }
+        function removeStudent(i) { state.roster.splice(i,1); renderRoster(); }
+
+        function startTimer() {
+            const ui = document.getElementById('timer-ui');
+            const val = document.getElementById('timer-val');
+            let remaining = parseInt(state.cfg.timer);
+            ui.classList.remove('hidden');
+            val.innerText = remaining + 's';
+            clearInterval(state.timer);
+            state.timer = setInterval(() => {
+                remaining--;
+                val.innerText = remaining + 's';
+                if(remaining <= 0) stopTimer();
+            }, 1000);
+        }
+        function stopTimer() { clearInterval(state.timer); document.getElementById('timer-ui').classList.add('hidden'); }
+        function getMatchColor(i) { return ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#f97316', '#a855f7'][i % 8]; }
+        function checkGameOver() { if(Object.values(state.inventory).every(v => v >= state.cfg.target)) document.getElementById('game-over-overlay').classList.remove('hidden'); }
+        function closeCelebration() { document.getElementById('game-over-overlay').classList.add('hidden'); }
+        
+        function resetGame() {
+            state.inventory = { wheat:0, barley:0, grape:0, fig:0, pomegranate:0, olive:0, date:0 };
+            state.pomegranate = { matched: [], flipped: [], deck: null };
+            state.rosterIdx = 0;
+            state.cfg.target = document.getElementById('cfg-target-missions').value;
+            state.cfg.groupSize = document.getElementById('cfg-group-size').value;
+            state.cfg.timer = document.getElementById('cfg-timer').value;
+            init();
+            toggleSettings();
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
