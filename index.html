@@ -1,436 +1,404 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.2">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #6d6d6d; -webkit-text-stroke: #6d6d6d}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #6b0001; -webkit-text-stroke: #6b0001}
-    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #fb0007; -webkit-text-stroke: #fb0007}
-    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #0000ff; -webkit-text-stroke: #0000ff}
-    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; -webkit-text-stroke: #000000}
-    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #18702b; -webkit-text-stroke: #18702b}
-    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; -webkit-text-stroke: #000000; min-height: 16.0px}
-    span.s1 {font-kerning: none; background-color: #ecf1f7}
-    span.s2 {font-kerning: none; color: #fb0007; background-color: #ecf1f7; -webkit-text-stroke: 0px #fb0007}
-    span.s3 {font-kerning: none; color: #2a2a2a; background-color: #ecf1f7; -webkit-text-stroke: 0px #2a2a2a}
-    span.s4 {font-kerning: none; color: #000000; background-color: #ecf1f7; -webkit-text-stroke: 0px #000000}
-    span.s5 {font-kerning: none; color: #0000ff; background-color: #ecf1f7; -webkit-text-stroke: 0px #0000ff}
-    span.s6 {font-kerning: none; color: #6b0001; background-color: #ecf1f7; -webkit-text-stroke: 0px #6b0001}
-    span.s7 {font-kerning: none; color: #6f0ec3; background-color: #ecf1f7; -webkit-text-stroke: 0px #6f0ec3}
-    span.s8 {font-kerning: none; color: #093c94; background-color: #ecf1f7; -webkit-text-stroke: 0px #093c94}
-    span.s9 {font-kerning: none; color: #18702b; background-color: #ecf1f7; -webkit-text-stroke: 0px #18702b}
-    span.s10 {font-kerning: none; color: #137646; background-color: #ecf1f7; -webkit-text-stroke: 0px #137646}
-    span.s11 {font-kerning: none}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Bishvat: The Seven Species Mission</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #020617; color: white; margin: 0; overflow: hidden; height: 100vh; }
+        .hebrew-text { direction: rtl; unicode-bidi: isolate; font-family: 'Arial', sans-serif; }
+        .perspective-2000 { perspective: 2000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        .no-select { user-select: none; }
+        .card-container { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 </head>
 <body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE</span><span class="s2"> html</span><span class="s1">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;</span><span class="s1">html</span><span class="s4"> </span><span class="s2">lang</span><span class="s3">=</span><span class="s5">"en"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;</span><span class="s1">head</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">meta</span><span class="s4"> </span><span class="s1">charset</span><span class="s3">=</span><span class="s5">"UTF-8"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">meta</span><span class="s4"> </span><span class="s2">name</span><span class="s3">=</span><span class="s1">"viewport"</span><span class="s4"> </span><span class="s2">content</span><span class="s3">=</span><span class="s1">"width=device-width, initial-scale=1.0"</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">title</span><span class="s3">&gt;</span><span class="s1">Tu Bishvat: The Seven Species Mission</span><span class="s3">&lt;/</span><span class="s6">title</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">script</span><span class="s4"> </span><span class="s2">src</span><span class="s3">=</span><span class="s1">"https://unpkg.com/react@18/umd/react.production.min.js"</span><span class="s3">&gt;&lt;/</span><span class="s6">script</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">script</span><span class="s4"> </span><span class="s2">src</span><span class="s3">=</span><span class="s1">"https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"</span><span class="s3">&gt;&lt;/</span><span class="s6">script</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">script</span><span class="s4"> </span><span class="s2">src</span><span class="s3">=</span><span class="s1">"https://unpkg.com/@babel/standalone/babel.min.js"</span><span class="s3">&gt;&lt;/</span><span class="s6">script</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">script</span><span class="s4"> </span><span class="s2">src</span><span class="s3">=</span><span class="s1">"https://cdn.tailwindcss.com"</span><span class="s3">&gt;&lt;/</span><span class="s6">script</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s1">style</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s7">@import</span><span class="s4"> </span><span class="s8">url</span><span class="s4">(</span><span class="s1">'https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&amp;display=swap'</span><span class="s4">);</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s6">body</span><span class="s4"> { </span><span class="s1">font-family:</span><span class="s4"> </span><span class="s9">'Inter'</span><span class="s4">, </span><span class="s8">sans-serif</span><span class="s4">; </span><span class="s1">background:</span><span class="s4"> </span><span class="s8">#020617</span><span class="s4">; </span><span class="s1">color:</span><span class="s4"> </span><span class="s8">white</span><span class="s4">; </span><span class="s1">margin:</span><span class="s4"> </span><span class="s10">0</span><span class="s4">; </span><span class="s1">overflow:</span><span class="s4"> </span><span class="s8">hidden</span><span class="s4">; </span><span class="s1">height:</span><span class="s4"> </span><span class="s10">100vh</span><span class="s4">; }</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s6">.hebrew-text</span><span class="s4"> { </span><span class="s1">direction:</span><span class="s4"> </span><span class="s8">rtl</span><span class="s4">; </span><span class="s1">unicode-bidi:</span><span class="s4"> </span><span class="s8">isolate</span><span class="s4">; </span><span class="s1">font-family:</span><span class="s4"> </span><span class="s9">'Arial'</span><span class="s4">, </span><span class="s8">sans-serif</span><span class="s4">; }</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">.perspective-2000</span><span class="s4"> { </span><span class="s2">perspective:</span><span class="s4"> </span><span class="s10">2000px</span><span class="s4">; }</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">.transform-style-3d</span><span class="s4"> { </span><span class="s2">transform-style:</span><span class="s4"> </span><span class="s8">preserve-3d</span><span class="s4">; }</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s6">.backface-hidden</span><span class="s4"> { </span><span class="s1">backface-visibility:</span><span class="s4"> </span><span class="s8">hidden</span><span class="s4">; }</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s6">.rotate-y-180</span><span class="s1"> { </span><span class="s2">transform:</span><span class="s1"> </span><span class="s8">rotateY(</span><span class="s10">180deg</span><span class="s8">)</span><span class="s1">; }</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s6">.no-select</span><span class="s1"> { </span><span class="s2">user-select:</span><span class="s1"> </span><span class="s8">none</span><span class="s1">; }</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s6">.card-container</span><span class="s1"> { </span><span class="s2">transition:</span><span class="s1"> </span><span class="s8">transform</span><span class="s1"> </span><span class="s10">0.6s</span><span class="s1"> </span><span class="s8">cubic-bezier(</span><span class="s10">0.4</span><span class="s1">, </span><span class="s10">0</span><span class="s1">, </span><span class="s10">0.2</span><span class="s1">, </span><span class="s10">1</span><span class="s8">)</span><span class="s1">; }</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">.hide-scrollbar::-webkit-scrollbar</span><span class="s4"> { </span><span class="s2">display:</span><span class="s4"> </span><span class="s8">none</span><span class="s4">; }</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s6">.hide-scrollbar</span><span class="s4"> { </span><span class="s1">-ms-overflow-style:</span><span class="s4"> </span><span class="s8">none</span><span class="s4">; </span><span class="s1">scrollbar-width:</span><span class="s4"> </span><span class="s8">none</span><span class="s4">; }</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s1">style</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;/</span><span class="s1">head</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;</span><span class="s1">body</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">id</span><span class="s3">=</span><span class="s1">"root"</span><span class="s3">&gt;&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">script</span><span class="s4"> </span><span class="s2">type</span><span class="s3">=</span><span class="s1">"text/babel"</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>const { useState, useEffect, useCallback, useMemo } = React;</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>const MATCH_PAIRS = [</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>{ h: "אֶרֶץ", e: "Land", hex: "#38bdf8" }, { h: "מַיִם", e: "Water", hex: "#60a5fa" },<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>{ h: "שֶׁמֶשׁ", e: "Sun", hex: "#facc15" }, { h: "פְּרִי", e: "Fruit", hex: "#f87171" },</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>{ h: "טֶבַע", e: "Nature", hex: "#34d399" }, { h: "עֵץ", e: "Tree", hex: "#d97706" },<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>{ h: "בְּרָכָה", e: "Blessing", hex: "#818cf8" }, { h: "חַיִּים", e: "Life", hex: "#fb7185" }</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>];</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>const GRAPE_MISSIONS = [</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>{ quote: "Unless someone like you cares a whole awful lot...", source: "The Lorax", prompt: "What local environment part would you stand up for first?", type: "Discussion", fact: "One vine can produce up to 40 clusters of grapes!" },</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>{ quote: "As my ancestors planted for me, so I plant for my children.", source: "Talmud", prompt: "What are we 'planting' for people 50 years from now?", type: "Discussion" },</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>{ quote: "Earth provides enough to satisfy every man's needs, but not every man's greed.", source: "Gandhi", prompt: "How can we practice 'enough-ness' this week?", type: "Discussion" },</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>{ quote: "The best time to plant a tree was 20 years ago. The second best time is now.", source: "Proverb", prompt: "What is a green habit you can start today?", type: "Discussion" },</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>{ quote: "A vine needs a trellis to grow high.", source: "Folklore", prompt: "Who are the 'trellises' (supporters) in your life?", type: "Discussion" },</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>{ quote: "Look deep into nature, then you will understand everything better.", source: "Einstein", prompt: "What is the most complex thing you've seen in nature?", type: "Discussion" },</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>{ quote: "To walk in nature is to witness a thousand miracles.", source: "Mary Davis", prompt: "Name one 'tiny miracle' you saw outside today?", type: "Discussion" },</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>{ quote: "The vine produces clusters, not single grapes.", source: "Proverb", prompt: "How is our class like a cluster of grapes?", type: "Discussion" },</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>{ quote: "Don't destroy the fruit-bearing trees.", source: "Torah", prompt: "Why is it important not to waste resources (Bal Tashchit)?", type: "Discussion" },</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>{ quote: "Every blade of grass has an angel whispering 'Grow'.", source: "Midrash", prompt: "What whispers 'grow' to you when things are hard?", type: "Discussion" }</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>];</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>const SPECIES_DATA = {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>wheat: { en: "Wheat", he: "חִטָּה", hex: "#f59e0b", bg: "bg-amber-500", border: "border-amber-500" },</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>barley: { en: "Barley", he: "שְׂעוֹרָה", hex: "#eab308", bg: "bg-yellow-400", border: "border-yellow-400" },</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>grape: { en: "Grapes", he: "עֲנָבִים", hex: "#6366f1", bg: "bg-indigo-500", border: "border-indigo-500" },</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>fig: { en: "Figs", he: "תְּאֵנִים", hex: "#9333ea", bg: "bg-purple-600", border: "border-purple-600" },</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>pomegranate: { en: "Pomegranate", he: "רִמּוֹן", hex: "#dc2626", bg: "bg-red-600", border: "border-red-600" },</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>olive: { en: "Olives", he: "זֵיתִים", hex: "#65a30d", bg: "bg-lime-600", border: "border-lime-600" },</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>date: { en: "Dates", he: "תְּמָרִים", hex: "#c2410c", bg: "bg-orange-700", border: "border-orange-700" }</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>};</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>const LucideIcon = ({ name, size = 24, className = "" }) =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const [svg, setSvg] = useState("");</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>useEffect(() =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>const checkLucide = setInterval(() =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>if (window.lucide) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>const icon = window.lucide.icons[name];</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>if (icon) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>const s = `&lt;svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"&gt;${icon[1].map(i =&gt; `&lt;${i[0]} ${Object.entries(i[1]).map(([k,v]) =&gt; `${k}="${v}"`).join(' ')} /&gt;`).join('')}&lt;/svg&gt;`;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>setSvg(s); clearInterval(checkLucide);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>}, 50);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>return () =&gt; clearInterval(checkLucide);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>}, [name, size]);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>return &lt;span className={className} dangerouslySetInnerHTML={{ __html: svg }} /&gt;;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>};</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>const SpeciesIcon = ({ type, className = "", color = "currentColor", fill = "none" }) =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const icons = {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>wheat: &lt;path d="M12 22V12M12 12L8 8M12 12L16 8M12 8V2M12 8L8 4" /&gt;,</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>barley: &lt;path d="M12 22V10M12 10C12 10 16 8 16 5M12 10C12 10 8 8 8 5" /&gt;,</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>grape: &lt;g&gt;&lt;circle cx="12" cy="7" r="2.5"/&gt;&lt;circle cx="9.5" cy="11" r="2.5"/&gt;&lt;circle cx="14.5" cy="11" r="2.5"/&gt;&lt;circle cx="12" cy="15" r="2.5"/&gt;&lt;/g&gt;,</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>fig: &lt;path d="M12 22C12 22 19 18 19 13C19 8 12 3 12 3C12 3 5 8 5 13C5 18 12 22 12 22Z" /&gt;,</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>pomegranate: &lt;g&gt;&lt;path d="M12 21C16.5 21 20 17.5 20 13C20 8.5 16 5 12 5C8 5 4 8.5 4 13C4 17.5 7.5 21 12 21Z"/&gt;&lt;path d="M9 5L8 2M12 5V2M15 5L16 2"/&gt;&lt;/g&gt;,</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>olive: &lt;ellipse cx="12" cy="13" rx="5" ry="7" /&gt;,</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>date: &lt;path d="M12 22V5M12 5C12 5 18 7 21 12M12 5C12 5 6 7 3 12" /&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>};</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>return &lt;svg viewBox="0 0 24 24" fill={fill} stroke={color} strokeWidth="2.5" strokeLinecap="round" className={className}&gt;{icons[type]}&lt;/svg&gt;;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>};</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>const ProgressRing = ({ progress, color, size = 48 }) =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const radius = 20;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const circumference = 2 * Math.PI * radius;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const offset = circumference - (progress / 100) * circumference;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>return (</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>&lt;svg width={size} height={size} className="transform -rotate-90"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;circle cx={size/2} cy={size/2} r={radius} stroke="currentColor" strokeWidth="4" fill="transparent" className="opacity-10" /&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;circle cx={size/2} cy={size/2} r={radius} stroke={color} strokeWidth="4" fill="transparent" strokeDasharray={circumference} style={{ strokeDashoffset: offset, transition: 'stroke-dashoffset 0.8s ease' }} strokeLinecap="round" /&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/svg&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>};</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>const App = () =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const [roster, setRoster] = useState(["Alex", "Marshall", "Kai", "Adi", "Aaron", "David", "Brenner"]);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const [inventory, setInventory] = useState({});</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const [activeSpecies, setActiveSpecies] = useState('wheat');</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const [cardState, setCardState] = useState('back');</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const [challenge, setChallenge] = useState(null);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const [selectedAgents, setSelectedAgents] = useState([]);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const [showSettings, setShowSettings] = useState(false);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const [targetPerSpecies, setTargetPerSpecies] = useState(3);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const [groupSize, setGroupSize] = useState(2);</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const [memoryCards, setMemoryCards] = useState([]);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const [flippedIndices, setFlippedIndices] = useState([]);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const [matchedIds, setMatchedIds] = useState([]);</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const initMemoryGame = useCallback(() =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>const cards = [];</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>MATCH_PAIRS.forEach((pair, i) =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>cards.push({ id: `h-${i}`, text: pair.h, matchId: i, type: 'he', color: pair.hex });</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>cards.push({ id: `e-${i}`, text: pair.e, matchId: i, type: 'en', color: pair.hex });</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>});</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>setMemoryCards(cards.sort(() =&gt; Math.random() - 0.5));</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>setFlippedIndices([]);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>setMatchedIds([]);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>}, []);</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>useEffect(() =&gt; { initMemoryGame(); }, [initMemoryGame]);</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const generateMission = useCallback(() =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>if (activeSpecies === 'pomegranate') return;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>let next;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>if (activeSpecies === 'grape') {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>next = GRAPE_MISSIONS[Math.floor(Math.random() * GRAPE_MISSIONS.length)];</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>} else {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>const deck = [</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>{ id: "w1", prompt: "אִילָן", answer: "אִילָן (Tree)", type: "Vocab", hasAnswer: true },</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>{ id: "b1", prompt: "How many 'New Years' are in the Jewish calendar?", answer: "Four", type: "Trivia", hasAnswer: true },</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>{ id: "d1", prompt: "The act of 'Repairing the World' through justice and kindness.", answer: "Tikkun Olam", type: "Jeopardy", hasAnswer: true }</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>];</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>next = deck[Math.floor(Math.random() * deck.length)];</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>setChallenge(next);</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>// Only select agents for Fig and Olive</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>if (activeSpecies === 'fig' || activeSpecies === 'olive') {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>const pool = [...roster].sort(() =&gt; 0.5 - Math.random());</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>setSelectedAgents(pool.slice(0, groupSize));</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>} else {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>setSelectedAgents([]);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>}, [activeSpecies, roster, groupSize]);</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>useEffect(() =&gt; { generateMission(); }, [activeSpecies, generateMission]);</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const handleFlip = (idx) =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>if (flippedIndices.length === 2 || flippedIndices.includes(idx) || matchedIds.includes(memoryCards[idx].matchId)) return;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>const newFlipped = [...flippedIndices, idx];</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>setFlippedIndices(newFlipped);</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>if (newFlipped.length === 2) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>const [first, second] = newFlipped;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>if (memoryCards[first].matchId === memoryCards[second].matchId) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>setMatchedIds(prev =&gt; [...prev, memoryCards[first].matchId]);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>setFlippedIndices([]);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>if (matchedIds.length + 1 === MATCH_PAIRS.length) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>setTimeout(() =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>setInventory(prev =&gt; ({ ...prev, pomegranate: (prev.pomegranate || 0) + 1 }));</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>initMemoryGame();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>}, 1500);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>} else {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>setTimeout(() =&gt; setFlippedIndices([]), 1000);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>};</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const completeMission = () =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>setInventory(prev =&gt; ({ ...prev, [activeSpecies]: (prev[activeSpecies] || 0) + 1 }));</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>setCardState('back');</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>setTimeout(generateMission, 500);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>};</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>const tikkunProgress = (Object.keys(SPECIES_DATA).filter(k =&gt; (inventory[k] || 0) &gt;= targetPerSpecies).length / 7) * 100;</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>return (</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div className="h-screen flex flex-col bg-slate-950 text-white overflow-hidden no-select"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;header className="h-20 bg-slate-900/80 border-b border-white/10 px-8 flex items-center justify-between shrink-0 z-[60]"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div className="flex items-center gap-6"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div className="p-2.5 bg-emerald-500 rounded-xl shadow-lg shadow-emerald-500/20"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;SpeciesIcon type="date" className="w-7 h-7 text-white" /&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;h1 className="text-xl font-black uppercase tracking-tighter leading-none"&gt;The Seven Species Mission&lt;/h1&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mt-1 block"&gt;Planting Seeds for Tomorrow&lt;/span&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;button onClick={() =&gt; setShowSettings(true)} className="p-3 hover:bg-white/10 rounded-full transition-colors"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;LucideIcon name="settings-2" /&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/button&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/header&gt;</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;main className="flex-grow flex p-6 gap-6 overflow-hidden"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div className="w-72 flex flex-col gap-2 shrink-0 hide-scrollbar overflow-y-auto"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>{Object.entries(SPECIES_DATA).map(([key, data]) =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>const count = inventory[key] || 0;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>const isDone = count &gt;= targetPerSpecies;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>const isActive = activeSpecies === key;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>const progress = Math.min((count / targetPerSpecies) * 100, 100);</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>return (</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;button key={key} onClick={() =&gt; {setActiveSpecies(key); setCardState('back');}}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>className={`py-6 px-5 rounded-2xl border-2 transition-all flex items-center gap-4 relative overflow-hidden group</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>${isDone ? data.bg + ' border-transparent' : isActive ? 'bg-white border-white text-slate-950 shadow-xl' : 'bg-slate-900/60 border-white/5 opacity-70 hover:opacity-100'}`}&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;div className="relative shrink-0"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;div className="absolute inset-0 flex items-center justify-center"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>&lt;ProgressRing progress={progress} color={isDone ? '#fff' : data.hex} size={44} /&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;div className={`w-10 h-10 rounded-xl flex items-center justify-center relative z-10 transition-colors ${isActive ? 'bg-slate-100' : isDone ? 'bg-white/20' : 'bg-white/5'}`}&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>&lt;SpeciesIcon type={key} className="w-6 h-6" color={isActive ? data.hex : 'white'} /&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;div className="text-left flex-grow min-w-0 z-10"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;div className={`text-[10px] font-black uppercase tracking-widest mb-1 truncate ${isActive ? 'text-slate-500' : isDone ? 'text-white/80' : 'text-slate-400'}`}&gt;{data.en}&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;div className={`text-xl font-black hebrew-text truncate ${isDone ? 'text-white' : ''}`}&gt;{data.he}&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>{isDone &amp;&amp; &lt;LucideIcon name="check-circle" size={18} className="text-white shrink-0 z-10" /&gt;}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;/button&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>})}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div className="flex-grow flex flex-col items-center justify-center relative min-h-0"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>{cardState !== 'back' &amp;&amp; activeSpecies !== 'pomegranate' &amp;&amp; (</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;div className="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-10 transition-opacity" /&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>)}</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>{activeSpecies === 'pomegranate' ? (</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;div className="w-full h-full max-h-[85vh] grid grid-cols-4 grid-rows-4 gap-4 p-4"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                    </span>{memoryCards.map((card, idx) =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>const isFlipped = flippedIndices.includes(idx) || matchedIds.includes(card.matchId);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>const isMatched = matchedIds.includes(card.matchId);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>return (</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;div key={card.id} onClick={() =&gt; handleFlip(idx)} className="perspective-2000 cursor-pointer w-full h-full min-h-0"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>&lt;div className={`relative w-full h-full card-container transform-style-3d ${isFlipped ? 'rotate-y-180' : ''}`}&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>&lt;div className="absolute inset-0 backface-hidden bg-red-600 rounded-2xl flex items-center justify-center border-4 border-white/20 shadow-lg"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                        </span>&lt;span className="text-3xl font-black text-white/40"&gt;{idx + 1}&lt;/span&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>&lt;div className={`absolute inset-0 rotate-y-180 backface-hidden bg-white rounded-2xl border-4 flex flex-col items-center justify-center p-2 text-center shadow-xl transition-colors duration-500`}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                        </span>style={{ borderColor: isMatched ? card.color : '#e2e8f0' }}&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                        </span>&lt;span className={`text-2xl font-black text-black leading-tight ${card.type === 'he' ? 'hebrew-text' : ''}`}&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                            </span>{card.text}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                        </span>&lt;/span&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                    </span>})}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>) : (</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;div className="flex flex-col items-center w-full h-full justify-center gap-10 z-20"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                    </span>{selectedAgents.length &gt; 0 &amp;&amp; (</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;div className="flex gap-4 animate-in slide-in-from-top-4"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>{selectedAgents.map(a =&gt; (</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>&lt;div key={a} className="px-6 py-3 bg-white text-slate-950 rounded-2xl border-[3px] border-emerald-500 shadow-xl font-black uppercase text-lg flex items-center gap-3"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>&lt;div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-xs text-white"&gt;{a[0]}&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>{a}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>))}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                    </span>)}</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;div className="w-full max-w-xl aspect-[3/4] perspective-2000"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;div className={`w-full h-full transform-style-3d transition-all duration-700 ${cardState !== 'back' ? 'rotate-y-180' : ''}`}&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;div className="absolute inset-0 backface-hidden bg-white rounded-[3rem] p-4 shadow-2xl"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>&lt;div className={`w-full h-full ${SPECIES_DATA[activeSpecies].bg} rounded-[2.5rem] flex flex-col items-center justify-center text-white relative overflow-hidden`}&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>&lt;div className="absolute inset-0 opacity-10 pointer-events-none"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                        </span>&lt;SpeciesIcon type={activeSpecies} className="w-full h-full scale-125" color="white" fill="white" /&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>&lt;h2 className="text-7xl font-black uppercase tracking-tighter mb-4 z-10"&gt;{SPECIES_DATA[activeSpecies].en}&lt;/h2&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>&lt;button onClick={() =&gt; setCardState('front')} className="mt-8 px-14 py-6 bg-white text-slate-950 rounded-2xl font-black text-2xl uppercase tracking-widest shadow-2xl hover:scale-105 active:scale-95 transition-all z-10"&gt;Start Mission&lt;/button&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;/div&gt;</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;div className="absolute inset-0 rotate-y-180 backface-hidden bg-white rounded-[3rem] p-12 flex flex-col shadow-2xl border-[16px] border-slate-50"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>&lt;div className="flex-grow flex flex-col items-center justify-center text-center"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>{activeSpecies === 'grape' &amp;&amp; challenge?.quote &amp;&amp; (</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                        </span>&lt;div className="mb-6 animate-in fade-in slide-in-from-bottom-2"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                            </span>&lt;div className="text-2xl font-serif italic text-slate-600 mb-2 leading-relaxed"&gt;"{challenge.quote}"&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                            </span>&lt;div className="text-xs font-black uppercase tracking-widest text-emerald-600"&gt;— {challenge.source}&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                        </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>)}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>&lt;div className={`font-black text-slate-900 leading-tight mb-8 ${challenge?.prompt?.length &gt; 40 ? 'text-3xl' : 'text-5xl'}`}&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                        </span>{challenge?.prompt}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>{cardState === 'reveal' &amp;&amp; challenge?.hasAnswer &amp;&amp; (</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                        </span>&lt;div className="p-6 bg-emerald-50 rounded-2xl border-4 border-emerald-100 animate-in zoom-in w-full text-3xl font-black text-emerald-600 uppercase"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                            </span>{challenge.answer}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                        </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>)}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>&lt;button onClick={challenge?.hasAnswer &amp;&amp; cardState === 'front' ? () =&gt; setCardState('reveal') : completeMission}<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>className={`w-full py-6 ${SPECIES_DATA[activeSpecies].bg} text-white rounded-2xl font-black text-xl uppercase tracking-widest shadow-xl active:scale-95 transition-all`}&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>{challenge?.hasAnswer &amp;&amp; cardState === 'front' ? 'Reveal Answer' : 'Mission Success'}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>&lt;/button&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>)}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div className="w-24 flex flex-col items-center shrink-0 h-full"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;span className="text-2xl font-black text-emerald-400 mb-2"&gt;{Math.round(tikkunProgress)}&lt;/span&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div className="flex-grow w-16 bg-slate-900/40 rounded-full border border-white/10 flex flex-col-reverse p-2 relative overflow-hidden shadow-inner"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;div className="absolute bottom-0 inset-x-0 bg-emerald-500/30 transition-all duration-1000 ease-out" style={{ height: `${tikkunProgress}%` }} /&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;div className="z-10 flex flex-col-reverse gap-3"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                    </span>{Object.keys(SPECIES_DATA).map(k =&gt; (inventory[k] || 0) &gt;= targetPerSpecies &amp;&amp; (</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;div key={k} className={`w-full aspect-square rounded-full flex items-center justify-center ${SPECIES_DATA[k].bg} border-4 border-slate-950 shadow-xl animate-in zoom-in duration-500`}&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;SpeciesIcon type={k} className="w-8 h-8 text-white" /&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                    </span>))}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/main&gt;</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>{showSettings &amp;&amp; (</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div className="fixed inset-0 bg-slate-950/95 z-[100] flex items-center justify-center p-6 backdrop-blur-md"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div className="bg-slate-900 w-full max-w-2xl rounded-[3rem] border border-white/10 p-10 shadow-2xl overflow-y-auto max-h-[90vh]"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;div className="flex justify-between items-center mb-10"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;h2 className="text-4xl font-black uppercase italic tracking-tighter"&gt;Mission Config&lt;/h2&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;button onClick={() =&gt; setShowSettings(false)} className="p-2 hover:bg-white/10 rounded-full"&gt;&lt;LucideIcon name="x" size={32} /&gt;&lt;/button&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;div className="grid grid-cols-2 gap-10"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;div className="space-y-8"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;section&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4 block"&gt;Missions Per Species&lt;/label&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;div className="flex gap-2"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>{[1, 3, 5, 10].map(val =&gt; (</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>&lt;button key={val} onClick={() =&gt; setTargetPerSpecies(val)}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                        </span>className={`flex-grow py-4 rounded-xl font-black text-xl transition-all ${targetPerSpecies === val ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                        </span>{val}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>&lt;/button&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>))}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;/section&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;section&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4 block"&gt;Team Size (Fig/Olive)&lt;/label&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;div className="flex gap-2"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>{[1, 2, 3, 4].map(val =&gt; (</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>&lt;button key={val} onClick={() =&gt; setGroupSize(val)}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                        </span>className={`flex-grow py-4 rounded-xl font-black text-xl transition-all ${groupSize === val ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/30' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                        </span>{val}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>&lt;/button&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>))}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;/section&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;/div&gt;</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;section&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4 block"&gt;Field Agents ({roster.length})&lt;/label&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;div className="bg-slate-950/50 rounded-2xl p-4 border border-white/5 max-h-64 overflow-y-auto hide-scrollbar mb-4 space-y-2"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>{roster.map((name, i) =&gt; (</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>&lt;div key={i} className="bg-slate-800/80 px-4 py-3 rounded-xl flex items-center justify-between group"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>&lt;span className="font-bold tracking-tight"&gt;{name}&lt;/span&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>&lt;button onClick={() =&gt; setRoster(roster.filter((_, idx) =&gt; idx !== i))} className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg transition-all" title="Remove Agent"&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                        </span>&lt;LucideIcon name="trash-2" size={18} /&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                    </span>&lt;/button&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>))}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>{roster.length === 0 &amp;&amp; &lt;div className="text-center py-8 text-slate-600 italic"&gt;No agents recruited...&lt;/div&gt;}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;form className="flex gap-2" onSubmit={(e) =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>e.preventDefault();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>const name = e.target.agentName.value.trim();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>if (name) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>setRoster([...roster, name]);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                                </span>e.target.reset();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>}}&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;input name="agentName" placeholder="New Agent Name..." className="flex-grow bg-slate-950 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition-colors" /&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;button className="bg-emerald-500 px-6 rounded-xl font-black uppercase tracking-widest text-xs"&gt;Add&lt;/button&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;/form&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;/section&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;button onClick={() =&gt; setShowSettings(false)} className="w-full mt-12 py-5 bg-white text-slate-950 rounded-2xl font-black uppercase tracking-widest text-xl hover:bg-slate-100 transition-colors shadow-2xl"&gt;Save &amp; Resume Missions&lt;/button&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>)}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>};</span></p>
-<p class="p7"><span class="s11"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>const root = ReactDOM.createRoot(document.getElementById('root'));</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>root.render(&lt;App /&gt;);</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s1">script</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">script</span><span class="s4"> </span><span class="s2">src</span><span class="s3">=</span><span class="s1">"https://unpkg.com/lucide@latest"</span><span class="s3">&gt;&lt;/</span><span class="s6">script</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;/</span><span class="s1">body</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;/</span><span class="s1">html</span><span class="s3">&gt;</span></p>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback, useMemo } = React;
+
+        const MATCH_PAIRS = [
+            { h: "אֶרֶץ", e: "Land", hex: "#38bdf8" }, { h: "מַיִם", e: "Water", hex: "#60a5fa" }, 
+            { h: "שֶׁמֶשׁ", e: "Sun", hex: "#facc15" }, { h: "פְּרִי", e: "Fruit", hex: "#f87171" },
+            { h: "טֶבַע", e: "Nature", hex: "#34d399" }, { h: "עֵץ", e: "Tree", hex: "#d97706" }, 
+            { h: "בְּרָכָה", e: "Blessing", hex: "#818cf8" }, { h: "חַיִּים", e: "Life", hex: "#fb7185" }
+        ];
+
+        const GRAPE_MISSIONS = [
+            { quote: "Unless someone like you cares a whole awful lot...", source: "The Lorax", prompt: "What local environment part would you stand up for first?", type: "Discussion", fact: "One vine can produce up to 40 clusters of grapes!" },
+            { quote: "As my ancestors planted for me, so I plant for my children.", source: "Talmud", prompt: "What are we 'planting' for people 50 years from now?", type: "Discussion" },
+            { quote: "Earth provides enough to satisfy every man's needs, but not every man's greed.", source: "Gandhi", prompt: "How can we practice 'enough-ness' this week?", type: "Discussion" },
+            { quote: "The best time to plant a tree was 20 years ago. The second best time is now.", source: "Proverb", prompt: "What is a green habit you can start today?", type: "Discussion" },
+            { quote: "A vine needs a trellis to grow high.", source: "Folklore", prompt: "Who are the 'trellises' (supporters) in your life?", type: "Discussion" },
+            { quote: "Look deep into nature, then you will understand everything better.", source: "Einstein", prompt: "What is the most complex thing you've seen in nature?", type: "Discussion" },
+            { quote: "To walk in nature is to witness a thousand miracles.", source: "Mary Davis", prompt: "Name one 'tiny miracle' you saw outside today?", type: "Discussion" },
+            { quote: "The vine produces clusters, not single grapes.", source: "Proverb", prompt: "How is our class like a cluster of grapes?", type: "Discussion" },
+            { quote: "Don't destroy the fruit-bearing trees.", source: "Torah", prompt: "Why is it important not to waste resources (Bal Tashchit)?", type: "Discussion" },
+            { quote: "Every blade of grass has an angel whispering 'Grow'.", source: "Midrash", prompt: "What whispers 'grow' to you when things are hard?", type: "Discussion" }
+        ];
+
+        const SPECIES_DATA = {
+            wheat: { en: "Wheat", he: "חִטָּה", hex: "#f59e0b", bg: "bg-amber-500", border: "border-amber-500" },
+            barley: { en: "Barley", he: "שְׂעוֹרָה", hex: "#eab308", bg: "bg-yellow-400", border: "border-yellow-400" },
+            grape: { en: "Grapes", he: "עֲנָבִים", hex: "#6366f1", bg: "bg-indigo-500", border: "border-indigo-500" },
+            fig: { en: "Figs", he: "תְּאֵנִים", hex: "#9333ea", bg: "bg-purple-600", border: "border-purple-600" },
+            pomegranate: { en: "Pomegranate", he: "רִמּוֹן", hex: "#dc2626", bg: "bg-red-600", border: "border-red-600" },
+            olive: { en: "Olives", he: "זֵיתִים", hex: "#65a30d", bg: "bg-lime-600", border: "border-lime-600" },
+            date: { en: "Dates", he: "תְּמָרִים", hex: "#c2410c", bg: "bg-orange-700", border: "border-orange-700" }
+        };
+
+        const LucideIcon = ({ name, size = 24, className = "" }) => {
+            const [svg, setSvg] = useState("");
+            useEffect(() => {
+                const checkLucide = setInterval(() => {
+                    if (window.lucide) {
+                        const icon = window.lucide.icons[name];
+                        if (icon) {
+                            const s = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${icon[1].map(i => `<${i[0]} ${Object.entries(i[1]).map(([k,v]) => `${k}="${v}"`).join(' ')} />`).join('')}</svg>`;
+                            setSvg(s); clearInterval(checkLucide);
+                        }
+                    }
+                }, 50);
+                return () => clearInterval(checkLucide);
+            }, [name, size]);
+            return <span className={className} dangerouslySetInnerHTML={{ __html: svg }} />;
+        };
+
+        const SpeciesIcon = ({ type, className = "", color = "currentColor", fill = "none" }) => {
+            const icons = {
+                wheat: <path d="M12 22V12M12 12L8 8M12 12L16 8M12 8V2M12 8L8 4" />,
+                barley: <path d="M12 22V10M12 10C12 10 16 8 16 5M12 10C12 10 8 8 8 5" />,
+                grape: <g><circle cx="12" cy="7" r="2.5"/><circle cx="9.5" cy="11" r="2.5"/><circle cx="14.5" cy="11" r="2.5"/><circle cx="12" cy="15" r="2.5"/></g>,
+                fig: <path d="M12 22C12 22 19 18 19 13C19 8 12 3 12 3C12 3 5 8 5 13C5 18 12 22 12 22Z" />,
+                pomegranate: <g><path d="M12 21C16.5 21 20 17.5 20 13C20 8.5 16 5 12 5C8 5 4 8.5 4 13C4 17.5 7.5 21 12 21Z"/><path d="M9 5L8 2M12 5V2M15 5L16 2"/></g>,
+                olive: <ellipse cx="12" cy="13" rx="5" ry="7" />,
+                date: <path d="M12 22V5M12 5C12 5 18 7 21 12M12 5C12 5 6 7 3 12" />
+            };
+            return <svg viewBox="0 0 24 24" fill={fill} stroke={color} strokeWidth="2.5" strokeLinecap="round" className={className}>{icons[type]}</svg>;
+        };
+
+        const ProgressRing = ({ progress, color, size = 48 }) => {
+            const radius = 20;
+            const circumference = 2 * Math.PI * radius;
+            const offset = circumference - (progress / 100) * circumference;
+            return (
+                <svg width={size} height={size} className="transform -rotate-90">
+                    <circle cx={size/2} cy={size/2} r={radius} stroke="currentColor" strokeWidth="4" fill="transparent" className="opacity-10" />
+                    <circle cx={size/2} cy={size/2} r={radius} stroke={color} strokeWidth="4" fill="transparent" strokeDasharray={circumference} style={{ strokeDashoffset: offset, transition: 'stroke-dashoffset 0.8s ease' }} strokeLinecap="round" />
+                </svg>
+            );
+        };
+
+        const App = () => {
+            const [roster, setRoster] = useState(["Alex", "Marshall", "Kai", "Adi", "Aaron", "David", "Brenner"]);
+            const [inventory, setInventory] = useState({});
+            const [activeSpecies, setActiveSpecies] = useState('wheat');
+            const [cardState, setCardState] = useState('back');
+            const [challenge, setChallenge] = useState(null);
+            const [selectedAgents, setSelectedAgents] = useState([]);
+            const [showSettings, setShowSettings] = useState(false);
+            const [targetPerSpecies, setTargetPerSpecies] = useState(3);
+            const [groupSize, setGroupSize] = useState(2);
+            
+            const [memoryCards, setMemoryCards] = useState([]);
+            const [flippedIndices, setFlippedIndices] = useState([]);
+            const [matchedIds, setMatchedIds] = useState([]);
+
+            const initMemoryGame = useCallback(() => {
+                const cards = [];
+                MATCH_PAIRS.forEach((pair, i) => {
+                    cards.push({ id: `h-${i}`, text: pair.h, matchId: i, type: 'he', color: pair.hex });
+                    cards.push({ id: `e-${i}`, text: pair.e, matchId: i, type: 'en', color: pair.hex });
+                });
+                setMemoryCards(cards.sort(() => Math.random() - 0.5));
+                setFlippedIndices([]);
+                setMatchedIds([]);
+            }, []);
+
+            useEffect(() => { initMemoryGame(); }, [initMemoryGame]);
+
+            const generateMission = useCallback(() => {
+                if (activeSpecies === 'pomegranate') return;
+                
+                let next;
+                if (activeSpecies === 'grape') {
+                    next = GRAPE_MISSIONS[Math.floor(Math.random() * GRAPE_MISSIONS.length)];
+                } else {
+                    const deck = [
+                        { id: "w1", prompt: "אִילָן", answer: "אִילָן (Tree)", type: "Vocab", hasAnswer: true },
+                        { id: "b1", prompt: "How many 'New Years' are in the Jewish calendar?", answer: "Four", type: "Trivia", hasAnswer: true },
+                        { id: "d1", prompt: "The act of 'Repairing the World' through justice and kindness.", answer: "Tikkun Olam", type: "Jeopardy", hasAnswer: true }
+                    ];
+                    next = deck[Math.floor(Math.random() * deck.length)];
+                }
+                
+                setChallenge(next);
+                
+                // Only select agents for Fig and Olive
+                if (activeSpecies === 'fig' || activeSpecies === 'olive') {
+                    const pool = [...roster].sort(() => 0.5 - Math.random());
+                    setSelectedAgents(pool.slice(0, groupSize));
+                } else {
+                    setSelectedAgents([]);
+                }
+            }, [activeSpecies, roster, groupSize]);
+
+            useEffect(() => { generateMission(); }, [activeSpecies, generateMission]);
+
+            const handleFlip = (idx) => {
+                if (flippedIndices.length === 2 || flippedIndices.includes(idx) || matchedIds.includes(memoryCards[idx].matchId)) return;
+                const newFlipped = [...flippedIndices, idx];
+                setFlippedIndices(newFlipped);
+
+                if (newFlipped.length === 2) {
+                    const [first, second] = newFlipped;
+                    if (memoryCards[first].matchId === memoryCards[second].matchId) {
+                        setMatchedIds(prev => [...prev, memoryCards[first].matchId]);
+                        setFlippedIndices([]);
+                        if (matchedIds.length + 1 === MATCH_PAIRS.length) {
+                            setTimeout(() => {
+                                setInventory(prev => ({ ...prev, pomegranate: (prev.pomegranate || 0) + 1 }));
+                                initMemoryGame();
+                            }, 1500);
+                        }
+                    } else {
+                        setTimeout(() => setFlippedIndices([]), 1000);
+                    }
+                }
+            };
+
+            const completeMission = () => {
+                setInventory(prev => ({ ...prev, [activeSpecies]: (prev[activeSpecies] || 0) + 1 }));
+                setCardState('back');
+                setTimeout(generateMission, 500);
+            };
+
+            const tikkunProgress = (Object.keys(SPECIES_DATA).filter(k => (inventory[k] || 0) >= targetPerSpecies).length / 7) * 100;
+
+            return (
+                <div className="h-screen flex flex-col bg-slate-950 text-white overflow-hidden no-select">
+                    <header className="h-20 bg-slate-900/80 border-b border-white/10 px-8 flex items-center justify-between shrink-0 z-[60]">
+                        <div className="flex items-center gap-6">
+                            <div className="p-2.5 bg-emerald-500 rounded-xl shadow-lg shadow-emerald-500/20">
+                                <SpeciesIcon type="date" className="w-7 h-7 text-white" />
+                            </div>
+                            <div>
+                                <h1 className="text-xl font-black uppercase tracking-tighter leading-none">The Seven Species Mission</h1>
+                                <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mt-1 block">Planting Seeds for Tomorrow</span>
+                            </div>
+                        </div>
+                        <button onClick={() => setShowSettings(true)} className="p-3 hover:bg-white/10 rounded-full transition-colors">
+                            <LucideIcon name="settings-2" />
+                        </button>
+                    </header>
+
+                    <main className="flex-grow flex p-6 gap-6 overflow-hidden">
+                        <div className="w-72 flex flex-col gap-2 shrink-0 hide-scrollbar overflow-y-auto">
+                            {Object.entries(SPECIES_DATA).map(([key, data]) => {
+                                const count = inventory[key] || 0;
+                                const isDone = count >= targetPerSpecies;
+                                const isActive = activeSpecies === key;
+                                const progress = Math.min((count / targetPerSpecies) * 100, 100);
+
+                                return (
+                                    <button key={key} onClick={() => {setActiveSpecies(key); setCardState('back');}}
+                                        className={`py-6 px-5 rounded-2xl border-2 transition-all flex items-center gap-4 relative overflow-hidden group
+                                            ${isDone ? data.bg + ' border-transparent' : isActive ? 'bg-white border-white text-slate-950 shadow-xl' : 'bg-slate-900/60 border-white/5 opacity-70 hover:opacity-100'}`}>
+                                        <div className="relative shrink-0">
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <ProgressRing progress={progress} color={isDone ? '#fff' : data.hex} size={44} />
+                                            </div>
+                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center relative z-10 transition-colors ${isActive ? 'bg-slate-100' : isDone ? 'bg-white/20' : 'bg-white/5'}`}>
+                                                <SpeciesIcon type={key} className="w-6 h-6" color={isActive ? data.hex : 'white'} />
+                                            </div>
+                                        </div>
+                                        <div className="text-left flex-grow min-w-0 z-10">
+                                            <div className={`text-[10px] font-black uppercase tracking-widest mb-1 truncate ${isActive ? 'text-slate-500' : isDone ? 'text-white/80' : 'text-slate-400'}`}>{data.en}</div>
+                                            <div className={`text-xl font-black hebrew-text truncate ${isDone ? 'text-white' : ''}`}>{data.he}</div>
+                                        </div>
+                                        {isDone && <LucideIcon name="check-circle" size={18} className="text-white shrink-0 z-10" />}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        <div className="flex-grow flex flex-col items-center justify-center relative min-h-0">
+                            {cardState !== 'back' && activeSpecies !== 'pomegranate' && (
+                                <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-10 transition-opacity" />
+                            )}
+
+                            {activeSpecies === 'pomegranate' ? (
+                                <div className="w-full h-full max-h-[85vh] grid grid-cols-4 grid-rows-4 gap-4 p-4">
+                                    {memoryCards.map((card, idx) => {
+                                        const isFlipped = flippedIndices.includes(idx) || matchedIds.includes(card.matchId);
+                                        const isMatched = matchedIds.includes(card.matchId);
+                                        return (
+                                            <div key={card.id} onClick={() => handleFlip(idx)} className="perspective-2000 cursor-pointer w-full h-full min-h-0">
+                                                <div className={`relative w-full h-full card-container transform-style-3d ${isFlipped ? 'rotate-y-180' : ''}`}>
+                                                    <div className="absolute inset-0 backface-hidden bg-red-600 rounded-2xl flex items-center justify-center border-4 border-white/20 shadow-lg">
+                                                        <span className="text-3xl font-black text-white/40">{idx + 1}</span>
+                                                    </div>
+                                                    <div className={`absolute inset-0 rotate-y-180 backface-hidden bg-white rounded-2xl border-4 flex flex-col items-center justify-center p-2 text-center shadow-xl transition-colors duration-500`}
+                                                        style={{ borderColor: isMatched ? card.color : '#e2e8f0' }}>
+                                                        <span className={`text-2xl font-black text-black leading-tight ${card.type === 'he' ? 'hebrew-text' : ''}`}>
+                                                            {card.text}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center w-full h-full justify-center gap-10 z-20">
+                                    {selectedAgents.length > 0 && (
+                                        <div className="flex gap-4 animate-in slide-in-from-top-4">
+                                            {selectedAgents.map(a => (
+                                                <div key={a} className="px-6 py-3 bg-white text-slate-950 rounded-2xl border-[3px] border-emerald-500 shadow-xl font-black uppercase text-lg flex items-center gap-3">
+                                                    <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-xs text-white">{a[0]}</div>
+                                                    {a}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    <div className="w-full max-w-xl aspect-[3/4] perspective-2000">
+                                        <div className={`w-full h-full transform-style-3d transition-all duration-700 ${cardState !== 'back' ? 'rotate-y-180' : ''}`}>
+                                            <div className="absolute inset-0 backface-hidden bg-white rounded-[3rem] p-4 shadow-2xl">
+                                                <div className={`w-full h-full ${SPECIES_DATA[activeSpecies].bg} rounded-[2.5rem] flex flex-col items-center justify-center text-white relative overflow-hidden`}>
+                                                    <div className="absolute inset-0 opacity-10 pointer-events-none">
+                                                        <SpeciesIcon type={activeSpecies} className="w-full h-full scale-125" color="white" fill="white" />
+                                                    </div>
+                                                    <h2 className="text-7xl font-black uppercase tracking-tighter mb-4 z-10">{SPECIES_DATA[activeSpecies].en}</h2>
+                                                    <button onClick={() => setCardState('front')} className="mt-8 px-14 py-6 bg-white text-slate-950 rounded-2xl font-black text-2xl uppercase tracking-widest shadow-2xl hover:scale-105 active:scale-95 transition-all z-10">Start Mission</button>
+                                                </div>
+                                            </div>
+
+                                            <div className="absolute inset-0 rotate-y-180 backface-hidden bg-white rounded-[3rem] p-12 flex flex-col shadow-2xl border-[16px] border-slate-50">
+                                                <div className="flex-grow flex flex-col items-center justify-center text-center">
+                                                    {activeSpecies === 'grape' && challenge?.quote && (
+                                                        <div className="mb-6 animate-in fade-in slide-in-from-bottom-2">
+                                                            <div className="text-2xl font-serif italic text-slate-600 mb-2 leading-relaxed">"{challenge.quote}"</div>
+                                                            <div className="text-xs font-black uppercase tracking-widest text-emerald-600">— {challenge.source}</div>
+                                                        </div>
+                                                    )}
+                                                    <div className={`font-black text-slate-900 leading-tight mb-8 ${challenge?.prompt?.length > 40 ? 'text-3xl' : 'text-5xl'}`}>
+                                                        {challenge?.prompt}
+                                                    </div>
+                                                    {cardState === 'reveal' && challenge?.hasAnswer && (
+                                                        <div className="p-6 bg-emerald-50 rounded-2xl border-4 border-emerald-100 animate-in zoom-in w-full text-3xl font-black text-emerald-600 uppercase">
+                                                            {challenge.answer}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <button onClick={challenge?.hasAnswer && cardState === 'front' ? () => setCardState('reveal') : completeMission} 
+                                                    className={`w-full py-6 ${SPECIES_DATA[activeSpecies].bg} text-white rounded-2xl font-black text-xl uppercase tracking-widest shadow-xl active:scale-95 transition-all`}>
+                                                    {challenge?.hasAnswer && cardState === 'front' ? 'Reveal Answer' : 'Mission Success'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="w-24 flex flex-col items-center shrink-0 h-full">
+                            <span className="text-2xl font-black text-emerald-400 mb-2">{Math.round(tikkunProgress)}</span>
+                            <div className="flex-grow w-16 bg-slate-900/40 rounded-full border border-white/10 flex flex-col-reverse p-2 relative overflow-hidden shadow-inner">
+                                <div className="absolute bottom-0 inset-x-0 bg-emerald-500/30 transition-all duration-1000 ease-out" style={{ height: `${tikkunProgress}%` }} />
+                                <div className="z-10 flex flex-col-reverse gap-3">
+                                    {Object.keys(SPECIES_DATA).map(k => (inventory[k] || 0) >= targetPerSpecies && (
+                                        <div key={k} className={`w-full aspect-square rounded-full flex items-center justify-center ${SPECIES_DATA[k].bg} border-4 border-slate-950 shadow-xl animate-in zoom-in duration-500`}>
+                                            <SpeciesIcon type={k} className="w-8 h-8 text-white" />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+
+                    {showSettings && (
+                        <div className="fixed inset-0 bg-slate-950/95 z-[100] flex items-center justify-center p-6 backdrop-blur-md">
+                            <div className="bg-slate-900 w-full max-w-2xl rounded-[3rem] border border-white/10 p-10 shadow-2xl overflow-y-auto max-h-[90vh]">
+                                <div className="flex justify-between items-center mb-10">
+                                    <h2 className="text-4xl font-black uppercase italic tracking-tighter">Mission Config</h2>
+                                    <button onClick={() => setShowSettings(false)} className="p-2 hover:bg-white/10 rounded-full"><LucideIcon name="x" size={32} /></button>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-10">
+                                    <div className="space-y-8">
+                                        <section>
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4 block">Missions Per Species</label>
+                                            <div className="flex gap-2">
+                                                {[1, 3, 5, 10].map(val => (
+                                                    <button key={val} onClick={() => setTargetPerSpecies(val)}
+                                                        className={`flex-grow py-4 rounded-xl font-black text-xl transition-all ${targetPerSpecies === val ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>
+                                                        {val}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </section>
+                                        <section>
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4 block">Team Size (Fig/Olive)</label>
+                                            <div className="flex gap-2">
+                                                {[1, 2, 3, 4].map(val => (
+                                                    <button key={val} onClick={() => setGroupSize(val)}
+                                                        className={`flex-grow py-4 rounded-xl font-black text-xl transition-all ${groupSize === val ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/30' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>
+                                                        {val}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </section>
+                                    </div>
+
+                                    <section>
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4 block">Field Agents ({roster.length})</label>
+                                        <div className="bg-slate-950/50 rounded-2xl p-4 border border-white/5 max-h-64 overflow-y-auto hide-scrollbar mb-4 space-y-2">
+                                            {roster.map((name, i) => (
+                                                <div key={i} className="bg-slate-800/80 px-4 py-3 rounded-xl flex items-center justify-between group">
+                                                    <span className="font-bold tracking-tight">{name}</span>
+                                                    <button onClick={() => setRoster(roster.filter((_, idx) => idx !== i))} className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg transition-all" title="Remove Agent">
+                                                        <LucideIcon name="trash-2" size={18} />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                            {roster.length === 0 && <div className="text-center py-8 text-slate-600 italic">No agents recruited...</div>}
+                                        </div>
+                                        <form className="flex gap-2" onSubmit={(e) => {
+                                            e.preventDefault();
+                                            const name = e.target.agentName.value.trim();
+                                            if (name) {
+                                                setRoster([...roster, name]);
+                                                e.target.reset();
+                                            }
+                                        }}>
+                                            <input name="agentName" placeholder="New Agent Name..." className="flex-grow bg-slate-950 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition-colors" />
+                                            <button className="bg-emerald-500 px-6 rounded-xl font-black uppercase tracking-widest text-xs">Add</button>
+                                        </form>
+                                    </section>
+                                </div>
+                                <button onClick={() => setShowSettings(false)} className="w-full mt-12 py-5 bg-white text-slate-950 rounded-2xl font-black uppercase tracking-widest text-xl hover:bg-slate-100 transition-colors shadow-2xl">Save & Resume Missions</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 </body>
 </html>
