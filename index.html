@@ -223,11 +223,10 @@
     </main>
 
     <div id="settings-ui" class="hidden fixed inset-0 z-[200] bg-slate-950/98 backdrop-blur-3xl flex items-center justify-center p-6">
-        <div class="bg-slate-900 w-full max-w-5xl h-[85vh] rounded-[3rem] border border-white/10 overflow-hidden flex flex-col">
-            <div class="px-8 py-4 border-b border-white/10 flex justify-between items-center bg-white/5">
-                <div class="flex gap-6">
-                    <div onclick="switchSettingsTab('general')" id="tab-general" class="settings-tab active">System Controls</div>
-                    <div onclick="switchSettingsTab('content')" id="tab-content" class="settings-tab">Content Architect</div>    
+        <div class="bg-slate-900 w-full max-w-4xl h-[80vh] rounded-[3rem] border border-white/10 overflow-hidden flex flex-col shadow-2xl">
+            <div class="p-6 border-b border-white/10 flex justify-between items-center bg-white/5">
+                <h2 class="text-2xl font-black uppercase tracking-tighter">Mission Settings</h2>
+                <div class="flex gap-4">
                     <button onclick="resetGame()" class="px-4 py-2 bg-red-600/20 text-red-400 rounded-lg text-xs font-black uppercase border border-red-500/20">Reset Game</button>
                     <button onclick="toggleSettings()" class="text-2xl font-light hover:opacity-50 px-2">✕</button>
                 </div>
@@ -265,17 +264,7 @@
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
-
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'tu-bishvat-control-final';
-
+    <script>
         const SPECIES_DATA = {
             wheat: { id: 'wheat', en: "Wheat", hb: "חִטָּה", color: "#f59e0b" },
             barley: { id: 'barley', en: "Barley", hb: "שְׂעוֹרָה", color: "#eab308" },
@@ -286,245 +275,27 @@
             date: { id: 'date', en: "Dates", hb: "תְּמָרִים", color: "#c2410c" }
         };
 
-const INITIAL_CONTENT = {
-    wheat: [
-        { hebrew: "עֵץ", english: "Tree" },
-        { hebrew: "אֲדָמָה", english: "Earth" },
-        { hebrew: "זֶרַע", english: "Seed" },
-        { hebrew: "מַיִם", english: "Water" },
-        { hebrew: "שֶׁמֶשׁ", english: "Sun" },
-        { hebrew: "קָצִיר", english: "Harvest" },
-        { hebrew: "לֶחֶם", english: "Bread" },
-        { hebrew: "שָׂדֶה", english: "Field" },
-        { hebrew: "טֶבַע", english: "Nature" },
-        { hebrew: "צֶמַח", english: "Plant" }
-    ],
+        const CONTENT = {
+            wheat: [{h: "עֵץ", e: "Tree"}, {h: "אֲדָמָה", e: "Earth"}, {h: "זֶרַע", e: "Seed"}, {h: "מַיִם", e: "Water"}, {h: "שֶׁמֶשׁ", e: "Sun"}, {h: "קָצִיר", e: "Harvest"}, {h: "לֶחֶם", e: "Bread"}, {h: "שָׂדֶה", e: "Field"}, {h: "טֶבַע", e: "Nature"}, {h: "צֶמַח", e: "Plant"}],
+            barley: [{q: "How many 'New Years' are in the Jewish calendar?", a: "Four"}, {q: "Which tree is the first to bloom in Israel in Shevat?", a: "שָׁקֵד (shaqed) - Almond"}, {q: "What is the Hebrew date of Tu Bishvat?", a: "15th of שְׁבָט (Shevat)"}, {q: "In the metaphor 'A person is like a tree,' what do the roots represent?", a: "Our values, family, and Jewish traditions"}, {q: "Barley was one of the first crops grown in ancient Israel.", a: "True"}, {q: "What color are almond blossoms?", a: "White or light pink"}, {q: "What do we call the festive meal on Tu Bishvat?", a: "Seder"}, {q: "Which book of the Torah lists the Seven Species?", a: "Deuteronomy (Devarim)"}, {q: "What prayer is said over new fruit?", a: "Shehecheyanu"}, {q: "True or False: Barley ripens before wheat in Israel.", a: "True"}],
+            grape: [{s: "The Lorax", q: "Unless someone like you cares a whole awful lot, nothing is going to get better. It’s not.", p: "What local environment would you protect first?"}, {s: "Talmud", q: "As my ancestors planted for me, so I plant for my children.", p: "What are we planting for people 50 years from now?"}, {s: "Gandhi", q: "Earth provides enough to satisfy every man's needs, but not every man's greed.", p: "How can we practice enough-ness this week?"}, {s: "Proverb", q: "The best time to plant a tree was 20 years ago. The second best time is now.", p: "What green habit can you start today?"}, {s: "Folklore", q: "A vine needs a trellis to grow high.", p: "Who are the supporters who help you grow?"}, {s: "Einstein", q: "Look deep into nature, and then you will understand everything better.", p: "What is the most complex thing you have seen in nature?"}, {s: "Mary Davis", q: "To walk in nature is to witness a thousand miracles.", p: "What tiny miracle have you noticed recently?"}, {s: "Proverb", q: "The vine produces clusters, not single grapes.", p: "How is our class like a cluster of grapes?"}, {s: "Torah", q: "When you besiege a city… you must not destroy its trees.", p: "Why is wasting resources a problem?"}, {s: "Midrash", q: "Every blade of grass has an angel that whispers to it, ‘Grow.’", p: "What helps you grow when things are hard?"}],
+            fig: ["A seed slowly growing into a tree", "A squirrel hiding nuts", "Reaching high to pick ripe fruit from a tree", "A bee pollinating a flower", "A gardener planting a tree", "Wind blowing through leaves", "A bird building a nest", "People picnicking under a tree", "Cleaning trash from a park or forest", "Rain in a forest"],
+            pomegranate: [{a: "ט״וּ בִּשְׁבָט Tu Bishvat", b: "Birthday of the Trees"}, {a: "Planting a tree", b: "Replaces Forests"}, {a: "Picking up trash", b: "Protects wildlife"}, {a: "Composting food scraps", b: "Feeds the soil"}, {a: "טֶבַע", b: "Nature"}, {a: "Bees", b: "Pollinate flowers"}, {a: "אֶרֶץ", b: "Land"}, {a: "מַיִם", b: "Water"}],
+            olive: [{t: "Peace", h: "שָׁלוֹם", f: ["War", "Quiet", "Shalom", "Olive"]}, {t: "Light", h: "אוֹר", f: ["Sun", "Lamp", "Dark", "Olive"]}, {t: "Oil", h: "שֶׁמֶן", f: ["Fat", "Cooking", "Hanukkah", "Liquid"]}, {t: "Mountain", h: "הַר", f: ["Hill", "Climb", "High", "Peak"]}, {t: "Branch", h: "עָנָף", f: ["Tree", "Stick", "Leaf", "Bird"]}, {t: "Ancient", h: "עַתִּיק", f: ["Old", "History", "New", "Past"]}, {t: "Green", h: "יָרוֹק", f: ["Color", "Grass", "Leaf", "Nature"]}, {t: "Dove", h: "יוֹנָה", f: ["Bird", "Fly", "White", "Peace"]}, {t: "Strength", h: "כּוֹחַ", f: ["Strong", "Muscle", "Weak", "Power"]}, {t: "Friend", h: "חָבֵר", f: ["Buddy", "Person", "School", "Love"]}],
+            date: [{q: "Repairing the world through justice and kindness", t: "תִּיקּוּן עוֹלָם (Tikkun Olam)"}, {q: "Blessing over fruit from a tree", t: "בּוֹרֵא פְּרִי הָעֵץ (Borei Pri Ha’etz)"}, {q: "Month when Tu Bishvat occurs", t: "שְׁבָט (Shevat)"}, {q: "Land of milk and honey (date honey)", t: "אֶרֶץ יִשְׂרָאֵל (Eretz Yisrael)"}, {q: "A young tree or plant", t: "שְׁתִיל (Sapling)"}, {q: "Crown of the Seven Species with 613 seeds", t: "רִמּוֹן (Pomegranate)"}, {q: "Part of a tree that absorbs water", t: "שֹׁרָשִׁים (Roots)"}, {q: "New Year for Trees", t: "ט\"ו בִּשְׁבָט (Tu Bishvat)"}, {q: "Showing kindness to the environment (Middah)", t: "חֶסֶד (Chesed)"}, {q: "Acting fairly and responsibly with nature (Middah)", t: "צֶדֶק (Tzedek)"}, {q: "Appreciating the gifts of nature (Middah)", t: "הוֹדָיָה (Hodayah / Gratitude)"}, {q: "Protecting plants and animals (Middah)", t: "נֶאֱמָנוּת (Ne’emanut / Responsibility)"}, {q: "Planting trees to help future generations (Middah)", t: "אֲחֲרָיוּת (Acharayut / Accountability)"}, {q: "The Jewish value of avoiding waste", t: "בַּל תַּשְׁחִית (Bal Tashchit)"}, {q: "A ritual meal celebrating the trees", t: "ט\"ו בִּשְׁבָט סֵדֶר (Tu Bishvat Seder)"}, {q: "First tree to bloom in Israel", t: "שָׁקֵד (Shaked / Almond)"}, {q: "Pollinating insects that help plants grow", t: "דְּבוֹרָה (Devorah / Bee)"}]
+        };
 
-    barley: [
-        { prompt: "How many 'New Years' are in the Jewish calendar?", answer: "Four" },
-        { prompt: "Which tree is the first to bloom in Israel in Shevat?", answer: "שָׁקֵד (shaqed) - Almond" },
-        { prompt: "What is the Hebrew date of Tu Bishvat?", answer: "15th of שְׁבָט (Shevat)" },
-        { prompt: "In the metaphor 'A person is like a tree,' what do the roots represent?", answer: "Our values, family, and Jewish traditions" },
-        { prompt: "Barley was one of the first crops grown in ancient Israel.", answer: "True" },
-        { prompt: "What color are almond blossoms?", answer: "White or light pink" },
-        { prompt: "What do we call the festive meal on Tu Bishvat?", answer: "Seder" },
-        { prompt: "Which book of the Torah lists the Seven Species?", answer: "Deuteronomy (Devarim)" },
-        { prompt: "What prayer is said over new fruit?", answer: "Shehecheyanu" },
-        { prompt: "True or False: Barley ripens before wheat in Israel.", answer: "True" }
-    ],
-
-    grape: [
-        {
-            source: "The Lorax",
-            quote: "Unless someone like you cares a whole awful lot, nothing is going to get better. It’s not.",
-            prompt: "What local environment would you protect first?"
-        },
-        {
-            source: "Talmud",
-            quote: "As my ancestors planted for me, so I plant for my children.",
-            prompt: "What are we planting for people 50 years from now?"
-        },
-        {
-            source: "Gandhi",
-            quote: "Earth provides enough to satisfy every man's needs, but not every man's greed.",
-            prompt: "How can we practice enough-ness this week?"
-        },
-        {
-            source: "Proverb",
-            quote: "The best time to plant a tree was 20 years ago. The second best time is now.",
-            prompt: "What green habit can you start today?"
-        },
-        {
-            source: "Folklore",
-            quote: "A vine needs a trellis to grow high.",
-            prompt: "Who are the supporters who help you grow?"
-        },
-        {
-            source: "Einstein",
-            quote: "Look deep into nature, and then you will understand everything better.",
-            prompt: "What is the most complex thing you have seen in nature?"
-        },
-        {
-            source: "Mary Davis",
-            quote: "To walk in nature is to witness a thousand miracles.",
-            prompt: "What tiny miracle have you noticed recently?"
-        },
-        {
-            source: "Proverb",
-            quote: "The vine produces clusters, not single grapes.",
-            prompt: "How is our class like a cluster of grapes?"
-        },
-        {
-            source: "Torah",
-            quote: "When you besiege a city… you must not destroy its trees.",
-            prompt: "Why is wasting resources a problem?"
-        },
-        {
-            source: "Midrash",
-            quote: "Every blade of grass has an angel that whispers to it, ‘Grow.’",
-            prompt: "What helps you grow when things are hard?"
-        }
-    ],
-
-    fig: [
-        "A seed slowly growing into a tree",
-        "A squirrel hiding nuts",
-        "Reaching high to pick ripe fruit from a tree",
-        "A bee pollinating a flower",
-        "A gardener planting a tree",
-        "Wind blowing through leaves",
-        "A bird building a nest",
-        "People picnicking under a tree",
-        "Cleaning trash from a park or forest",
-        "Rain in a forest"
-    ],
-
-    pomegranate: [
-        { card_a: "ט״וּ בִּשְׁבָט Tu Bishvat", match_card: "Birthday of the Trees" },
-        { card_a: "Planting a tree", match_card: "Replaces Forests" },
-        { card_a: "Picking up trash", match_card: "Protects wildlife" },
-        { card_a: "Composting food scraps", match_card: "Feeds the soil" },
-        { card_a: "טֶבַע", match_card: "Nature" },
-        { card_a: "Bees", match_card: "Pollinate flowers" },
-        { card_a: "אֶרֶץ", match_card: "Land" },
-        { card_a: "מַיִם", match_card: "Water" }
-    ],
-
-    olive: [
-        { target: "Peace", hebrew: "שָׁלוֹם", forbidden: ["War", "Quiet", "Shalom", "Olive"] },
-        { target: "Light", hebrew: "אוֹר", forbidden: ["Sun", "Lamp", "Dark", "Olive"] },
-        { target: "Oil", hebrew: "שֶׁמֶן", forbidden: ["Fat", "Cooking", "Hanukkah", "Liquid"] },
-        { target: "Mountain", hebrew: "הַר", forbidden: ["Hill", "Climb", "High", "Peak"] },
-        { target: "Branch", hebrew: "עָנָף", forbidden: ["Tree", "Stick", "Leaf", "Bird"] },
-        { target: "Ancient", hebrew: "עַתִּיק", forbidden: ["Old", "History", "New", "Past"] },
-        { target: "Green", hebrew: "יָרוֹק", forbidden: ["Color", "Grass", "Leaf", "Nature"] },
-        { target: "Dove", hebrew: "יוֹנָה", forbidden: ["Bird", "Fly", "White", "Peace"] },
-        { target: "Strength", hebrew: "כּוֹחַ", forbidden: ["Strong", "Muscle", "Weak", "Power"] },
-        { target: "Friend", hebrew: "חָבֵר", forbidden: ["Buddy", "Person", "School", "Love"] }
-    ],
-
-    date: [
-        { answer_shown: "Repairing the world through justice and kindness", term: "תִּיקּוּן עוֹלָם (Tikkun Olam)" },
-        { answer_shown: "Blessing over fruit from a tree", term: "בּוֹרֵא פְּרִי הָעֵץ (Borei Pri Ha’etz)" },
-        { answer_shown: "Month when Tu Bishvat occurs", term: "שְׁבָט (Shevat)" },
-        { answer_shown: "Land of milk and honey (date honey)", term: "אֶרֶץ יִשְׂרָאֵל (Eretz Yisrael)" },
-        { answer_shown: "A young tree or plant", term: "שְׁתִיל (Sapling)" },
-        { answer_shown: "Crown of the Seven Species with 613 seeds", term: "רִמּוֹן (Pomegranate)" },
-        { answer_shown: "Part of a tree that absorbs water", term: "שֹׁרָשִׁים (Roots)" },
-        { answer_shown: "New Year for Trees", term: "ט\"ו בִּשְׁבָט (Tu Bishvat)" },
-        { answer_shown: "Showing kindness to the environment (Middah)", term: "חֶסֶד (Chesed)" },
-        { answer_shown: "Acting fairly and responsibly with nature (Middah)", term: "צֶדֶק (Tzedek)" },
-        { answer_shown: "Appreciating the gifts of nature (Middah)", term: "הוֹדָיָה (Hodayah / Gratitude)" },
-        { answer_shown: "Protecting plants and animals (Middah)", term: "נֶאֱמָנוּת (Ne’emanut / Responsibility)" },
-        { answer_shown: "Planting trees to help future generations (Middah)", term: "אֲחֲרָיוּת (Acharayut / Accountability)" },
-        { answer_shown: "The Jewish value of avoiding waste", term: "בַּל תַּשְׁחִית (Bal Tashchit)" },
-        { answer_shown: "A ritual meal celebrating the trees", term: "ט\"ו בִּשְׁבָט סֵדֶר (Tu Bishvat Seder)" },
-        { answer_shown: "First tree to bloom in Israel", term: "שָׁקֵד (Shaked / Almond)" },
-        { answer_shown: "Pollinating insects that help plants grow", term: "דְּבוֹרָה (Devorah / Bee)" }
-    ]
-};
-
-        window.state = {
+        const state = {
             active: 'wheat',
             inventory: { wheat:0, barley:0, grape:0, fig:0, pomegranate:0, olive:0, date:0 },
             idx: { wheat:0, barley:0, grape:0, fig:0, pomegranate:0, olive:0, date:0 },
             cfg: { target: 5, groupSize: 2, timer: 0, audio: true },
-            roster: ["Abby", "Marshall", "Julianna", "Kai", "Ellie", "Adi", "Aaron", "Isaac", "Avery P.", "David", "Brenner", "Aviv", "Avery W."], rosterIdx: 0,
+            roster: ["Abby", "Marshall", "Julianna", "Kai", "Ellie", "Adi", "Aaron", "Isaac", "Avery P.", "David", "Brenner", "Aviv", "Avery W."],
+            rosterIdx: 0,
             pom: { deck: [], flipped: [], matched: [] },
-            time: 0, interval: null,
-            content: JSON.parse(JSON.stringify(INITIAL_CONTENT)),
-            user: null, editingSpecies: null
+            time: 0,
+            timerInterval: null
         };
-
-        async function init() {
-            await signInAnonymously(auth);
-            onAuthStateChanged(auth, user => { if(user) { state.user = user; setupCloudSync(); } });
-            setupUI(); renderNav(); renderStats(); syncBoard(); renderContentSidebar();
-        }
-
-        function setupCloudSync() {
-            const ref = doc(db, 'artifacts', appId, 'public', 'data', 'curriculum');
-            onSnapshot(ref, snap => {
-                if(snap.exists()) {
-                    state.content = snap.data().content;
-                    if(state.active === 'pomegranate') buildPomDeck();
-                    syncBoard();
-                    if(state.editingSpecies) openEditor(state.editingSpecies);
-                } else { saveToCloud(); }
-            });
-        }
-
-        async function saveToCloud() {
-            if(!state.user) return;
-            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'curriculum'), { content: state.content });
-        }
-
-        // --- START CONTENT ARCHITECT CODE (Liftable) ---
-        window.switchSettingsTab = tab => {
-            document.getElementById('tab-general').classList.toggle('active', tab === 'general');
-            document.getElementById('tab-content').classList.toggle('active', tab === 'content');
-            document.getElementById('view-general').classList.toggle('hidden', tab !== 'general');
-            document.getElementById('view-content').classList.toggle('hidden', tab !== 'content');
-        };
-
-        window.renderContentSidebar = () => {
-            const sidebar = document.getElementById('content-sidebar');
-            sidebar.innerHTML = Object.keys(SPECIES_DATA).map(k => `
-                <button onclick="openEditor('${k}')" id="side-edit-${k}" class="text-left px-4 py-3 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-all flex items-center gap-3">
-                    <div class="w-6 h-6">${getSVG(k, SPECIES_DATA[k].color)}</div>
-                    <span class="text-[10px] font-black uppercase">${SPECIES_DATA[k].en}</span>
-                </button>
-            `).join('');
-        };
-
-        window.openEditor = k => {
-            state.editingSpecies = k;
-            document.querySelectorAll('#content-sidebar button').forEach(b => b.classList.remove('ring-2', 'ring-emerald-500'));
-            document.getElementById(`side-edit-${k}`).classList.add('ring-2', 'ring-emerald-500');
-            const editor = document.getElementById('content-editor');
-            const items = state.content[k];
-            editor.innerHTML = `
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-black uppercase text-emerald-400">${SPECIES_DATA[k].en} Editor</h3>
-                    <button onclick="addItem('${k}')" class="px-4 py-2 bg-emerald-600 rounded-xl text-[10px] font-black uppercase">+ Add</button>
-                </div>
-                <div class="space-y-3">${items.map((item, i) => renderItemEditor(k, i, item)).join('')}</div>`;
-        };
-
-        function renderItemEditor(k, i, item) {
-            let fields = "";
-            switch(k) {
-                case 'wheat': fields = `<input onchange="upd('${k}',${i},'hebrew',this.value)" value="${item.hebrew}" class="hebrew bg-black/20 p-2 rounded-lg text-xs w-1/2">
-                                       <input onchange="upd('${k}',${i},'english',this.value)" value="${item.english}" class="bg-black/20 p-2 rounded-lg text-xs w-1/2">`; break;
-                case 'barley': fields = `<input onchange="upd('${k}',${i},'prompt',this.value)" value="${item.prompt}" class="bg-black/20 p-2 rounded-lg text-xs w-full mb-1">
-                                        <input onchange="upd('${k}',${i},'answer',this.value)" value="${item.answer}" class="bg-black/20 p-2 rounded-lg text-xs w-full text-emerald-400">`; break;
-                case 'grape': fields = `<input onchange="upd('${k}',${i},'source',this.value)" value="${item.source}" class="bg-black/20 p-2 rounded-lg text-[10px] w-full mb-1 opacity-50">
-                                       <textarea onchange="upd('${k}',${i},'quote',this.value)" class="bg-black/20 p-2 rounded-lg text-xs w-full mb-1">${item.quote}</textarea>
-                                       <input onchange="upd('${k}',${i},'prompt',this.value)" value="${item.prompt}" class="bg-black/20 p-2 rounded-lg text-xs w-full">`; break;
-                case 'fig': fields = `<input onchange="upd('${k}',${i},null,this.value)" value="${item}" class="bg-black/20 p-2 rounded-lg text-xs w-full">`; break;
-                case 'pomegranate': fields = `<input onchange="upd('${k}',${i},'card_a',this.value)" value="${item.card_a}" class="bg-black/20 p-2 rounded-lg text-xs w-1/2">
-                                             <input onchange="upd('${k}',${i},'match_card',this.value)" value="${item.match_card}" class="bg-black/20 p-2 rounded-lg text-xs w-1/2">`; break;
-                case 'olive': fields = `<input onchange="upd('${k}',${i},'target',this.value)" value="${item.target}" class="bg-black/20 p-2 rounded-lg text-xs w-1/3">
-                                       <input onchange="upd('${k}',${i},'hebrew',this.value)" value="${item.hebrew}" class="hebrew bg-black/20 p-2 rounded-lg text-xs w-1/3">
-                                       <input onchange="upd('${k}',${i},'forbidden',this.value)" value="${item.forbidden.join(',')}" class="bg-black/20 p-2 rounded-lg text-[10px] w-1/3">`; break;
-                case 'date': fields = `<textarea onchange="upd('${k}',${i},'answer_shown',this.value)" class="bg-black/20 p-2 rounded-lg text-xs w-full mb-1">${item.answer_shown}</textarea>
-                                      <input onchange="upd('${k}',${i},'term',this.value)" value="${item.term}" class="bg-black/20 p-2 rounded-lg text-xs w-full">`; break;
-            }
-            return `<div class="bg-slate-800 p-3 rounded-xl flex gap-2 relative group"><div class="flex-grow flex flex-wrap gap-1">${fields}</div><button onclick="remItem('${k}',${i})" class="text-red-500 opacity-0 group-hover:opacity-100 p-1">✕</button></div>`;
-        }
-
-        window.upd = (k, i, f, v) => {
-            if(f === 'forbidden') v = v.split(',').map(s=>s.trim());
-            if(f === null) state.content[k][i] = v; else state.content[k][i][f] = v;
-            saveToCloud();
-        };
-        window.remItem = (k, i) => { state.content[k].splice(i,1); saveToCloud(); openEditor(k); };
-        window.addItem = k => {
-            const defs = { wheat:{hebrew:'-',english:'-'}, barley:{prompt:'?',answer:'-'}, grape:{source:'-',quote:'-',prompt:'?'}, fig:'Action', pomegranate:{card_a:'A',match_card:'B'}, olive:{target:'X',hebrew:'-',forbidden:[]}, date:{answer_shown:'-',term:'-'} };
-            state.content[k].unshift(defs[k]); saveToCloud(); openEditor(k);
-        };
-        // --- END CONTENT ARCHITECT CODE ---
-        
 
         function getSVG(k, color="white", size="w-full h-full") {
             const paths = {
