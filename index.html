@@ -3,74 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tu Bishvat: Seven Species Game</title>
+    <title>Tu Bishvat: Mission Control</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+Hebrew:wght@400;700;900&display=swap');
         
-        :root {
-            --card-width: 520px;
-            --card-height: 680px;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #020617;
-            color: white;
-            overflow: hidden;
-            height: 100vh;
-            width: 100vw;
-            user-select: none;
-        }
-
+        :root { --card-width: 520px; --card-height: 680px; }
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: white; overflow: hidden; height: 100vh; width: 100vw; user-select: none; }
         .hebrew { font-family: 'Noto Sans Hebrew', sans-serif; direction: rtl; }
-
-        .scene {
-            width: var(--card-width);
-            height: var(--card-height);
-            perspective: 2000px;
-        }
-
-        .card-inner {
-            width: 100%;
-            height: 100%;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-style: preserve-3d;
-            position: relative;
-        }
-
+        
+        .scene { width: var(--card-width); height: var(--card-height); perspective: 2000px; }
+        .card-inner { width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; position: relative; }
         .card-inner.is-flipped { transform: rotateY(180deg); }
-
-        .card-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            border-radius: 3rem;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        .card-face { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 3rem; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .card-back { transform: rotateY(180deg); background-color: white; color: #0f172a; }
+        
+        @keyframes pulse-shake {
+            0% { transform: scale(1); }
+            10% { transform: scale(1.02) rotate(1deg); }
+            20% { transform: scale(1.02) rotate(-1deg); }
+            30% { transform: scale(1) rotate(0); }
         }
+        .btn-mission-active { animation: pulse-shake 2s infinite ease-in-out; }
 
-        .card-front { color: white; }
-        .card-back {
-            transform: rotateY(180deg);
-            background-color: white;
-            color: #0f172a;
-        }
-
-        .watermark-icon {
-            position: absolute;
-            top: -20px;
-            left: -20px;
-            width: 240px;
-            height: 240px;
-            opacity: 0.15;
-            pointer-events: none;
-        }
+        .progress-ring { transform: rotate(-90deg); transform-origin: 50% 50%; }
+        .progress-ring__circle { transition: stroke-dashoffset 0.6s ease; stroke-linecap: round; }
 
         /* MATCH GRID SCALING FIXES FOR TV */
         .match-grid-container {
@@ -133,35 +91,23 @@
 
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
-
-        .divider-line {
-            height: 2px;
-            background: #dc2626;
-            flex-grow: 1;
-            border-radius: 10px;
-        }
+        .settings-tab { cursor: pointer; padding: 0.75rem 1.5rem; border-bottom: 2px solid transparent; transition: all 0.2s; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; }
+        .settings-tab.active { border-color: #10b981; color: #10b981; background: rgba(16, 185, 129, 0.05); }
     </style>
 </head>
 <body class="flex flex-col">
 
-    <header class="h-20 bg-slate-950/80 backdrop-blur-md border-b border-white/10 flex items-center justify-between px-10 z-50 shrink-0">
+    <header class="h-20 bg-slate-950/80 backdrop-blur-md border-b border-white/10 flex items-center justify-between px-10 z-50">
         <div class="flex items-center gap-4">
             <div class="p-2 bg-emerald-500 rounded-lg">
-                <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                    <path d="M12 22V12M12 12L5 8M12 12L19 8M12 7L8 3M12 7L16 3" stroke-linecap="round"/>
-                </svg>
+                <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 22V12M12 12L5 8M12 12L19 8M12 7L8 3M12 7L16 3" stroke-linecap="round"/></svg>
             </div>
-            <h1 class="text-xl font-black italic uppercase tracking-tighter">Seven Species Mission Control</h1>
+            <h1 class="text-xl font-black italic uppercase tracking-tighter">Tu Bishvat: Mission Control</h1>
         </div>
-
         <div class="flex items-center gap-6">
             <div id="timer-ui" class="hidden px-5 py-2 bg-slate-900 border border-white/10 rounded-full flex items-center gap-4">
-                <span class="text-[10px] font-black text-white/40 uppercase">Clock</span>
                 <span id="timer-clock" class="text-xl font-black tabular-nums text-emerald-400">00:00</span>
             </div>
-            <button onclick="toggleAudio()" id="audio-toggle" class="p-3 bg-slate-900 rounded-xl border border-white/10 hover:bg-slate-800">
-                <svg id="audio-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M11 5L6 9H2V15H6L11 19V5Z M15.54 8.46a5 5 0 010 7.07"/></svg>
-            </button>
             <button onclick="toggleSettings()" class="p-3 bg-slate-900 rounded-xl border border-white/10 hover:bg-slate-800">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             </button>
@@ -169,102 +115,87 @@
     </header>
 
     <main class="flex-grow flex p-6 gap-6 overflow-hidden">
-        <nav id="species-nav" class="w-72 flex flex-col gap-2 overflow-y-auto custom-scrollbar pr-1 shrink-0"></nav>
-
+        <nav id="species-nav" class="w-72 flex flex-col gap-2 overflow-y-auto custom-scrollbar shrink-0"></nav>
+        
         <section class="flex-grow flex flex-col items-center justify-center bg-slate-900/40 rounded-[3rem] border border-white/5 relative overflow-hidden">
             <div id="roster-tag" class="hidden absolute top-6 px-6 py-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full flex flex-col items-center z-10">
-                <span class="text-[8px] font-black uppercase tracking-widest text-emerald-400">Current Team</span>
+                <span class="text-[8px] font-black uppercase tracking-widest text-emerald-400">Assignment</span>
                 <div id="active-students" class="text-lg font-black italic">--</div>
             </div>
-
+            
             <div id="card-scene" class="scene">
                 <div id="card-inner" class="card-inner">
-                    <div id="card-front" class="card-face card-front p-10">
-                        <div class="watermark-icon" id="f-watermark"></div>
-                        <div class="relative z-10">
-                            <h2 id="f-en" class="text-5xl font-black uppercase tracking-tighter italic"></h2>
-                            <div id="f-hb" class="hebrew text-2xl font-bold opacity-80 mt-1"></div>
-                        </div>
-                        <div class="flex-grow flex items-center justify-center">
-                            <div id="f-icon-large" class="w-64 h-64"></div>
-                        </div>
-                        <button onclick="flipCard(true)" class="w-full py-6 bg-white text-slate-900 rounded-2xl text-2xl font-black uppercase tracking-widest hover:scale-105 transition-all">Start Mission</button>
+                    <div id="card-front" class="card-face p-10">
+                        <div class="absolute top-[-20px] left-[-20px] w-64 h-64 opacity-20" id="f-watermark"></div>
+                        <h2 id="f-en" class="text-6xl font-black uppercase italic relative z-10"></h2>
+                        <div id="f-hb" class="hebrew text-3xl font-bold opacity-80 mt-1 relative z-10"></div>
+                        <div class="flex-grow flex items-center justify-center"><div id="f-icon-large" class="w-72 h-72"></div></div>
+                        <button onclick="flipCard()" class="btn-mission-active w-full py-8 bg-white text-slate-900 rounded-[2rem] text-3xl font-black uppercase tracking-widest hover:scale-105 transition-transform">Start Mission</button>
                     </div>
-
                     <div id="card-back" class="card-face card-back p-10">
                         <div id="b-header" class="absolute top-0 left-0 right-0 h-24 flex items-center px-10 rounded-t-[3rem]">
-                            <div class="relative z-10">
-                                <h2 id="b-en" class="text-3xl font-black uppercase tracking-tighter text-white"></h2>
-                                <div id="b-hb" class="hebrew text-xl font-bold text-white/80"></div>
-                            </div>
+                            <h2 id="b-en" class="text-3xl font-black uppercase text-white tracking-tighter"></h2>
                             <div id="b-icon-small" class="ml-auto w-12 h-12 opacity-50"></div>
                         </div>
                         <div id="mission-body" class="flex-grow flex flex-col items-center justify-center text-center mt-20 overflow-y-auto custom-scrollbar"></div>
-                        <div class="mt-8 grid grid-cols-1 gap-4" id="action-zone">
+                        <div id="action-zone" class="mt-8">
                             <button id="reveal-btn" onclick="revealSolution()" class="hidden w-full py-6 bg-slate-900 text-white rounded-2xl text-xl font-black uppercase">Reveal Secret</button>
                             <button id="complete-btn" onclick="logMissionSuccess()" class="hidden w-full py-6 border-4 border-slate-900 text-slate-900 rounded-2xl text-xl font-black uppercase">Mission Complete</button>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div id="match-view" class="hidden w-full h-full p-8 flex flex-col">
-                <div id="match-grid" class="match-grid-container flex-grow"></div>
-            </div>
+            <div id="match-view" class="hidden w-full h-full p-12 flex items-center justify-center"><div id="match-grid" class="match-grid-container"></div></div>
         </section>
 
         <aside class="w-56 flex flex-col items-center bg-slate-950/40 rounded-[3rem] border border-white/5 p-6 shrink-0">
-            <div id="total-perc" class="text-4xl font-black text-emerald-400 mb-4">0%</div>
-            <div class="flex-grow w-12 bg-slate-900 rounded-full border-4 border-slate-800 overflow-hidden flex flex-col-reverse relative">
-                <div id="main-progress" class="w-full bg-gradient-to-t from-emerald-600 to-emerald-300 transition-all duration-1000" style="height: 0%"></div>
+            <div id="total-perc" class="text-4xl font-black text-emerald-400 mb-4 italic">0%</div>
+            <div class="flex-grow w-14 bg-slate-900 rounded-full border-4 border-slate-800 overflow-hidden flex flex-col-reverse relative">
+                <div id="main-progress" class="w-full bg-emerald-500 transition-all duration-1000" style="height: 0%"></div>
             </div>
             <div id="badge-grid" class="grid grid-cols-2 gap-2 mt-6"></div>
         </aside>
     </main>
 
     <div id="settings-ui" class="hidden fixed inset-0 z-[200] bg-slate-950/98 backdrop-blur-3xl flex items-center justify-center p-6">
-        <div class="bg-slate-900 w-full max-w-4xl h-[80vh] rounded-[3rem] border border-white/10 overflow-hidden flex flex-col shadow-2xl">
-            <div class="p-6 border-b border-white/10 flex justify-between items-center bg-white/5">
-                <h2 class="text-2xl font-black uppercase tracking-tighter">Mission Settings</h2>
-                <div class="flex gap-4">
-                    <button onclick="resetGame()" class="px-4 py-2 bg-red-600/20 text-red-400 rounded-lg text-xs font-black uppercase border border-red-500/20">Reset Game</button>
-                    <button onclick="toggleSettings()" class="text-2xl font-light hover:opacity-50 px-2">✕</button>
+        <div class="bg-slate-900 w-full max-w-6xl h-[85vh] rounded-[3rem] border border-white/10 overflow-hidden flex flex-col shadow-2xl">
+            <div class="px-8 py-4 border-b border-white/10 flex justify-between items-center bg-white/5">
+                <div class="flex gap-6">
+                    <div onclick="switchSettingsTab('general')" id="tab-general" class="settings-tab active">System Config</div>
+                    <div onclick="switchSettingsTab('content')" id="tab-content" class="settings-tab">Content Architect</div>
+                </div>
+                <button onclick="toggleSettings()" class="text-2xl font-light hover:rotate-90 transition-transform">✕</button>
+            </div>
+            <div id="view-general" class="flex-grow flex overflow-hidden">
+                <div class="w-1/2 p-10 border-r border-white/5 space-y-10 overflow-y-auto custom-scrollbar">
+                    <div><label class="text-[10px] font-black uppercase tracking-widest opacity-40">Missions per species</label><input type="range" id="cfg-target" min="1" max="25" class="w-full mt-4 accent-emerald-500"><div id="target-count" class="text-2xl font-black text-emerald-400 mt-2">5</div></div>
+                    <div><label class="text-[10px] font-black uppercase tracking-widest opacity-40">Group Size (Social Missions)</label><div id="group-size-container" class="flex gap-2 mt-4"></div></div>
+                    <div><label class="text-[10px] font-black uppercase tracking-widest opacity-40">Mission Timer (Seconds)</label><div id="timer-options" class="grid grid-cols-5 gap-2 mt-4"></div></div>
+                </div>
+                <div class="w-1/2 p-10 bg-black/20 flex flex-col">
+                    <label class="text-[10px] font-black uppercase tracking-widest opacity-40 mb-4">Roster Management</label>
+                    <div class="flex gap-2 mb-6"><input type="text" id="name-in" placeholder="Enter name..." class="flex-grow bg-slate-800 p-4 rounded-xl border border-white/10 text-sm font-bold outline-none"><button onclick="addStudent()" class="px-6 bg-emerald-600 rounded-xl font-black uppercase text-xs">Join</button></div>
+                    <div id="roster-list" class="flex-grow overflow-y-auto space-y-2 custom-scrollbar"></div>
                 </div>
             </div>
-            <div class="flex-grow flex overflow-hidden">
-                <div class="w-1/2 p-8 border-r border-white/5 overflow-y-auto space-y-8 custom-scrollbar">
-                    <div class="space-y-3">
-                        <label class="block text-[9px] font-black uppercase tracking-widest opacity-40">Target Count per Species</label>
-                        <div class="flex items-center gap-4">
-                            <input type="range" id="cfg-target" min="1" max="20" step="1" class="flex-grow accent-emerald-500 bg-slate-800 h-2 rounded-full appearance-none">
-                            <span id="target-count" class="text-2xl font-black text-emerald-400 w-10">5</span>
-                        </div>
-                    </div>
-                    <div class="space-y-3">
-                        <label class="block text-[9px] font-black uppercase tracking-widest opacity-40">Active Team Size (Fig/Olive)</label>
-                        <div class="flex gap-2" id="group-size-container"></div>
-                    </div>
-                    <div class="space-y-3">
-                        <label class="block text-[9px] font-black uppercase tracking-widest opacity-40">Mission Clock (Seconds)</label>
-                        <div id="timer-options" class="grid grid-cols-5 gap-1"></div>
-                    </div>
-                    <div class="pt-4 border-t border-white/5 space-y-4">
-                        <button onclick="triggerVictory()" class="w-full py-4 bg-emerald-600 text-white rounded-xl font-black uppercase text-sm">Preview Victory Sequence</button>
-                    </div>
-                </div>
-                <div class="w-1/2 p-8 bg-black/20 flex flex-col">
-                    <label class="block text-[9px] font-black uppercase tracking-widest opacity-40 mb-3">Student Roster Management</label>
-                    <div class="flex gap-2 mb-4">
-                        <input type="text" id="name-in" placeholder="New student name..." class="flex-grow bg-slate-800 border border-white/10 p-3 rounded-xl text-sm font-bold outline-none">
-                        <button onclick="addStudent()" class="px-5 bg-emerald-600 rounded-xl font-black uppercase text-xs">Add</button>
-                    </div>
-                    <div id="roster-list" class="flex-grow overflow-y-auto space-y-1 pr-1 custom-scrollbar"></div>
-                </div>
+            <div id="view-content" class="hidden flex-grow flex overflow-hidden">
+                <div class="w-64 bg-black/20 border-r border-white/5 p-4 flex flex-col gap-2 overflow-y-auto custom-scrollbar" id="content-sidebar"></div>
+                <div class="flex-grow p-10 overflow-y-auto custom-scrollbar" id="content-editor"></div>
             </div>
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'tu-bishvat-missions-v3';
+
         const SPECIES_DATA = {
             wheat: { id: 'wheat', en: "Wheat", hb: "חִטָּה", color: "#f59e0b" },
             barley: { id: 'barley', en: "Barley", hb: "שְׂעוֹרָה", color: "#eab308" },
@@ -275,351 +206,248 @@
             date: { id: 'date', en: "Dates", hb: "תְּמָרִים", color: "#c2410c" }
         };
 
-        const CONTENT = {
-            wheat: [{h: "עֵץ", e: "Tree"}, {h: "אֲדָמָה", e: "Earth"}, {h: "זֶרַע", e: "Seed"}, {h: "מַיִם", e: "Water"}, {h: "שֶׁמֶשׁ", e: "Sun"}, {h: "קָצִיר", e: "Harvest"}, {h: "לֶחֶם", e: "Bread"}, {h: "שָׂדֶה", e: "Field"}, {h: "טֶבַע", e: "Nature"}, {h: "צֶמַח", e: "Plant"}],
-            barley: [{q: "How many 'New Years' are in the Jewish calendar?", a: "Four"}, {q: "Which tree is the first to bloom in Israel in Shevat?", a: "שָׁקֵד (shaqed) - Almond"}, {q: "What is the Hebrew date of Tu Bishvat?", a: "15th of שְׁבָט (Shevat)"}, {q: "In the metaphor 'A person is like a tree,' what do the roots represent?", a: "Our values, family, and Jewish traditions"}, {q: "Barley was one of the first crops grown in ancient Israel.", a: "True"}, {q: "What color are almond blossoms?", a: "White or light pink"}, {q: "What do we call the festive meal on Tu Bishvat?", a: "Seder"}, {q: "Which book of the Torah lists the Seven Species?", a: "Deuteronomy (Devarim)"}, {q: "What prayer is said over new fruit?", a: "Shehecheyanu"}, {q: "True or False: Barley ripens before wheat in Israel.", a: "True"}],
-            grape: [{s: "The Lorax", q: "Unless someone like you cares a whole awful lot, nothing is going to get better. It’s not.", p: "What local environment would you protect first?"}, {s: "Talmud", q: "As my ancestors planted for me, so I plant for my children.", p: "What are we planting for people 50 years from now?"}, {s: "Gandhi", q: "Earth provides enough to satisfy every man's needs, but not every man's greed.", p: "How can we practice enough-ness this week?"}, {s: "Proverb", q: "The best time to plant a tree was 20 years ago. The second best time is now.", p: "What green habit can you start today?"}, {s: "Folklore", q: "A vine needs a trellis to grow high.", p: "Who are the supporters who help you grow?"}, {s: "Einstein", q: "Look deep into nature, and then you will understand everything better.", p: "What is the most complex thing you have seen in nature?"}, {s: "Mary Davis", q: "To walk in nature is to witness a thousand miracles.", p: "What tiny miracle have you noticed recently?"}, {s: "Proverb", q: "The vine produces clusters, not single grapes.", p: "How is our class like a cluster of grapes?"}, {s: "Torah", q: "When you besiege a city… you must not destroy its trees.", p: "Why is wasting resources a problem?"}, {s: "Midrash", q: "Every blade of grass has an angel that whispers to it, ‘Grow.’", p: "What helps you grow when things are hard?"}],
+        const INITIAL_CONTENT = {
+            wheat: [{ hebrew: "עֵץ", english: "Tree" }, { hebrew: "אֲדָמָה", english: "Earth" }, { hebrew: "זֶרַע", english: "Seed" }, { hebrew: "מַיִם", english: "Water" }, { hebrew: "שֶׁמֶשׁ", english: "Sun" }, { hebrew: "קָצִיר", english: "Harvest" }, { hebrew: "לֶחֶם", english: "Bread" }, { hebrew: "שָׂדֶה", english: "Field" }, { hebrew: "טֶבַע", english: "Nature" }, { hebrew: "צֶמַח", english: "Plant" }],
+            barley: [{ prompt: "How many 'New Years' are in the Jewish calendar?", answer: "Four" }, { prompt: "Which tree is the first to bloom in Israel in Shevat?", answer: "שָׁקֵד (shaqed) - Almond" }, { prompt: "What is the Hebrew date of Tu Bishvat?", answer: "15th of שְׁבָט (Shevat)" }, { prompt: "In the metaphor 'A person is like a tree,' what do the roots represent?", answer: "Our values, family, and Jewish traditions" }, { prompt: "Barley was one of the first crops grown in ancient Israel.", answer: "True" }, { prompt: "What color are almond blossoms?", answer: "White or light pink" }, { prompt: "What do we call the festive meal on Tu Bishvat?", answer: "Seder" }, { prompt: "Which book of the Torah lists the Seven Species?", answer: "Deuteronomy (Devarim)" }, { prompt: "What prayer is said over new fruit?", answer: "Shehecheyanu" }, { prompt: "True or False: Barley ripens before wheat in Israel.", answer: "True" }],
+            grape: [{ source: "The Lorax", quote: "Unless someone like you cares a whole awful lot, nothing is going to get better. It’s not.", prompt: "What local environment would you protect first?" }, { source: "Talmud", quote: "As my ancestors planted for me, so I plant for my children.", prompt: "What are we planting for people 50 years from now?" }, { source: "Gandhi", quote: "Earth provides enough to satisfy every man's needs, but not every man's greed.", prompt: "How can we practice enough-ness this week?" }, { source: "Proverb", quote: "The best time to plant a tree was 20 years ago. The second best time is now.", prompt: "What green habit can you start today?" }, { source: "Folklore", quote: "A vine needs a trellis to grow high.", prompt: "Who are the supporters who help you grow?" }, { source: "Einstein", quote: "Look deep into nature, and then you will understand everything better.", prompt: "What is the most complex thing you have seen in nature?" }, { source: "Mary Davis", quote: "To walk in nature is to witness a thousand miracles.", prompt: "What tiny miracle have you noticed recently?" }, { source: "Proverb", quote: "The vine produces clusters, not single grapes.", prompt: "How is our class like a cluster of grapes?" }, { source: "Torah", quote: "When you besiege a city… you must not destroy its trees.", prompt: "Why is wasting resources a problem?" }, { source: "Midrash", quote: "Every blade of grass has an angel that whispers to it, ‘Grow.’", prompt: "What helps you grow when things are hard?" }],
             fig: ["A seed slowly growing into a tree", "A squirrel hiding nuts", "Reaching high to pick ripe fruit from a tree", "A bee pollinating a flower", "A gardener planting a tree", "Wind blowing through leaves", "A bird building a nest", "People picnicking under a tree", "Cleaning trash from a park or forest", "Rain in a forest"],
-            pomegranate: [{a: "ט״וּ בִּשְׁבָט Tu Bishvat", b: "Birthday of the Trees"}, {a: "Planting a tree", b: "Replaces Forests"}, {a: "Picking up trash", b: "Protects wildlife"}, {a: "Composting food scraps", b: "Feeds the soil"}, {a: "טֶבַע", b: "Nature"}, {a: "Bees", b: "Pollinate flowers"}, {a: "אֶרֶץ", b: "Land"}, {a: "מַיִם", b: "Water"}],
-            olive: [{t: "Peace", h: "שָׁלוֹם", f: ["War", "Quiet", "Shalom", "Olive"]}, {t: "Light", h: "אוֹר", f: ["Sun", "Lamp", "Dark", "Olive"]}, {t: "Oil", h: "שֶׁמֶן", f: ["Fat", "Cooking", "Hanukkah", "Liquid"]}, {t: "Mountain", h: "הַר", f: ["Hill", "Climb", "High", "Peak"]}, {t: "Branch", h: "עָנָף", f: ["Tree", "Stick", "Leaf", "Bird"]}, {t: "Ancient", h: "עַתִּיק", f: ["Old", "History", "New", "Past"]}, {t: "Green", h: "יָרוֹק", f: ["Color", "Grass", "Leaf", "Nature"]}, {t: "Dove", h: "יוֹנָה", f: ["Bird", "Fly", "White", "Peace"]}, {t: "Strength", h: "כּוֹחַ", f: ["Strong", "Muscle", "Weak", "Power"]}, {t: "Friend", h: "חָבֵר", f: ["Buddy", "Person", "School", "Love"]}],
-            date: [{q: "Repairing the world through justice and kindness", t: "תִּיקּוּן עוֹלָם (Tikkun Olam)"}, {q: "Blessing over fruit from a tree", t: "בּוֹרֵא פְּרִי הָעֵץ (Borei Pri Ha’etz)"}, {q: "Month when Tu Bishvat occurs", t: "שְׁבָט (Shevat)"}, {q: "Land of milk and honey (date honey)", t: "אֶרֶץ יִשְׂרָאֵל (Eretz Yisrael)"}, {q: "A young tree or plant", t: "שְׁתִיל (Sapling)"}, {q: "Crown of the Seven Species with 613 seeds", t: "רִמּוֹן (Pomegranate)"}, {q: "Part of a tree that absorbs water", t: "שֹׁרָשִׁים (Roots)"}, {q: "New Year for Trees", t: "ט\"ו בִּשְׁבָט (Tu Bishvat)"}, {q: "Showing kindness to the environment (Middah)", t: "חֶסֶד (Chesed)"}, {q: "Acting fairly and responsibly with nature (Middah)", t: "צֶדֶק (Tzedek)"}, {q: "Appreciating the gifts of nature (Middah)", t: "הוֹדָיָה (Hodayah / Gratitude)"}, {q: "Protecting plants and animals (Middah)", t: "נֶאֱמָנוּת (Ne’emanut / Responsibility)"}, {q: "Planting trees to help future generations (Middah)", t: "אֲחֲרָיוּת (Acharayut / Accountability)"}, {q: "The Jewish value of avoiding waste", t: "בַּל תַּשְׁחִית (Bal Tashchit)"}, {q: "A ritual meal celebrating the trees", t: "ט\"ו בִּשְׁבָט סֵדֶר (Tu Bishvat Seder)"}, {q: "First tree to bloom in Israel", t: "שָׁקֵד (Shaked / Almond)"}, {q: "Pollinating insects that help plants grow", t: "דְּבוֹרָה (Devorah / Bee)"}]
+            pomegranate: [{ card_a: "ט״וּ בִּשְׁבָט Tu Bishvat", match_card: "Birthday of the Trees" }, { card_a: "Planting a tree", match_card: "Replaces Forests" }, { card_a: "Picking up trash", match_card: "Protects wildlife" }, { card_a: "Composting food scraps", match_card: "Feeds the soil" }, { card_a: "טֶבַע", match_card: "Nature" }, { card_a: "Bees", match_card: "Pollinate flowers" }, { card_a: "אֶרֶץ", match_card: "Land" }, { card_a: "מַיִם", match_card: "Water" }],
+            olive: [{ target: "Peace", hebrew: "שָׁלוֹם", forbidden: ["War", "Quiet", "Shalom", "Olive"] }, { target: "Light", hebrew: "אוֹר", forbidden: ["Sun", "Lamp", "Dark", "Olive"] }, { target: "Oil", hebrew: "שֶׁמֶן", forbidden: ["Fat", "Cooking", "Hanukkah", "Liquid"] }, { target: "Mountain", hebrew: "הַר", forbidden: ["Hill", "Climb", "High", "Peak"] }, { target: "Branch", hebrew: "עָנָף", forbidden: ["Tree", "Stick", "Leaf", "Bird"] }, { target: "Ancient", hebrew: "עַתִּיק", forbidden: ["Old", "History", "New", "Past"] }, { target: "Green", hebrew: "יָרוֹק", forbidden: ["Color", "Grass", "Leaf", "Nature"] }, { target: "Dove", hebrew: "יוֹנָה", forbidden: ["Bird", "Fly", "White", "Peace"] }, { target: "Strength", hebrew: "כּוֹחַ", forbidden: ["Strong", "Muscle", "Weak", "Power"] }, { target: "Friend", hebrew: "חָבֵר", forbidden: ["Buddy", "Person", "School", "Love"] }],
+            date: [{ answer_shown: "Repairing the world through justice and kindness", term: "תִּיקּוּן עוֹלָם (Tikkun Olam)" }, { answer_shown: "Blessing over fruit from a tree", term: "בּוֹרֵא פְּרִי הָעֵץ (Borei Pri Ha’etz)" }, { answer_shown: "Month when Tu Bishvat occurs", term: "שְׁבָט (Shevat)" }, { answer_shown: "Land of milk and honey (date honey)", term: "אֶרֶץ יִשְׂרָאֵל (Eretz Yisrael)" }, { answer_shown: "A young tree or plant", term: "שְׁתִיל (Sapling)" }, { answer_shown: "Crown of the Seven Species with 613 seeds", term: "רִמּוֹן (Pomegranate)" }, { answer_shown: "Part of a tree that absorbs water", term: "שֹׁרָשִׁים (Roots)" }, { answer_shown: "New Year for Trees", term: "ט\"ו בִּשְׁבָט (Tu Bishvat)" }, { answer_shown: "Showing kindness to the environment (Middah)", term: "חֶסֶד (Chesed)" }, { answer_shown: "Acting fairly and responsibly with nature (Middah)", term: "צֶדֶק (Tzedek)" }, { answer_shown: "Appreciating the gifts of nature (Middah)", term: "הוֹדָיָה (Hodayah / Gratitude)" }, { answer_shown: "Protecting plants and animals (Middah)", term: "נֶאֱמָנוּת (Ne’emanut / Responsibility)" }, { answer_shown: "Planting trees to help future generations (Middah)", term: "אֲחֲרָיוּת (Acharayut / Accountability)" }, { answer_shown: "The Jewish value of avoiding waste", term: "בַּל תַּשְׁחִית (Bal Tashchit)" }, { answer_shown: "A ritual meal celebrating the trees", term: "ט\"ו בִּשְׁבָט סֵדֶר (Tu Bishvat Seder)" }, { answer_shown: "First tree to bloom in Israel", term: "שָׁקֵד (Shaked / Almond)" }, { answer_shown: "Pollinating insects that help plants grow", term: "דְּבוֹרָה (Devorah / Bee)" }]
         };
 
-        const state = {
+        window.state = {
             active: 'wheat',
             inventory: { wheat:0, barley:0, grape:0, fig:0, pomegranate:0, olive:0, date:0 },
             idx: { wheat:0, barley:0, grape:0, fig:0, pomegranate:0, olive:0, date:0 },
-            cfg: { target: 5, groupSize: 2, timer: 0, audio: true },
-            roster: ["Abby", "Marshall", "Julianna", "Kai", "Ellie", "Adi", "Aaron", "Isaac", "Avery P.", "David", "Brenner", "Aviv", "Avery W."],
-            rosterIdx: 0,
+            cfg: { target: 10, groupSize: 2, timer: 0 },
+            roster: ["Abby", "Marshall", "Julianna", "Kai", "Ellie", "Adi", "Aaron", "Isaac", "Avery P.", "David", "Brenner", "Aviv", "Avery W."], rosterIdx: 0,
             pom: { deck: [], flipped: [], matched: [] },
-            time: 0,
-            timerInterval: null
+            time: 0, interval: null,
+            content: JSON.parse(JSON.stringify(INITIAL_CONTENT)),
+            user: null, editingSpecies: null
         };
 
-        function getSVG(k, color="white", size="w-full h-full") {
-            const paths = {
-                wheat: "M12 22V12M12 12L7 7M12 12L17 7M12 7V2",
-                barley: "M12 22V10M12 10C12 10 16 8 16 4M12 10C12 10 8 8 8 4",
-                grape: "M12 8a2 2 0 100-4 2 2 0 000 4zm-3 4a2 2 0 100-4 2 2 0 000 4zm6 0a2 2 0 100-4 2 2 0 000 4z",
-                fig: "M12 22s8-5 8-10S12 2 12 2 4 7 4 12s8 10 8 10z",
-                pomegranate: "M12 22a9 9 0 100-18 9 9 0 000 18z M12 4L10 2L12 0L14 2L12 4z", // Crowned
-                olive: "M12 20a5 8 0 100-16 5 8 0 000 16z",
-                date: "M12 22V5M12 5c4 2 7 8 7 8M12 5C8 7 5 13 5 13"
+        async function init() {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+            onAuthStateChanged(auth, user => { if(user) { state.user = user; setupCloudSync(); } });
+            setupUI(); renderNav(); renderStats(); syncBoard(); renderContentSidebar();
+        }
+
+        function setupCloudSync() {
+            if (!state.user) return;
+            // CORRECT PATH: artifacts/{appId}/public/data/{collectionName}/{documentId}
+            // segmental structure: artifacts(1)/appId(2)/public(3)/data(4)/curriculum(5)/data(6)
+            const ref = doc(db, 'artifacts', appId, 'public', 'data', 'curriculum', 'main');
+            onSnapshot(ref, snap => {
+                if(snap.exists()) {
+                    state.content = snap.data().content;
+                    if(state.active === 'pomegranate') buildPomDeck();
+                    syncBoard();
+                    if(state.editingSpecies) openEditor(state.editingSpecies);
+                } else { saveToCloud(); }
+            }, (err) => console.error("Snapshot error:", err));
+        }
+
+        async function saveToCloud() {
+            if(!state.user) return;
+            const ref = doc(db, 'artifacts', appId, 'public', 'data', 'curriculum', 'main');
+            await setDoc(ref, { content: state.content });
+        }
+
+        function setupUI() {
+            document.getElementById('cfg-target').oninput = e => { 
+                state.cfg.target = parseInt(e.target.value); 
+                document.getElementById('target-count').innerText = state.cfg.target; 
+                renderNav(); renderStats(); 
             };
-            return `<svg viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${k==='pomegranate'?3:2.5}" class="${size}"><path d="${paths[k]||''}" stroke-linecap="round"/></svg>`;
-        }
-
-        function init() {
-            const groupContainer = document.getElementById('group-size-container');
-            groupContainer.innerHTML = [1,2,3,4].map(n => `
-                <button onclick="setTeamSize(${n})" id="team-size-${n}" class="team-btn flex-grow py-3 rounded-xl border-2 border-white/5 bg-slate-800 font-black text-sm">${n}</button>
-            `).join('');
-
-            const timerOptions = document.getElementById('timer-options');
-            const opts = ["Off", 15, 30, 45, 60, 75, 90, 105, 120];
-            timerOptions.innerHTML = opts.map(o => `
-                <button onclick="setTimer(${o==='Off'?0:o})" class="timer-opt-btn py-2 rounded-lg border border-white/5 bg-slate-800 text-[9px] font-black uppercase">${o}</button>
-            `).join('');
-
-            document.getElementById('cfg-target').addEventListener('input', (e) => {
-                state.cfg.target = parseInt(e.target.value);
-                document.getElementById('target-count').innerText = state.cfg.target;
-                renderNav(); renderStats();
-            });
-
+            document.getElementById('group-size-container').innerHTML = [1,2,3,4].map(n => `<button onclick="setGS(${n})" id="gs-${n}" class="flex-grow py-3 rounded-xl bg-slate-800 border-2 border-white/5 font-black text-xs transition-colors">${n}</button>`).join('');
+            document.getElementById('timer-options').innerHTML = [0,15,30,45,60].map(s => `<button onclick="setT(${s})" class="py-3 bg-slate-800 rounded-xl border border-white/5 text-[10px] font-black">${s||'OFF'}</button>`).join('');
             buildPomDeck();
-            renderNav();
-            renderStats();
-            renderSettings();
-            syncBoard();
         }
 
-        function buildPomDeck() {
-            const pairs = CONTENT.pomegranate;
-            const d = [];
-            pairs.forEach((p, i) => {
-                const color = `hsl(${(i * 45) % 360}, 75%, 50%)`;
-                d.push({ v: p.a, id: i, color });
-                d.push({ v: p.b, id: i, color });
-            });
-            state.pom.deck = d.sort(() => Math.random() - 0.5);
-        }
+        window.setGS = n => { state.cfg.groupSize = n; renderSettings(); syncBoard(); };
+        window.setT = s => { state.cfg.timer = s; document.getElementById('timer-ui').classList.toggle('hidden', s===0); renderSettings(); };
+        window.addStudent = () => { const i = document.getElementById('name-in'); if(i.value.trim()){ state.roster.push(i.value.trim()); i.value=''; renderSettings(); } };
+        window.removeStudent = i => { state.roster.splice(i,1); renderSettings(); };
 
-        function renderNav() {
+        window.renderNav = () => {
             const nav = document.getElementById('species-nav');
             nav.innerHTML = Object.keys(SPECIES_DATA).map(k => {
-                const s = SPECIES_DATA[k];
-                const active = state.active === k;
-                const done = state.inventory[k] >= state.cfg.target;
-                return `
-                <button onclick="changeSpecies('${k}')" class="p-4 rounded-2xl flex items-center gap-4 border transition-all relative
-                    ${done ? 'text-white' : (active ? 'bg-white text-slate-900' : 'bg-slate-900/40 opacity-60')} "
-                    style="${done ? `background-color: ${s.color}; border-color: ${s.color};` : (active ? 'border-color: white;' : 'border-color: transparent;')}">
-                    <div class="w-10 h-10 shrink-0 p-2 rounded-lg bg-black/10">${getSVG(k, active && !done ? s.color : 'white')}</div>
-                    <div class="text-left flex-grow">
-                        <div class="text-[9px] font-black uppercase tracking-widest ${active && !done ? 'text-slate-400' : 'text-white/60'}">${s.en}</div>
-                        <div class="hebrew text-base font-black">${s.hb}</div>
+                const s = SPECIES_DATA[k], act = state.active === k, perc = (state.inventory[k] / state.cfg.target) * 100;
+                const radius = 22, circum = 2 * Math.PI * radius, offset = circum - (perc / 100) * circum;
+                return `<button onclick="state.active='${k}';renderNav();syncBoard();" class="p-4 rounded-3xl flex items-center gap-4 border-2 transition-all relative ${act?'bg-white text-slate-900 border-white shadow-lg':'bg-slate-900/40 border-transparent text-slate-400'}">
+                    <div class="relative w-12 h-12 flex-shrink-0">
+                        <svg class="progress-ring w-12 h-12">
+                            <circle class="progress-ring__circle" stroke="${act?'#e2e8f0':'#1e293b'}" stroke-width="4" fill="transparent" r="${radius}" cx="24" cy="24"/>
+                            <circle class="progress-ring__circle" stroke="${s.color}" stroke-width="4" stroke-dasharray="${circum} ${circum}" style="stroke-dashoffset: ${offset}" fill="transparent" r="${radius}" cx="24" cy="24"/>
+                        </svg>
+                        <div class="absolute inset-0 p-3">${getSVG(k, act?s.color:'white')}</div>
                     </div>
+                    <div class="text-left"><div class="text-[9px] font-black uppercase opacity-60">${s.en}</div><div class="hebrew font-black leading-tight">${s.hb}</div></div>
                 </button>`;
             }).join('');
-        }
+        };
 
-        function changeSpecies(k) { state.active = k; renderNav(); syncBoard(); }
-
-        function syncBoard() {
+        window.syncBoard = () => {
             const s = SPECIES_DATA[state.active];
-            const scene = document.getElementById('card-scene');
-            const match = document.getElementById('match-view');
-            const rosterTag = document.getElementById('roster-tag');
             document.getElementById('card-inner').classList.remove('is-flipped');
-            
-            if (state.active === 'pomegranate') {
-                scene.classList.add('hidden');
-                match.classList.remove('hidden');
-                rosterTag.classList.add('hidden');
+            if(state.active === 'pomegranate') {
+                document.getElementById('card-scene').classList.add('hidden');
+                document.getElementById('match-view').classList.remove('hidden');
                 renderMatch();
             } else {
-                scene.classList.remove('hidden');
-                match.classList.add('hidden');
+                document.getElementById('card-scene').classList.remove('hidden');
+                document.getElementById('match-view').classList.add('hidden');
                 document.getElementById('card-front').style.backgroundColor = s.color;
-                document.getElementById('f-en').innerText = s.en;
-                document.getElementById('f-hb').innerText = s.hb;
+                document.getElementById('f-en').innerText = s.en; document.getElementById('f-hb').innerText = s.hb;
                 document.getElementById('f-watermark').innerHTML = getSVG(state.active, 'white');
                 document.getElementById('f-icon-large').innerHTML = getSVG(state.active, 'white');
                 document.getElementById('b-header').style.backgroundColor = s.color;
                 document.getElementById('b-en').innerText = s.en;
-                document.getElementById('b-hb').innerText = s.hb;
                 document.getElementById('b-icon-small').innerHTML = getSVG(state.active, 'white');
-                
-                if (['fig', 'olive'].includes(state.active) && state.roster.length) {
-                    rosterTag.classList.remove('hidden');
-                    const team = [];
-                    for(let i=0; i<state.cfg.groupSize; i++) team.push(state.roster[(state.rosterIdx + i) % state.roster.length]);
-                    document.getElementById('active-students').innerText = team.join(" & ");
-                } else {
-                    rosterTag.classList.add('hidden');
-                }
             }
-        }
+            const rt = document.getElementById('roster-tag');
+            if(['fig','olive'].includes(state.active) && state.roster.length) {
+                rt.classList.remove('hidden');
+                let team = []; for(let i=0; i<state.cfg.groupSize; i++) team.push(state.roster[(state.rosterIdx + i) % state.roster.length]);
+                document.getElementById('active-students').innerText = team.join(" & ");
+            } else rt.classList.add('hidden');
+        };
 
-        function flipCard() {
-            const data = CONTENT[state.active];
-            const idx = state.idx[state.active] % data.length;
-            const body = document.getElementById('mission-body');
-            let html = "";
-            state.revealContent = null;
-
+        window.flipCard = () => {
+            const items = state.content[state.active], idx = state.idx[state.active] % items.length, b = document.getElementById('mission-body'), d = items[idx];
+            let h = ""; state.revealContent = null;
+            if(!items.length) { b.innerHTML = "No missions programmed."; return; }
             switch(state.active) {
-                case 'wheat':
-                    html = `<div class="hebrew text-8xl font-black mb-4">${data[idx].h}</div>`;
-                    state.revealContent = `<div class="text-6xl font-black italic uppercase text-emerald-600">${data[idx].e}</div>`;
-                    break;
-                case 'barley':
-                    html = `<div class="text-3xl font-black leading-tight px-6">${data[idx].q}</div>`;
-                    state.revealContent = `<div class="mt-8 text-4xl font-black bg-slate-100 text-slate-900 px-8 py-4 rounded-2xl border-2 border-slate-900">${data[idx].a}</div>`;
-                    break;
-                case 'grape':
-                    html = `
-                        <div class="italic text-xl mb-4 opacity-70">"${data[idx].q}"</div>
-                        <div class="text-base font-black uppercase mb-8 text-indigo-600">— ${data[idx].s}</div>
-                        <div class="bg-slate-50 p-6 rounded-3xl border border-slate-200 text-2xl font-bold">${data[idx].p}</div>
-                    `;
-                    break;
-                case 'fig':
-                    html = `<div class="text-5xl font-black italic uppercase tracking-tighter">${data[idx]}</div>`;
-                    break;
-                case 'olive':
-                    html = `
-                        <div class="flex flex-col items-center gap-2 mb-10">
-                            <div class="text-7xl font-black uppercase italic tracking-tighter">${data[idx].t}</div>
-                            <div class="hebrew text-4xl font-bold opacity-40">${data[idx].h}</div>
-                        </div>
-                        <div class="w-full flex items-center gap-4 mb-6">
-                            <div class="divider-line"></div>
-                            <span class="text-red-600 font-black text-xl tracking-[0.2em] uppercase">Caution</span>
-                            <div class="divider-line"></div>
-                        </div>
-                        <div class="flex flex-wrap justify-center gap-4">
-                            ${data[idx].f.map(w => `<div class="bg-red-50 text-red-600 px-6 py-3 rounded-2xl text-xl font-black uppercase border-2 border-red-100">${w}</div>`).join('')}
-                        </div>
-                    `;
-                    break;
-                case 'date':
-                    html = `<div class="text-2xl font-black mb-6 px-10 leading-relaxed">${data[idx].q}</div>`;
-                    state.revealContent = `<div class="hebrew text-5xl font-black text-orange-700">${data[idx].t}</div>`;
-                    break;
+                case 'wheat': h = `<div class="hebrew text-8xl font-black">${d.hebrew}</div>`; state.revealContent = `<div class="text-5xl font-black italic uppercase text-emerald-600">${d.english}</div>`; break;
+                case 'barley': h = `<div class="text-3xl font-black px-6 leading-tight">${d.prompt}</div>`; state.revealContent = `<div class="text-3xl font-black bg-slate-100 p-4 rounded-xl text-slate-900 border-b-8 border-slate-200">${d.answer}</div>`; break;
+                case 'grape': h = `<div class="italic text-xl mb-4 opacity-60">"${d.quote}"</div><div class="text-[10px] font-black mb-8 uppercase tracking-widest text-indigo-500">— ${d.source}</div><div class="bg-indigo-50 border-2 border-indigo-100 p-8 rounded-[2rem] text-2xl font-bold text-indigo-900">${d.prompt}</div>`; break;
+                case 'fig': h = `<div class="text-5xl font-black italic uppercase leading-none">${d}</div>`; break;
+                case 'olive': h = `<div class="text-7xl font-black italic leading-none mb-2">${d.target}</div><div class="hebrew text-4xl opacity-30 mb-10">${d.hebrew}</div><div class="text-red-600 font-black uppercase text-xs tracking-[0.2em] mb-4">Forbidden Words</div><div class="flex flex-wrap justify-center gap-2">${d.forbidden.map(w=>`<div class="bg-red-50 text-red-600 px-5 py-3 rounded-xl font-bold border-2 border-red-100">${w}</div>`).join('')}</div>`; break;
+                case 'date': h = `<div class="text-2xl font-black mb-10 px-10 leading-relaxed">${d.answer_shown}</div>`; state.revealContent = `<div class="hebrew text-6xl font-black text-orange-700">${d.term}</div>`; break;
             }
-
-            body.innerHTML = html;
-            document.getElementById('reveal-btn').classList.toggle('hidden', !state.revealContent);
+            b.innerHTML = h; document.getElementById('reveal-btn').classList.toggle('hidden', !state.revealContent);
             document.getElementById('complete-btn').classList.toggle('hidden', !!state.revealContent);
             document.getElementById('card-inner').classList.add('is-flipped');
-            startClock();
-        }
+            if(state.cfg.timer) startClock();
+        };
 
-        function revealSolution() {
-            document.getElementById('mission-body').innerHTML += `<div class="mt-8">${state.revealContent}</div>`;
-            document.getElementById('reveal-btn').classList.add('hidden');
-            document.getElementById('complete-btn').classList.remove('hidden');
-        }
+        window.revealSolution = () => { document.getElementById('mission-body').innerHTML += `<div class="mt-12 animate-bounce">${state.revealContent}</div>`; document.getElementById('reveal-btn').classList.add('hidden'); document.getElementById('complete-btn').classList.remove('hidden'); };
+        window.logMissionSuccess = () => {
+            state.inventory[state.active] = Math.min(state.cfg.target, state.inventory[state.active]+1); state.idx[state.active]++;
+            if(['fig','olive'].includes(state.active)) state.rosterIdx += state.cfg.groupSize;
+            confetti({particleCount:150, spread:70, origin:{y:0.8}, colors:['#10b981','#ffffff','#3b82f6']}); renderStats(); renderNav(); syncBoard();
+        };
 
-        function logMissionSuccess() {
-            state.inventory[state.active] = Math.min(state.cfg.target, state.inventory[state.active] + 1);
-            state.idx[state.active]++;
-            if(['fig', 'olive'].includes(state.active)) state.rosterIdx += state.cfg.groupSize;
-            
-            if (state.cfg.audio) { /* simple synth chime would go here */ }
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            
-            renderStats(); renderNav(); syncBoard();
-            
-            // Auto check victory
-            const total = state.cfg.target * 7;
-            const cur = Object.values(state.inventory).reduce((a, b) => a + b, 0);
-            if(cur >= total) triggerVictory();
-        }
-
-        function renderMatch() {
-            const grid = document.getElementById('match-grid');
-            grid.innerHTML = state.pom.deck.map((c, i) => {
-                const isFlipped = state.pom.flipped.includes(i) || state.pom.matched.includes(c.id);
-                const isMatched = state.pom.matched.includes(c.id);
-                return `
-                <div onclick="tapMatch(${i})" class="match-card">
-                    <div class="match-inner ${isFlipped ? 'flipped' : ''}">
-                        <div class="match-face match-front flex-col gap-2">
-                            <div class="w-8 h-8 opacity-40">${getSVG('pomegranate', 'white')}</div>
-                            <span class="text-2xl font-black">${i + 1}</span>
-                        </div>
-                        <div class="match-face match-back" style="${isMatched ? `border-color:${c.color};` : ''}">
-                            <span class="text-2xl font-black uppercase hebrew leading-tight">${c.v}</span>
-                        </div>
-                    </div>
-                </div>`;
+        window.renderMatch = () => {
+            const g = document.getElementById('match-grid');
+            g.innerHTML = state.pom.deck.map((c, i) => {
+                const flip = state.pom.flipped.includes(i) || state.pom.matched.includes(c.id), mat = state.pom.matched.includes(c.id);
+                const fontSize = c.v.length > 20 ? '0.6rem' : (c.v.length > 10 ? '0.8rem' : '1.1rem');
+                return `<div onclick="tapM(${i})" class="match-card"><div class="match-inner ${flip?'flipped':''}"><div class="match-face match-front font-black text-2xl">${i+1}</div><div class="match-face match-back" style="${mat?`border-color:${c.color}`:''}">
+                    <div class="match-back-icon">${getSVG('pomegranate', '#dc2626')}</div>
+                    <span class="hebrew font-black relative z-10" style="font-size: ${fontSize}">${c.v}</span>
+                </div></div></div>`;
             }).join('');
-        }
-
-        function tapMatch(i) {
-            const p = state.pom;
-            if (p.flipped.length >= 2 || p.flipped.includes(i) || p.matched.includes(p.deck[i].id)) return;
-            p.flipped.push(i);
-            renderMatch();
-            if (p.flipped.length === 2) {
-                if (p.deck[p.flipped[0]].id === p.deck[p.flipped[1]].id) {
+        };
+        window.tapM = i => {
+            const p = state.pom; if(p.flipped.length>=2 || p.flipped.includes(i) || p.matched.includes(p.deck[i].id)) return;
+            p.flipped.push(i); renderMatch();
+            if(p.flipped.length === 2) {
+                if(p.deck[p.flipped[0]].id === p.deck[p.flipped[1]].id) {
                     p.matched.push(p.deck[p.flipped[0]].id);
-                    state.inventory.pomegranate = Math.floor((p.matched.length / 8) * state.cfg.target);
-                    p.flipped = [];
-                    setTimeout(() => { renderMatch(); renderStats(); renderNav(); }, 400);
-                } else {
-                    setTimeout(() => { p.flipped = []; renderMatch(); }, 1200);
-                }
+                    state.inventory.pomegranate = Math.floor((p.matched.length/state.content.pomegranate.length)*state.cfg.target);
+                    p.flipped=[]; setTimeout(()=>{renderMatch();renderStats();renderNav();}, 400);
+                } else setTimeout(()=>{p.flipped=[];renderMatch();}, 1000);
             }
-        }
+        };
 
-        function renderStats() {
-            const total = state.cfg.target * 7;
-            const cur = Object.values(state.inventory).reduce((a, b) => a + b, 0);
-            const p = Math.min(100, Math.round((cur / total) * 100));
-            document.getElementById('total-perc').innerText = p + '%';
-            document.getElementById('main-progress').style.height = p + '%';
-            document.getElementById('badge-grid').innerHTML = Object.keys(SPECIES_DATA).map(k => {
-                const done = state.inventory[k] >= state.cfg.target;
-                return `<div class="w-10 h-10 p-2 rounded-lg border-2 ${done?'bg-emerald-500 border-emerald-400':'bg-slate-900 border-white/5 opacity-20'}">${getSVG(k, 'white')}</div>`;
-            }).join('');
-        }
+        window.buildPomDeck = () => {
+            const d = []; state.content.pomegranate.forEach((p, i) => { const col = `hsl(${(i*45)%360},80%,45%)`; d.push({v:p.card_a,id:i,color:col},{v:p.match_card,id:i,color:col}); });
+            state.pom.deck = d.sort(()=>Math.random()-0.5); state.pom.matched=[]; state.pom.flipped=[];
+        };
 
-        function setTimer(secs) { 
-            state.cfg.timer = secs; 
-            document.getElementById('timer-ui').classList.toggle('hidden', secs === 0);
-            renderSettings();
-        }
-
-        function toggleAudio() {
-            state.cfg.audio = !state.cfg.audio;
-            document.getElementById('audio-icon').innerHTML = state.cfg.audio ? 
-                '<path d="M11 5L6 9H2V15H6L11 19V5Z M15.54 8.46a5 5 0 010 7.07"/>' : 
-                '<path d="M1 1l22 22M9 9l-3 3H2V15H6L11 19V11M11 5V6"/>';
-        }
+        window.renderStats = () => {
+            const t = state.cfg.target*7, c = Object.values(state.inventory).reduce((a,b)=>a+b,0), p = Math.round((c/t)*100);
+            document.getElementById('total-perc').innerText = p+'%'; document.getElementById('main-progress').style.height = p+'%';
+            document.getElementById('badge-grid').innerHTML = Object.keys(SPECIES_DATA).map(k => `<div class="w-10 h-10 p-2 rounded-lg border-2 ${state.inventory[k]>=state.cfg.target?'bg-emerald-500 border-emerald-400':'opacity-10 bg-slate-900 border-white/10'}">${getSVG(k,'white')}</div>`).join('');
+        };
 
         function startClock() {
-            if (state.cfg.timer === 0) return;
-            clearInterval(state.timerInterval);
-            state.time = state.cfg.timer;
-            updateClock();
-            state.timerInterval = setInterval(() => {
-                state.time--; updateClock();
-                if (state.time <= 0) clearInterval(state.timerInterval);
-            }, 1000);
+            clearInterval(state.interval); state.time = state.cfg.timer;
+            state.interval = setInterval(()=>{
+                state.time--; const m = Math.floor(state.time/60), s = state.time%60;
+                document.getElementById('timer-clock').innerText = `${m}:${s.toString().padStart(2,'0')}`;
+                if(state.time<=0) { clearInterval(state.interval); confetti({particleCount:50, origin:{y:0.3}, colors:['#ef4444']}); }
+            },1000);
         }
 
-        function updateClock() {
-            const m = Math.floor(state.time / 60); const s = state.time % 60;
-            const el = document.getElementById('timer-clock');
-            el.innerText = `${m}:${s.toString().padStart(2, '0')}`;
-            el.className = state.time < 10 ? "text-xl font-black text-red-500 animate-pulse" : "text-xl font-black text-emerald-400";
-        }
-
-        function triggerVictory() {
-            const duration = 15 * 1000;
-            const animationEnd = Date.now() + duration;
-            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-            const randomInRange = (min, max) => Math.random() * (max - min) + min;
-
-            const interval = setInterval(function() {
-                const timeLeft = animationEnd - Date.now();
-                if (timeLeft <= 0) return clearInterval(interval);
-                const particleCount = 50 * (timeLeft / duration);
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-            }, 250);
-            
-            if(document.getElementById('settings-ui').classList.contains('hidden') === false) toggleSettings();
-        }
-
-        function resetGame() {
-            Object.keys(state.inventory).forEach(k => state.inventory[k] = 0);
-            Object.keys(state.idx).forEach(k => state.idx[k] = 0);
-            state.rosterIdx = 0;
-            state.pom.matched = [];
-            state.pom.flipped = [];
-            buildPomDeck();
-            renderStats(); renderNav(); syncBoard(); toggleSettings();
-        }
-
-        function toggleSettings() { document.getElementById('settings-ui').classList.toggle('hidden'); renderSettings(); }
-
-        function renderSettings() {
-            document.querySelectorAll('.team-btn').forEach(btn => btn.classList.remove('bg-emerald-600', 'border-emerald-500', 'text-white'));
-            const activeTeam = document.getElementById(`team-size-${state.cfg.groupSize}`);
-            if(activeTeam) activeTeam.classList.add('bg-emerald-600', 'border-emerald-500', 'text-white');
-
-            document.querySelectorAll('.timer-opt-btn').forEach(btn => {
-                const val = btn.innerText === 'OFF' ? 0 : parseInt(btn.innerText);
-                btn.classList.toggle('bg-emerald-600', val === state.cfg.timer);
-                btn.classList.toggle('text-white', val === state.cfg.timer);
+        window.toggleSettings = () => { document.getElementById('settings-ui').classList.toggle('hidden'); renderSettings(); };
+        window.renderSettings = () => {
+            [1,2,3,4].forEach(n => {
+                const el = document.getElementById(`gs-${n}`);
+                if(el) el.classList.toggle('bg-emerald-600', state.cfg.groupSize===n);
             });
+            document.getElementById('roster-list').innerHTML = state.roster.map((n,i) => `<div class="flex justify-between p-3 bg-slate-800 rounded-xl mb-1 border border-white/5"><span class="text-sm font-bold">${n}</span><button onclick="removeStudent(${i})" class="text-red-500 font-black">✕</button></div>`).join('');
+        };
 
-            document.getElementById('roster-list').innerHTML = state.roster.map((n, i) => `
-                <div class="flex items-center justify-between p-3 bg-slate-800 rounded-xl border border-white/5">
-                    <span class="font-bold text-sm">${n}</span>
-                    <button onclick="removeStudent(${i})" class="text-red-500 text-xs hover:bg-red-500/10 p-2 rounded-lg">✕</button>
-                </div>
-            `).join('');
+        function getSVG(k, color="white") {
+            const p = { wheat:"M12 22V12M12 12L7 7M12 12L17 7M12 7V2", barley:"M12 22V10M12 10C12 10 16 8 16 4M12 10C12 10 8 8 8 4", grape:"M12 8a2 2 0 100-4 2 2 0 000 4zm-3 4a2 2 0 100-4 2 2 0 000 4zm6 0a2 2 0 100-4 2 2 0 000 4z", fig:"M12 22s8-5 8-10S12 2 12 2 4 7 4 12s8 10 8 10z", pomegranate:"M12 21a8 8 0 100-16 8 8 0 000 16zm0-16V3M9 3h6", olive:"M12 19a4 7 0 100-14 4 7 0 000 14z", date:"M12 22V5M12 5c4 2 7 8 7 8M12 5C8 7 5 13 5 13" };
+            return `<svg viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.5" class="w-full h-full"><path d="${p[k]}" stroke-linecap="round"/></svg>`;
         }
 
-        function setTeamSize(n) { state.cfg.groupSize = n; renderSettings(); syncBoard(); }
-        function addStudent() { 
-            const val = document.getElementById('name-in').value.trim(); 
-            if(val) { 
-                state.roster.push(val); 
-                document.getElementById('name-in').value = ""; 
-                renderSettings(); 
-            } 
-        }
-        function removeStudent(i) { state.roster.splice(i, 1); renderSettings(); }
+        window.switchSettingsTab = tab => {
+            document.getElementById('tab-general').classList.toggle('active', tab === 'general');
+            document.getElementById('tab-content').classList.toggle('active', tab === 'content');
+            document.getElementById('view-general').classList.toggle('hidden', tab !== 'general');
+            document.getElementById('view-content').classList.toggle('hidden', tab !== 'content');
+        };
 
-        window.onload = init;
+        window.renderContentSidebar = () => {
+            const sidebar = document.getElementById('content-sidebar');
+            sidebar.innerHTML = Object.keys(SPECIES_DATA).map(k => `<button onclick="openEditor('${k}')" id="side-edit-${k}" class="text-left px-4 py-3 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-all flex items-center gap-3"><div class="w-6 h-6">${getSVG(k, SPECIES_DATA[k].color)}</div><span class="text-[10px] font-black uppercase tracking-widest">${SPECIES_DATA[k].en}</span></button>`).join('');
+        };
+
+        window.openEditor = k => {
+            state.editingSpecies = k;
+            document.querySelectorAll('#content-sidebar button').forEach(b => b.classList.remove('ring-4', 'ring-emerald-500/30', 'bg-emerald-500/10'));
+            document.getElementById(`side-edit-${k}`).classList.add('ring-4', 'ring-emerald-500/30', 'bg-emerald-500/10');
+            const editor = document.getElementById('content-editor');
+            const items = state.content[k];
+            editor.innerHTML = `<div class="flex justify-between items-center mb-8"><h3 class="text-2xl font-black uppercase text-emerald-400 italic">Editing ${SPECIES_DATA[k].en}</h3><button onclick="addItem('${k}')" class="px-6 py-3 bg-emerald-600 rounded-xl text-xs font-black uppercase">+ New Item</button></div><div class="space-y-4">${items.map((item, i) => renderItemEditor(k, i, item)).join('')}</div>`;
+        };
+
+        function renderItemEditor(k, i, item) {
+            let fields = "";
+            switch(k) {
+                case 'wheat': fields = `<input onchange="upd('${k}',${i},'hebrew',this.value)" value="${item.hebrew}" class="hebrew bg-black/40 p-3 rounded-xl text-sm w-1/2"><input onchange="upd('${k}',${i},'english',this.value)" value="${item.english}" class="bg-black/40 p-3 rounded-xl text-sm w-1/2">`; break;
+                case 'barley': fields = `<input onchange="upd('${k}',${i},'prompt',this.value)" value="${item.prompt}" class="bg-black/40 p-3 rounded-xl text-sm w-full mb-1"><input onchange="upd('${k}',${i},'answer',this.value)" value="${item.answer}" class="bg-black/40 p-3 rounded-xl text-sm w-full text-emerald-400 font-bold">`; break;
+                case 'grape': fields = `<input onchange="upd('${k}',${i},'source',this.value)" value="${item.source}" class="bg-black/40 p-3 rounded-xl text-[10px] w-full mb-1 opacity-50 uppercase font-black"><textarea onchange="upd('${k}',${i},'quote',this.value)" class="bg-black/40 p-3 rounded-xl text-sm w-full mb-1 h-20">${item.quote}</textarea><input onchange="upd('${k}',${i},'prompt',this.value)" value="${item.prompt}" class="bg-black/40 p-3 rounded-xl text-sm w-full">`; break;
+                case 'fig': fields = `<input onchange="upd('${k}',${i},null,this.value)" value="${item}" class="bg-black/40 p-3 rounded-xl text-sm w-full">`; break;
+                case 'pomegranate': fields = `<input onchange="upd('${k}',${i},'card_a',this.value)" value="${item.card_a}" class="bg-black/40 p-3 rounded-xl text-sm w-1/2"><input onchange="upd('${k}',${i},'match_card',this.value)" value="${item.match_card}" class="bg-black/40 p-3 rounded-xl text-sm w-1/2">`; break;
+                case 'olive': fields = `<div class="flex gap-2 w-full"><input onchange="upd('${k}',${i},'target',this.value)" value="${item.target}" class="bg-black/40 p-3 rounded-xl text-sm w-1/2 font-black italic uppercase text-emerald-400"><input onchange="upd('${k}',${i},'hebrew',this.value)" value="${item.hebrew}" class="hebrew bg-black/40 p-3 rounded-xl text-sm w-1/2"></div><input onchange="upd('${k}',${i},'forbidden',this.value)" value="${item.forbidden.join(', ')}" class="bg-black/40 p-3 rounded-xl text-xs w-full mt-1 border border-red-500/20 text-red-400" placeholder="Forbidden words (comma separated)">`; break;
+                case 'date': fields = `<textarea onchange="upd('${k}',${i},'answer_shown',this.value)" class="bg-black/40 p-3 rounded-xl text-sm w-full mb-1 h-20">${item.answer_shown}</textarea><input onchange="upd('${k}',${i},'term',this.value)" value="${item.term}" class="hebrew bg-black/40 p-3 rounded-xl text-sm w-full text-orange-400">`; break;
+            }
+            return `<div class="bg-slate-800/80 p-4 rounded-2xl flex gap-3 relative group border border-white/5"><div class="flex-grow flex flex-wrap gap-1">${fields}</div><button onclick="remItem('${k}',${i})" class="text-red-500 hover:scale-125 transition-transform p-2">✕</button></div>`;
+        }
+
+        window.upd = (k, i, f, v) => {
+            if(f === 'forbidden') v = v.split(',').map(s=>s.trim());
+            if(f === null) state.content[k][i] = v; else state.content[k][i][f] = v;
+            saveToCloud();
+        };
+        window.remItem = (k, i) => { state.content[k].splice(i,1); saveToCloud(); openEditor(k); };
+        window.addItem = k => {
+            const defs = { wheat:{hebrew:'עֵץ',english:'Tree'}, barley:{prompt:'New Question?',answer:'True'}, grape:{source:'Folklore',quote:'"..."',prompt:'Reflection?'}, fig:'Charade Action', pomegranate:{card_a:'Term A',match_card:'Match B'}, olive:{target:'PEACE',hebrew:'שָׁלוֹם',forbidden:['War','Quiet']}, date:{answer_shown:'The definition...',term:'Concept'} };
+            state.content[k].unshift(defs[k]); saveToCloud(); openEditor(k);
+        };
+
+        init();
     </script>
 </body>
 </html>
