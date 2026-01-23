@@ -223,10 +223,11 @@
     </main>
 
     <div id="settings-ui" class="hidden fixed inset-0 z-[200] bg-slate-950/98 backdrop-blur-3xl flex items-center justify-center p-6">
-        <div class="bg-slate-900 w-full max-w-4xl h-[80vh] rounded-[3rem] border border-white/10 overflow-hidden flex flex-col shadow-2xl">
-            <div class="p-6 border-b border-white/10 flex justify-between items-center bg-white/5">
-                <h2 class="text-2xl font-black uppercase tracking-tighter">Mission Settings</h2>
-                <div class="flex gap-4">
+        <div class="bg-slate-900 w-full max-w-5xl h-[85vh] rounded-[3rem] border border-white/10 overflow-hidden flex flex-col">
+            <div class="px-8 py-4 border-b border-white/10 flex justify-between items-center bg-white/5">
+                <div class="flex gap-6">
+                    <div onclick="switchSettingsTab('general')" id="tab-general" class="settings-tab active">System Controls</div>
+                    <div onclick="switchSettingsTab('content')" id="tab-content" class="settings-tab">Content Architect</div>    
                     <button onclick="resetGame()" class="px-4 py-2 bg-red-600/20 text-red-400 rounded-lg text-xs font-black uppercase border border-red-500/20">Reset Game</button>
                     <button onclick="toggleSettings()" class="text-2xl font-light hover:opacity-50 px-2">✕</button>
                 </div>
